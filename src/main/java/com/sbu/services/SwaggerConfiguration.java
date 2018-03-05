@@ -1,5 +1,7 @@
 package com.sbu.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -28,25 +30,23 @@ import com.google.common.base.Predicates;
 
 public class SwaggerConfiguration {
 
+    /**
+     * This function configures our swagger doc located at http://hostname:8080/swagger-ui.html.
+     * @return new swagger docket.
+     */
+
+    /**
+     * Logger used to log all output throughout entire project.
+     */
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Bean
     public Docket swaggerDocket() {
+        logger.info("Configuring swaggerDoc");
         return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(this.ApiInfo())
                 .select()
+                .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
-                .apis(RequestHandlerSelectors.basePackage("com.sbu.services"))
                 .build();
-    }
-
-    private ApiInfo ApiInfo() {
-        return new ApiInfoBuilder()
-                .title("Eagle API")
-                .description("Enter the IDs in order to look for the content")
-                .version("0.1")
-                .build();
-    }
-
-    private Predicate<String> paths() {
-        return Predicates.not(PathSelectors.regex("/basic-error-controller.*"));
     }
 }

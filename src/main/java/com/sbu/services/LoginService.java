@@ -39,7 +39,7 @@ public class LoginService {
     }
 
     @RequestMapping(value= "/login", method = RequestMethod.POST)
-    public Response login (@RequestBody @Valid AppUser user) throws UnauthorizedException {
+    public Response login () throws UnauthorizedException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         //Auth handled in SecurityConfig we can just return 200 if we got this far
