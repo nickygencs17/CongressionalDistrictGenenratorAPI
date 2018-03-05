@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.3.RELEASE")
     }
 }
 
@@ -13,10 +13,18 @@ apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 
 jar {
-    baseName = 'gs-rest-service'
+    manifest {
+        attributes(
+                'Main-Class': 'com.com.sbu.main.Application'
+        )
+    }
+    baseName = 'gs-rest-service-305BackEnd'
     version =  '0.1.0'
 }
 
+bootRun {
+    addResources = true
+}
 repositories {
     mavenCentral()
 }
@@ -25,11 +33,33 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
-    testCompile('org.springframework.boot:spring-boot-starter-test')
+    compile("org.springframework.boot:spring-boot-starter-web") {
+        exclude module: "spring-boot-starter-tomcat"
+    }
+    compile("org.springframework.boot:spring-boot-starter-jetty")
+    // end::jetty[]
+    // tag::actuator[]
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile "com.googlecode.json-simple:json-simple:1.1.1"
+    compile group: 'com.sun.jersey', name: 'jersey-core', version: '1.19.3'
+    compile group: 'com.sun.jersey', name: 'jersey-client', version: '1.12'
+    // https://mvnrepository.com/artifact/wf.bitcoin/JavaBitcoindRpcClient
+    compile group: 'wf.bitcoin', name: 'JavaBitcoindRpcClient', version: '0.9.13'
+    compile 'com.github.fge:json-patch:1.9'
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.6.1'
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.6.1'
-    compile group: 'org.jboss.resteasy', name: 'resteasy-jaxrs', version: '2.3.0.GA'
-    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
+    compile group: 'org.springframework.security', name: 'spring-security-core', version: '4.2.2.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-config', version: '4.2.2.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-web', version: '4.2.2.RELEASE'
+    compile group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity4', version: '3.0.2.RELEASE'
+    compile("org.springframework.boot:spring-boot-starter-web")
+
+    // Use MySQL Connector-J
+    compile 'mysql:mysql-connector-java'
+    compile group: 'joda-time', name: 'joda-time-hibernate', version: '1.4'
+    // https://mvnrepository.com/artifact/joda-time/joda-time
+    compile group: 'joda-time', name: 'joda-time', version: '2.9.9'
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.0")
+
 
 }
