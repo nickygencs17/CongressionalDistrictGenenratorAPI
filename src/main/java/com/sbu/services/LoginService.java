@@ -5,6 +5,7 @@ import com.sbu.exceptions.UnauthorizedException;
 import com.sbu.main.Constants;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static com.sbu.utils.ResponseUtil.build200;
@@ -36,24 +40,18 @@ public class LoginService {
 
     @RequestMapping(value= "/login", method = RequestMethod.POST)
     public Response login (@RequestBody @Valid AppUser user) throws UnauthorizedException {
-        String current_password;
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        if(userManager.userExists(user.getUsername())){
-            current_password = userManager.loadUserByUsername(user.getUsername()).getPassword();
-        }
-        else{
-            return build404(Constants.USER_NOT_FOUND);
-
-        }
-        if(!current_password.equals(user.getPassword())){
-            throw new UnauthorizedException();
-
-        }
+        //Auth handled in SecurityConfig we can just return 200 if we got this far
+        Collection<GrantedAuthority> roles = (Collection<GrantedAuthority>) SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        List<String> roleNames = new ArrayList<>();
+        roles.forEach((GrantedAuthority ga) -> roleNames.add(ga.getAuthority()));
+        System.out.println("Attempting to login user: " + username + " with roles: " + roleNames);
 
         JSONObject response = new JSONObject();
         response.put("success", true);
         response.put("message", "Login Successful");
-        response.put("roles",userManager.loadUserByUsername(user.getUsername()).getAuthorities());
+        response.put("roles", roleNames);
 
         return build200(response);
 
