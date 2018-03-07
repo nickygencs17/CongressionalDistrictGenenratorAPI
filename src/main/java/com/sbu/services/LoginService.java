@@ -38,7 +38,7 @@ public class LoginService {
         this.userManager = inMemoryUserDetailsManager;
     }
 
-    @RequestMapping(value= "/login", method = RequestMethod.POST)
+    @RequestMapping(value= "/login", method = RequestMethod.GET)
     public Response login () throws UnauthorizedException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 

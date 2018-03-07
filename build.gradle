@@ -43,9 +43,6 @@ dependencies {
     compile "com.googlecode.json-simple:json-simple:1.1.1"
     compile group: 'com.sun.jersey', name: 'jersey-core', version: '1.19.3'
     compile group: 'com.sun.jersey', name: 'jersey-client', version: '1.12'
-    // https://mvnrepository.com/artifact/wf.bitcoin/JavaBitcoindRpcClient
-    compile group: 'wf.bitcoin', name: 'JavaBitcoindRpcClient', version: '0.9.13'
-    compile 'com.github.fge:json-patch:1.9'
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.6.1'
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.6.1'
     compile group: 'org.springframework.security', name: 'spring-security-core', version: '4.2.2.RELEASE'
