@@ -1,3 +1,6 @@
+
+package com.sbu.data.entitys;
+
 import java.util.ArrayList;
 
 /**
@@ -5,21 +8,21 @@ import java.util.ArrayList;
  * @author Rahul S Agasthya
  */
 public class District extends Division {
-    State state;
+    UsState usState;
     ArrayList<VoterDistrict> voterDistricts;
     
-    public District(String id, String name, long population, String geoJsonFile, State initState) {
+    public District(String id, String name, long population, String geoJsonFile, UsState initUsState) {
         super(id, name, population, geoJsonFile);
-        state = initState;
+        usState = initUsState;
         voterDistricts = new ArrayList<>();
     }
 
-    public State getState() {
-        return state;
+    public UsState getUsState() {
+        return usState;
     }
 
-    public void setState(State state) {
-        this.state = state;
+    public void setUsState(UsState usState) {
+        this.usState = usState;
     }
 
     public ArrayList<VoterDistrict> getVoterDistricts() {

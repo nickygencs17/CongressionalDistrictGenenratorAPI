@@ -2,6 +2,9 @@
  *
  * @author Rahul S Agasthya
  */
+
+package com.sbu.data.entitys;
+
 public class Division {
     String id;
     String name;

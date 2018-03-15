@@ -1,3 +1,5 @@
+package com.sbu.data.entitys;
+
 import java.util.ArrayList;
 
 /**

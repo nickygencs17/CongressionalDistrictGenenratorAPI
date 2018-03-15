@@ -1,7 +1,11 @@
+
+package com.sbu.data.entitys;
+
 /**
  *
  * @author Rahul S Agasthya
  */
+
 public class DistrictList {
     VoterDistrict district;
     DistrictNode neighbors;
