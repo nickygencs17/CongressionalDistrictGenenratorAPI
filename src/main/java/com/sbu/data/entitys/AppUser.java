@@ -11,11 +11,12 @@ public class AppUser {
     String state_id;
     String address;
     int zip;
+    String role;
 
     public AppUser() {
     }
 
-    public AppUser(String username, String user_password, String first_name, String last_name, String city, String state_id, String address, int zip) {
+    public AppUser(String username, String user_password, String first_name, String last_name, String city, String state_id, String address, int zip, String role) {
         this.username = username;
         this.user_password = user_password;
         this.first_name = first_name;
@@ -24,6 +25,7 @@ public class AppUser {
         this.state_id = state_id;
         this.address = address;
         this.zip = zip;
+        this.role = role;
     }
 
     public String getUsername() {
@@ -90,6 +92,11 @@ public class AppUser {
         this.zip = zip;
     }
 
+    public String getRole() {
+        return role;
+    }
 
-
+    public void setRole(String role) {
+        this.role = role;
+    }
 }
