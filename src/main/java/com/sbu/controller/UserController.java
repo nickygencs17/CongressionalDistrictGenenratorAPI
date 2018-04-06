@@ -46,7 +46,7 @@ public class UserController {
 
         List<GrantedAuthority> roles = new ArrayList<>();
         roles.add(ROLE_USER);
-        userManager.createUser(new User(user.getUsername(), user.getPassword(), roles));
+        userManager.createUser(new User(user.getUsername(), user.getUser_password(), roles));
 
         return build201(user.getUsername());
     }
