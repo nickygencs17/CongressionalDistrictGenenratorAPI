@@ -37,8 +37,6 @@ dependencies {
         exclude module: "spring-boot-starter-tomcat"
     }
     compile("org.springframework.boot:spring-boot-starter-jetty")
-    // end::jetty[]
-    // tag::actuator[]
     compile("org.springframework.boot:spring-boot-starter-actuator")
     compile "com.googlecode.json-simple:json-simple:1.1.1"
     compile group: 'com.sun.jersey', name: 'jersey-core', version: '1.19.3'
@@ -50,12 +48,17 @@ dependencies {
     compile group: 'org.springframework.security', name: 'spring-security-web', version: '4.2.2.RELEASE'
     compile group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity4', version: '3.0.2.RELEASE'
     compile("org.springframework.boot:spring-boot-starter-web")
+    compile group: 'joda-time', name: 'joda-time-hibernate', version: '1.4'
+    compile group: 'joda-time', name: 'joda-time', version: '2.9.9'
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.0")
+    // JPA Data (We are going to use Repositories, Entities, Hibernate, etc...)
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-
+    // Use MySQL Connector-J
+    compile 'mysql:mysql-connector-java'
     compile group: 'joda-time', name: 'joda-time-hibernate', version: '1.4'
     // https://mvnrepository.com/artifact/joda-time/joda-time
     compile group: 'joda-time', name: 'joda-time', version: '2.9.9'
-    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.0")
 
 
 }
