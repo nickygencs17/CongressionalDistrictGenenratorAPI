@@ -1,22 +1,47 @@
 package com.sbu.data.entitys;
 
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+@Entity
+@Table(name = "app_user")
 public class AppUser {
 
+    @Id
+    @NotNull
     String username;
+
+    @NotNull
     String user_password;
+
+    @NotNull
     String first_name;
+
+    @NotNull
     String last_name;
+
+    @NotNull
     String city;
-    String state_id;
+
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "state_id")
+    UsState state_id;
+
+
+    @NotNull
     String address;
+
+
+    @NotNull
     int zip;
+
+    @NotNull
     String role;
 
-    public AppUser() {
-    }
 
-    public AppUser(String username, String user_password, String first_name, String last_name, String city, String state_id, String address, int zip, String role) {
+    public AppUser(String username, String user_password, String first_name, String last_name, String city, UsState state_id, String address, int zip, String role) {
         this.username = username;
         this.user_password = user_password;
         this.first_name = first_name;
@@ -27,6 +52,18 @@ public class AppUser {
         this.zip = zip;
         this.role = role;
     }
+
+    public AppUser() {
+    }
+
+    public UsState getState_id() {
+        return state_id;
+    }
+
+    public void setState_id(UsState state_id) {
+        this.state_id = state_id;
+    }
+
 
     public String getUsername() {
         return username;
@@ -68,13 +105,7 @@ public class AppUser {
         this.city = city;
     }
 
-    public String getState_id() {
-        return state_id;
-    }
 
-    public void setState_id(String state_id) {
-        this.state_id = state_id;
-    }
 
     public String getAddress() {
         return address;
