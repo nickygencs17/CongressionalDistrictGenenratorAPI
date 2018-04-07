@@ -1,21 +1,54 @@
 package com.sbu.data.entitys;
 
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+@Entity
+@Table(name = "president_election_info")
 public class PresidentElectionInfo {
 
 
-    int electon_year;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    int id;
+
+    @NotNull
+    int election_year;
+
+    @NotNull
     String party;
+
+    @NotNull
     String pres_name;
+
+    @NotNull
     String vpres_name;
+
+    @NotNull
     long votes_for;
+
+    @NotNull
     float vote_percent;
+
+    @NotNull
     int ec_vote;
-    String state_id;
+
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "state_id")
+    UsState state_id;
+
+    @NotNull
     boolean is_winner;
 
 
-    public PresidentElectionInfo(int electon_year, String party, String pres_name, String vpres_name, long votes_for, float vote_percent, int ec_vote, String state_id, boolean is_winner) {
-        this.electon_year = electon_year;
+    public PresidentElectionInfo() {
+    }
+
+    public PresidentElectionInfo(int election_year, String party, String pres_name, String vpres_name, long votes_for, float vote_percent, int ec_vote, UsState state_id, boolean is_winner) {
+        this.election_year = election_year;
         this.party = party;
         this.pres_name = pres_name;
         this.vpres_name = vpres_name;
@@ -26,15 +59,20 @@ public class PresidentElectionInfo {
         this.is_winner = is_winner;
     }
 
-    public PresidentElectionInfo() {
+    public int getId() {
+        return id;
     }
 
-    public int getElecton_year() {
-        return electon_year;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setElecton_year(int electon_year) {
-        this.electon_year = electon_year;
+    public int getElection_year() {
+        return election_year;
+    }
+
+    public void setElection_year(int election_year) {
+        this.election_year = election_year;
     }
 
     public String getParty() {
@@ -85,11 +123,11 @@ public class PresidentElectionInfo {
         this.ec_vote = ec_vote;
     }
 
-    public String getState_id() {
+    public UsState getState_id() {
         return state_id;
     }
 
-    public void setState_id(String state_id) {
+    public void setState_id(UsState state_id) {
         this.state_id = state_id;
     }
 
@@ -100,6 +138,4 @@ public class PresidentElectionInfo {
     public void setIs_winner(boolean is_winner) {
         this.is_winner = is_winner;
     }
-
-
 }
