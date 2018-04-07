@@ -1,14 +1,27 @@
 package com.sbu.data.entitys;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.sql.Time;
 
 public class Comment {
 
-
+    @NotNull
     String comment_text;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     String comment_id;
+
+    @NotNull
     Time comment_time_date;
+
+    @NotNull
     String author;
+
+    @NotNull
     String post_id;
 
     public Comment(String comment_text, String comment_id, Time comment_time_date, String author, String post_id) {

@@ -1,21 +1,40 @@
 package com.sbu.data.entitys;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.sql.Time;
 
+@Entity
 public class BlogPost {
 
+
+    @NotNull
     String image_url;
+
+    @NotNull
     String post_text;
+
+
     String comment_ids;
-    String post_ids;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    String post_id;
+
+    @NotNull
     Time time_date;
 
 
-    public BlogPost(String image_url, String post_text, String comment_ids, String post_ids, Time time_date) {
+
+
+    public BlogPost(String image_url, String post_text, String comment_ids, String post_id, Time time_date) {
         this.image_url = image_url;
         this.post_text = post_text;
         this.comment_ids = comment_ids;
-        this.post_ids = post_ids;
+        this.post_id = post_id;
         this.time_date = time_date;
     }
 
@@ -46,12 +65,12 @@ public class BlogPost {
         this.comment_ids = comment_ids;
     }
 
-    public String getPost_ids() {
-        return post_ids;
+    public String getPost_id() {
+        return post_id;
     }
 
-    public void setPost_ids(String post_ids) {
-        this.post_ids = post_ids;
+    public void setPost_id(String post_id) {
+        this.post_id = post_id;
     }
 
     public Time getTime_date() {
