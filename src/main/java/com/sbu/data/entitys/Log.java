@@ -1,7 +1,9 @@
 package com.sbu.data.entitys;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.sql.Time;
 
 @Entity
@@ -9,8 +11,13 @@ import java.sql.Time;
 public class Log {
 
 
+    @NotNull
     Time time_date;
+
+    @Id
     int log_id;
+
+    @NotNull
     String log_details;
 
     public Log(Time time_date, int log_id, String log_details) {
@@ -22,7 +29,6 @@ public class Log {
     public Log() {
 
     }
-
 
     public Time getTime_date() {
         return time_date;

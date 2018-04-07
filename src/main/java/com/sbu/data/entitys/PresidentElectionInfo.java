@@ -1,26 +1,52 @@
 package com.sbu.data.entitys;
 
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "president_election_info")
 public class PresidentElectionInfo {
 
 
+
+    @Id
+    int id;
+
+    @NotNull
     int election_year;
+
+    @NotNull
     String party;
+
+    @NotNull
     String pres_name;
+
+    @NotNull
     String vpres_name;
+
+    @NotNull
     long votes_for;
+
+    @NotNull
     float vote_percent;
+
+    @NotNull
     int ec_vote;
-    String state_id;
+
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "state_id")
+    UsState state_id;
+
+    @NotNull
     boolean is_winner;
 
 
-    public PresidentElectionInfo(int election_year, String party, String pres_name, String vpres_name, long votes_for, float vote_percent, int ec_vote, String state_id, boolean is_winner) {
+    public PresidentElectionInfo() {
+    }
+
+    public PresidentElectionInfo(int election_year, String party, String pres_name, String vpres_name, long votes_for, float vote_percent, int ec_vote, UsState state_id, boolean is_winner) {
         this.election_year = election_year;
         this.party = party;
         this.pres_name = pres_name;
@@ -30,9 +56,6 @@ public class PresidentElectionInfo {
         this.ec_vote = ec_vote;
         this.state_id = state_id;
         this.is_winner = is_winner;
-    }
-
-    public PresidentElectionInfo() {
     }
 
     public int getElection_year() {
@@ -91,11 +114,11 @@ public class PresidentElectionInfo {
         this.ec_vote = ec_vote;
     }
 
-    public String getState_id() {
+    public UsState getState_id() {
         return state_id;
     }
 
-    public void setState_id(String state_id) {
+    public void setState_id(UsState state_id) {
         this.state_id = state_id;
     }
 
@@ -106,6 +129,4 @@ public class PresidentElectionInfo {
     public void setIs_winner(boolean is_winner) {
         this.is_winner = is_winner;
     }
-
-
 }

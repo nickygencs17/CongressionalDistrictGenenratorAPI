@@ -1,20 +1,32 @@
 package com.sbu.data.entitys;
 
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "congressional_districts")
-public class CongressionalDirstrict {
+public class CongressionalDistrict {
 
+    @Id
     String congress_id;
+
+    @NotNull
     String voting_districts;
+
+    @NotNull
     long population;
-    String state_id;
+
+    @NotNull
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "state_id")
+    UsState state_id;
+
+
     boolean is_changed;
 
-    public CongressionalDirstrict(String congress_id, String voting_districts, long population, String state_id, boolean is_changed) {
+
+    public CongressionalDistrict(String congress_id, String voting_districts, long population, UsState state_id, boolean is_changed) {
         this.congress_id = congress_id;
         this.voting_districts = voting_districts;
         this.population = population;
@@ -22,7 +34,15 @@ public class CongressionalDirstrict {
         this.is_changed = is_changed;
     }
 
-    public CongressionalDirstrict() {
+    public CongressionalDistrict() {
+    }
+
+    public UsState getState_id() {
+        return state_id;
+    }
+
+    public void setState_id(UsState state_id) {
+        this.state_id = state_id;
     }
 
     public String getCongress_id() {
@@ -49,13 +69,6 @@ public class CongressionalDirstrict {
         this.population = population;
     }
 
-    public String getState_id() {
-        return state_id;
-    }
-
-    public void setState_id(String state_id) {
-        this.state_id = state_id;
-    }
 
     public boolean isIs_changed() {
         return is_changed;

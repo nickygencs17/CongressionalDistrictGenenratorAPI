@@ -2,20 +2,34 @@ package com.sbu.data.entitys;
 
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "us_state")
 public class UsState {
 
 
-
+    @NotNull
     String voting_district_ids;
+
+    @NotNull
     String state_boundaries;
+
+    @NotNull
     String lower_boundaries;
+
+    @NotNull
     String upper_boundaries;
+
+    @NotNull
     String congress_boundaries;
+
+    @NotNull
     int number_of_congress_districts;
+
+    @Id
     String state_id;
 
     public UsState() {

@@ -1,25 +1,43 @@
 package com.sbu.data.entitys;
 
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "voting_districts")
 public class VotingDistrict {
 
 
-    String state_id;
-    String congress_id;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "state_id")
+    @NotNull
+    UsState state_id;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "congress_id")
+    @NotNull
+    CongressElectionInfo congress_id;
+
+    @Id
     String vd_id;
+
+    @NotNull
     String neighbor_vds;
+
+    @NotNull
     float d_leaning;
+
+    @NotNull
     float r_leaning;
+
+    @NotNull
     long population;
+
+    @NotNull
     String vd_boundaries;
 
-
-    public VotingDistrict(String state_id, String congress_id, String vd_id, String neighbor_vds, float d_leaning, float r_leaning, long population, String vd_boundaries) {
+    public VotingDistrict(UsState state_id, CongressElectionInfo congress_id, String vd_id, String neighbor_vds, float d_leaning, float r_leaning, long population, String vd_boundaries) {
         this.state_id = state_id;
         this.congress_id = congress_id;
         this.vd_id = vd_id;
@@ -33,20 +51,19 @@ public class VotingDistrict {
     public VotingDistrict() {
     }
 
-
-    public String getState_id() {
+    public UsState getState_id() {
         return state_id;
     }
 
-    public void setState_id(String state_id) {
+    public void setState_id(UsState state_id) {
         this.state_id = state_id;
     }
 
-    public String getCongress_id() {
+    public CongressElectionInfo getCongress_id() {
         return congress_id;
     }
 
-    public void setCongress_id(String congress_id) {
+    public void setCongress_id(CongressElectionInfo congress_id) {
         this.congress_id = congress_id;
     }
 

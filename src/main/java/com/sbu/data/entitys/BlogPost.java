@@ -18,6 +18,11 @@ public class BlogPost {
 
     String comment_ids;
 
+    @NotNull
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "username")
+    AppUser author;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     String post_id;
@@ -26,13 +31,11 @@ public class BlogPost {
     Time time_date;
 
 
-
-
-    public BlogPost(String image_url, String post_text, String comment_ids, String post_id, Time time_date) {
+    public BlogPost(String image_url, String post_text, String comment_ids, AppUser author, Time time_date) {
         this.image_url = image_url;
         this.post_text = post_text;
         this.comment_ids = comment_ids;
-        this.post_id = post_id;
+        this.author = author;
         this.time_date = time_date;
     }
 
@@ -79,6 +82,11 @@ public class BlogPost {
         this.time_date = time_date;
     }
 
+    public AppUser getAuthor() {
+        return author;
+    }
 
-
+    public void setAuthor(AppUser author) {
+        this.author = author;
+    }
 }

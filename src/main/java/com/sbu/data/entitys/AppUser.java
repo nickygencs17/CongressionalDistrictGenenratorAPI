@@ -25,7 +25,7 @@ public class AppUser {
     String city;
 
 
-   //@OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "state_id")
     UsState state_id;
 
