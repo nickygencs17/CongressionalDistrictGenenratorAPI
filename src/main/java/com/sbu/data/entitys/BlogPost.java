@@ -25,7 +25,7 @@ public class BlogPost {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    String post_id;
+    int post_id;
 
     @NotNull
     Time time_date;
@@ -66,11 +66,11 @@ public class BlogPost {
         this.comment_ids = comment_ids;
     }
 
-    public String getPost_id() {
+    public int getPost_id() {
         return post_id;
     }
 
-    public void setPost_id(String post_id) {
+    public void setPost_id(int post_id) {
         this.post_id = post_id;
     }
 

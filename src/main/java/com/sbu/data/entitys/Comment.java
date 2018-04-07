@@ -14,7 +14,7 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    String comment_id;
+    int comment_id;
 
     @NotNull
     Time comment_time_date;
@@ -63,11 +63,11 @@ public class Comment {
         this.comment_text = comment_text;
     }
 
-    public String getComment_id() {
+    public int getComment_id() {
         return comment_id;
     }
 
-    public void setComment_id(String comment_id) {
+    public void setComment_id(int comment_id) {
         this.comment_id = comment_id;
     }
 

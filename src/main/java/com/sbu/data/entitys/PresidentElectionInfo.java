@@ -11,6 +11,7 @@ public class PresidentElectionInfo {
 
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     int id;
 
     @NotNull
@@ -56,6 +57,14 @@ public class PresidentElectionInfo {
         this.ec_vote = ec_vote;
         this.state_id = state_id;
         this.is_winner = is_winner;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getElection_year() {

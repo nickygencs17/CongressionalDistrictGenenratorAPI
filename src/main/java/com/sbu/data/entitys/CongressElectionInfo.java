@@ -7,8 +7,8 @@ import javax.validation.constraints.NotNull;
 @Table(name = "congress_election_info")
 public class CongressElectionInfo {
 
-
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     int id;
 
     @NotNull
@@ -34,6 +34,11 @@ public class CongressElectionInfo {
     @NotNull
     boolean is_winner;
 
+
+
+    public CongressElectionInfo() {
+    }
+
     public CongressElectionInfo(int election_year, UsState state_id, CongressionalDistrict congress_id, String party, float percent_of_votes, boolean is_winner) {
         this.election_year = election_year;
         this.state_id = state_id;
@@ -43,7 +48,12 @@ public class CongressElectionInfo {
         this.is_winner = is_winner;
     }
 
-    public CongressElectionInfo() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public CongressionalDistrict getCongress_id() {

@@ -1,8 +1,6 @@
 package com.sbu.data.entitys;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Time;
 
@@ -15,19 +13,28 @@ public class Log {
     Time time_date;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     int log_id;
 
     @NotNull
     String log_details;
 
-    public Log(Time time_date, int log_id, String log_details) {
+
+    public Log(Time time_date, String log_details) {
         this.time_date = time_date;
-        this.log_id = log_id;
         this.log_details = log_details;
     }
 
     public Log() {
 
+    }
+
+    public int getLog_id() {
+        return log_id;
+    }
+
+    public void setLog_id(int log_id) {
+        this.log_id = log_id;
     }
 
     public Time getTime_date() {
@@ -38,13 +45,7 @@ public class Log {
         this.time_date = time_date;
     }
 
-    public int getLog_id() {
-        return log_id;
-    }
 
-    public void setLog_id(int log_id) {
-        this.log_id = log_id;
-    }
 
     public String getLog_details() {
         return log_details;

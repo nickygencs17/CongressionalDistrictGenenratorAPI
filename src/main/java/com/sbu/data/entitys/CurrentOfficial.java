@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 public class CurrentOfficial {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     int id;
 
     @OneToOne(fetch = FetchType.EAGER)
@@ -37,6 +38,16 @@ public class CurrentOfficial {
         this.full_name = full_name;
         this.party = party;
         this.district_id = district_id;
+    }
+
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public UsState getState_id() {
