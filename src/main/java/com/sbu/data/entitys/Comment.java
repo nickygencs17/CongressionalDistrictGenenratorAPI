@@ -1,11 +1,12 @@
 package com.sbu.data.entitys;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Time;
 
+
+@Entity
+@Table(name = "blog_post")
 public class Comment {
 
     @NotNull

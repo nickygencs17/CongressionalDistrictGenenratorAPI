@@ -1,7 +1,11 @@
 package com.sbu.data.entitys;
 
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "us_state")
 public class UsState {
 
 

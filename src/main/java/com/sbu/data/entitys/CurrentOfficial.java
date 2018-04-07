@@ -1,6 +1,13 @@
 package com.sbu.data.entitys;
 
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "current_officials")
 public class CurrentOfficial {
+
 
     String state_id;
     String type_office;

@@ -1,5 +1,11 @@
 package com.sbu.data.entitys;
 
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "voting_districts")
 public class VotingDistrict {
 
 

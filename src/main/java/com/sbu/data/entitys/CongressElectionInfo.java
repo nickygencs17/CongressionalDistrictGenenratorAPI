@@ -1,5 +1,10 @@
 package com.sbu.data.entitys;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "congress_election_info")
 public class CongressElectionInfo {
 
 

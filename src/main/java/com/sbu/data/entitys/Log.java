@@ -1,7 +1,11 @@
 package com.sbu.data.entitys;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.sql.Time;
 
+@Entity
+@Table(name = "log")
 public class Log {
 
 
