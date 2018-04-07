@@ -8,20 +8,20 @@ public class VotingDistrict {
     String vd_id;
     String neighbor_vds;
     float d_leaning;
-    float r_leanbing;
+    float r_leaning;
     long population;
-    String vd_boundries;
+    String vd_boundaries;
 
 
-    public VotingDistrict(String state_id, String congress_id, String vd_id, String neighbor_vds, float d_leaning, float r_leanbing, long population, String vd_boundries) {
+    public VotingDistrict(String state_id, String congress_id, String vd_id, String neighbor_vds, float d_leaning, float r_leaning, long population, String vd_boundaries) {
         this.state_id = state_id;
         this.congress_id = congress_id;
         this.vd_id = vd_id;
         this.neighbor_vds = neighbor_vds;
         this.d_leaning = d_leaning;
-        this.r_leanbing = r_leanbing;
+        this.r_leaning = r_leaning;
         this.population = population;
-        this.vd_boundries = vd_boundries;
+        this.vd_boundaries = vd_boundaries;
     }
 
     public VotingDistrict() {
@@ -68,12 +68,12 @@ public class VotingDistrict {
         this.d_leaning = d_leaning;
     }
 
-    public float getR_leanbing() {
-        return r_leanbing;
+    public float getR_leaning() {
+        return r_leaning;
     }
 
-    public void setR_leanbing(float r_leanbing) {
-        this.r_leanbing = r_leanbing;
+    public void setR_leaning(float r_leaning) {
+        this.r_leaning = r_leaning;
     }
 
     public long getPopulation() {
@@ -84,11 +84,11 @@ public class VotingDistrict {
         this.population = population;
     }
 
-    public String getVd_boundries() {
-        return vd_boundries;
+    public String getVd_boundaries() {
+        return vd_boundaries;
     }
 
-    public void setVd_boundries(String vd_boundries) {
-        this.vd_boundries = vd_boundries;
+    public void setVd_boundaries(String vd_boundaries) {
+        this.vd_boundaries = vd_boundaries;
     }
 }

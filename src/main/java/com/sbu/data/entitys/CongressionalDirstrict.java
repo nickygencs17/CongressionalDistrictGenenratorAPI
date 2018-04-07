@@ -3,14 +3,14 @@ package com.sbu.data.entitys;
 public class CongressionalDirstrict {
 
     String congress_id;
-    String voting_dirticts;
+    String voting_districts;
     long population;
     String state_id;
     boolean is_changed;
 
-    public CongressionalDirstrict(String congress_id, String voting_dirticts, long population, String state_id, boolean is_changed) {
+    public CongressionalDirstrict(String congress_id, String voting_districts, long population, String state_id, boolean is_changed) {
         this.congress_id = congress_id;
-        this.voting_dirticts = voting_dirticts;
+        this.voting_districts = voting_districts;
         this.population = population;
         this.state_id = state_id;
         this.is_changed = is_changed;
@@ -27,12 +27,12 @@ public class CongressionalDirstrict {
         this.congress_id = congress_id;
     }
 
-    public String getVoting_dirticts() {
-        return voting_dirticts;
+    public String getVoting_districts() {
+        return voting_districts;
     }
 
-    public void setVoting_dirticts(String voting_dirticts) {
-        this.voting_dirticts = voting_dirticts;
+    public void setVoting_districts(String voting_districts) {
+        this.voting_districts = voting_districts;
     }
 
     public long getPopulation() {

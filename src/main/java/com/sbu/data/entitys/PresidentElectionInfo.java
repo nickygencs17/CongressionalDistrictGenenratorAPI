@@ -3,7 +3,7 @@ package com.sbu.data.entitys;
 public class PresidentElectionInfo {
 
 
-    int electon_year;
+    int election_year;
     String party;
     String pres_name;
     String vpres_name;
@@ -14,8 +14,8 @@ public class PresidentElectionInfo {
     boolean is_winner;
 
 
-    public PresidentElectionInfo(int electon_year, String party, String pres_name, String vpres_name, long votes_for, float vote_percent, int ec_vote, String state_id, boolean is_winner) {
-        this.electon_year = electon_year;
+    public PresidentElectionInfo(int election_year, String party, String pres_name, String vpres_name, long votes_for, float vote_percent, int ec_vote, String state_id, boolean is_winner) {
+        this.election_year = election_year;
         this.party = party;
         this.pres_name = pres_name;
         this.vpres_name = vpres_name;
@@ -29,12 +29,12 @@ public class PresidentElectionInfo {
     public PresidentElectionInfo() {
     }
 
-    public int getElecton_year() {
-        return electon_year;
+    public int getElection_year() {
+        return election_year;
     }
 
-    public void setElecton_year(int electon_year) {
-        this.electon_year = electon_year;
+    public void setElection_year(int election_year) {
+        this.election_year = election_year;
     }
 
     public String getParty() {
