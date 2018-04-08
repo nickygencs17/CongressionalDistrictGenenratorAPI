@@ -25,9 +25,8 @@ public class AppUser {
     String city;
 
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "state_id")
-    UsState state_id;
+    @NotNull
+    String state_id;
 
 
     @NotNull
@@ -41,7 +40,7 @@ public class AppUser {
     String role;
 
 
-    public AppUser(String username, String user_password, String first_name, String last_name, String city, UsState state_id, String address, int zip, String role) {
+    public AppUser(String username, String user_password, String first_name, String last_name, String city, String state_id, String address, int zip, String role) {
         this.username = username;
         this.user_password = user_password;
         this.first_name = first_name;
@@ -56,11 +55,11 @@ public class AppUser {
     public AppUser() {
     }
 
-    public UsState getState_id() {
+    public String getState_id() {
         return state_id;
     }
 
-    public void setState_id(UsState state_id) {
+    public void setState_id(String state_id) {
         this.state_id = state_id;
     }
 

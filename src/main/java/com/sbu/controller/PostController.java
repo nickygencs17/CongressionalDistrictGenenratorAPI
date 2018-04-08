@@ -11,7 +11,7 @@ import static com.sbu.utils.ResponseUtil.build200;
 @RequestMapping("/post")
 public class PostController {
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
     Response getAllPosts(){
 
         return build200("Test");

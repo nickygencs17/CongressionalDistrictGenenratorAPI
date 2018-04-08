@@ -78,7 +78,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/vd/{username}",method = RequestMethod.GET)
-    Response getVotingDistrictByUsername(@PathVariable(value="id") String username){
+    Response getVotingDistrictByUsername(@PathVariable(value="username") String username){
 
         return build200("Test");
     }

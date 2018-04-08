@@ -28,10 +28,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //Protects all requests from unauthorized users
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers("/storage/**").permitAll()
                 .antMatchers("/swagger-ui.html").permitAll()
                 .antMatchers("/swagger-resources/**").permitAll()
                 .antMatchers("/v2/api-docs").permitAll()
+                .antMatchers("/algo").permitAll()
+                .antMatchers("/state/**").permitAll()
+                .antMatchers("/post/*").permitAll()
+                .antMatchers("/user").permitAll()
+                .antMatchers("/user/vd/*").permitAll()
                 .anyRequest().authenticated()
 
 
