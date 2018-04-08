@@ -53,7 +53,7 @@ public class UserController {
 
 
     @RequestMapping(value = "/{username}",method = RequestMethod.GET)
-    Response getUserByUsername(@PathVariable(value="id") String username){
+    Response getUserByUsername(@PathVariable(value="username") String username){
 
         return build200("Test");
     }
@@ -65,14 +65,14 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/{username}",method = RequestMethod.PUT)
-    Response putEditUser(@PathVariable(value="id") String username){
+    @RequestMapping(value = "/edit",method = RequestMethod.PUT)
+    Response putEditUser(@RequestBody AppUser user){
 
         return build200("Test");
     }
 
     @RequestMapping(value = "/{username}",method = RequestMethod.DELETE)
-    Response deleteUser(@PathVariable(value="id") String username){
+    Response deleteUser(@PathVariable(value="username") String username){
 
         return build200("Test");
     }

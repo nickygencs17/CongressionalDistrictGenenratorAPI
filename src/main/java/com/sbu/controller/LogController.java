@@ -1,10 +1,9 @@
 package com.sbu.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import com.sbu.data.entitys.Log;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.ws.rs.core.Response;
 
 import static com.sbu.utils.ResponseUtil.build200;
@@ -15,7 +14,7 @@ import static com.sbu.utils.ResponseUtil.build200;
 public class LogController {
 
     @RequestMapping(method = RequestMethod.POST)
-    Response postLog(){
+    Response postLog(@RequestBody @Valid Log log){
 
         return build200("Test");
     }

@@ -1,16 +1,16 @@
 package com.sbu.controller;
 
-import com.sbu.data.entitys.AppUser;
 import com.sbu.exceptions.UnauthorizedException;
-import com.sbu.main.Constants;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import static com.sbu.utils.ResponseUtil.build200;
-import static com.sbu.utils.ResponseUtil.build404;
 
 /**
  * Created by ngenco .
@@ -59,10 +58,8 @@ public class LoginController {
 
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-    public Response logout(@RequestBody @Valid AppUser user){
-        if(!userManager.userExists(user.getUsername())){
-            return build404(Constants.USER_NOT_FOUND);
-        }
-        return Response.ok().build();
+    public Response logout(){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return build200(username);
     }
 }

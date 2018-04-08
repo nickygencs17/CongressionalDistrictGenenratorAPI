@@ -2,7 +2,7 @@ package com.sbu.data.entitys;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.sql.Time;
+
 
 
 @Entity
@@ -17,19 +17,15 @@ public class Comment {
     int comment_id;
 
     @NotNull
-    Time comment_time_date;
+    String comment_time_date;
 
     @NotNull
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "username")
-    AppUser author;
+    String author;
 
     @NotNull
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "post_id")
-    BlogPost post_id;
+    String post_id;
 
-    public Comment(String comment_text, Time comment_time_date, AppUser author, BlogPost post_id) {
+    public Comment(String comment_text, String comment_time_date, String author, String post_id) {
         this.comment_text = comment_text;
         this.comment_time_date = comment_time_date;
         this.author = author;
@@ -39,19 +35,19 @@ public class Comment {
     public Comment() {
     }
 
-    public AppUser getAuthor() {
+    public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(AppUser author) {
+    public void setAuthor(String author) {
         this.author = author;
     }
 
-    public BlogPost getPost_id() {
+    public String getPost_id() {
         return post_id;
     }
 
-    public void setPost_id(BlogPost post_id) {
+    public void setPost_id(String post_id) {
         this.post_id = post_id;
     }
 
@@ -71,11 +67,11 @@ public class Comment {
         this.comment_id = comment_id;
     }
 
-    public Time getComment_time_date() {
+    public String getComment_time_date() {
         return comment_time_date;
     }
 
-    public void setComment_time_date(Time comment_time_date) {
+    public void setComment_time_date(String comment_time_date) {
         this.comment_time_date = comment_time_date;
     }
 

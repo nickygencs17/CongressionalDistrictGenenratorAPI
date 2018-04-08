@@ -2,7 +2,6 @@ package com.sbu.data.entitys;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.sql.Time;
 
 @Entity
 @Table(name = "log")
@@ -10,7 +9,7 @@ public class Log {
 
 
     @NotNull
-    Time time_date;
+    String time_date;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,7 +19,7 @@ public class Log {
     String log_details;
 
 
-    public Log(Time time_date, String log_details) {
+    public Log(String time_date, String log_details) {
         this.time_date = time_date;
         this.log_details = log_details;
     }
@@ -37,11 +36,11 @@ public class Log {
         this.log_id = log_id;
     }
 
-    public Time getTime_date() {
+    public String getTime_date() {
         return time_date;
     }
 
-    public void setTime_date(Time time_date) {
+    public void setTime_date(String time_date) {
         this.time_date = time_date;
     }
 

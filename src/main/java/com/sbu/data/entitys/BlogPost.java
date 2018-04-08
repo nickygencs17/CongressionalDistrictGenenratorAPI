@@ -2,7 +2,6 @@ package com.sbu.data.entitys;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.sql.Time;
 
 @Entity
 @Table(name = "blog_post")
@@ -19,19 +18,17 @@ public class BlogPost {
     String comment_ids;
 
     @NotNull
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "username")
-    AppUser author;
+    String author;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     int post_id;
 
     @NotNull
-    Time time_date;
+    String time_date;
 
 
-    public BlogPost(String image_url, String post_text, String comment_ids, AppUser author, Time time_date) {
+    public BlogPost(String image_url, String post_text, String comment_ids, String author,String time_date) {
         this.image_url = image_url;
         this.post_text = post_text;
         this.comment_ids = comment_ids;
@@ -74,19 +71,19 @@ public class BlogPost {
         this.post_id = post_id;
     }
 
-    public Time getTime_date() {
+    public String getTime_date() {
         return time_date;
     }
 
-    public void setTime_date(Time time_date) {
+    public void setTime_date(String time_date) {
         this.time_date = time_date;
     }
 
-    public AppUser getAuthor() {
+    public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(AppUser author) {
+    public void setAuthor(String author) {
         this.author = author;
     }
 }

@@ -1,7 +1,10 @@
 package com.sbu.controller;
 
+import com.sbu.data.entitys.BlogPost;
+import com.sbu.data.entitys.Comment;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.ws.rs.core.Response;
 
 import static com.sbu.utils.ResponseUtil.build200;
@@ -17,20 +20,21 @@ public class PostController {
         return build200("Test");
     }
 
-    @RequestMapping(value = "/{id}",method = RequestMethod.GET)
+    @RequestMapping(value = "/id/{id}",method = RequestMethod.GET)
     Response getPostByID(@PathVariable(value="id") String id){
 
         return build200("Test");
     }
 
-    @RequestMapping(value = "/comment/{id}",method = RequestMethod.POST)
-    Response postComment(@PathVariable(value="id") String id){
+    @RequestMapping(value = "/comment",method = RequestMethod.POST)
+    Response postComment(@RequestBody @Valid Comment comment){
+
 
         return build200("Test");
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    Response postNewPost(){
+    Response postNewPost(@RequestBody @Valid BlogPost post){
 
         return build200("Test");
     }

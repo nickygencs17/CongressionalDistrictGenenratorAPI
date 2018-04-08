@@ -15,9 +15,9 @@ import static com.sbu.utils.ResponseUtil.build200;
 public class DBController {
 
     @RequestMapping(method = RequestMethod.POST)
-    Response postUpdateDatabase(){
+    Response postUpdateDatabase(String query){
 
-        return build200("Test");
+        return build200(query);
     }
 
 }
