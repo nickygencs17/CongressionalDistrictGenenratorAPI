@@ -23,7 +23,7 @@ public class PostController {
         return build200("Test");
     }
 
-    @RequestMapping(value = "/{id}",method = RequestMethod.POST)
+    @RequestMapping(value = "/comment/{id}",method = RequestMethod.POST)
     Response postComment(@PathVariable(value="id") String id){
 
         return build200("Test");
