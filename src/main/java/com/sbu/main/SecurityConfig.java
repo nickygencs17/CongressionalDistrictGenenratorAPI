@@ -1,5 +1,7 @@
 package com.sbu.main;
 
+import com.sbu.services.AppUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -20,6 +22,10 @@ import java.util.Properties;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+
+
+    @Autowired
+    AppUserService userService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -56,7 +62,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
         final Properties users = new Properties();
-        //TODO: Take Users from DB and add them to in memory users
+
+
+
+        //Iterable<AppUser> appUsers = userService.getAllUsers();
+        //add whatever other user you need
+        users.put("rama", "pass,ROLE_ADMIN,enabled");
+        users.put("ethan", "pass,ROLE_ADMIN,enabled");
+        users.put("rahul", "pass,ROLE_ADMIN,enabled");
+        users.put("nick", "pass,ROLE_ADMIN,enabled");
+        users.put("genco","pass,ROLE_USER,enabled");
+
         return new InMemoryUserDetailsManager(users);
     }
 

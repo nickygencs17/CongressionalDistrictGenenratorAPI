@@ -3,6 +3,7 @@ package com.sbu.controller;
 
 import com.sbu.data.entitys.AppUser;
 import com.sbu.exceptions.BadRequestException;
+import com.sbu.services.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,16 +24,18 @@ import static com.sbu.utils.ResponseUtil.build409;
 @RestController
 @CrossOrigin
 @RequestMapping("/user")
-public class UserController {
+public class AppUserController {
 
 
     private static final GrantedAuthority ROLE_USER = new SimpleGrantedAuthority("ROLE_USER");
 
     @Autowired
+    AppUserService appUserService;
+    @Autowired
     private final InMemoryUserDetailsManager userManager;
 
     @Autowired
-    public UserController(InMemoryUserDetailsManager inMemoryUserDetailsManager) {
+    public AppUserController(InMemoryUserDetailsManager inMemoryUserDetailsManager) {
         this.userManager = inMemoryUserDetailsManager;
     }
 
@@ -55,13 +58,12 @@ public class UserController {
     @RequestMapping(value = "/{username}",method = RequestMethod.GET)
     Response getUserByUsername(@PathVariable(value="username") String username){
 
-        return build200("Test");
+        return build200(appUserService.getUserByUsername(username));
     }
 
     @RequestMapping(value = "/all",method = RequestMethod.GET)
     Response getAllUsers(){
-
-        return build200("Test");
+        return build200(appUserService.getAllUsers());
     }
 
 
