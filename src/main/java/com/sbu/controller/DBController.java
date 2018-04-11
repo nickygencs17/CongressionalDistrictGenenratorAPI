@@ -14,6 +14,8 @@ import static com.sbu.utils.ResponseUtil.build200;
 @RequestMapping("/db")
 public class DBController {
 
+    //TODO: are we even implementing this?
+
     @RequestMapping(method = RequestMethod.POST)
     Response postUpdateDatabase(String query){
 

@@ -3,23 +3,18 @@ package com.sbu.controller;
 
 import com.sbu.data.entitys.AppUser;
 import com.sbu.exceptions.BadRequestException;
+import com.sbu.main.Constants;
 import com.sbu.services.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
 
-import static com.sbu.utils.ResponseUtil.build200;
-import static com.sbu.utils.ResponseUtil.build201;
-import static com.sbu.utils.ResponseUtil.build409;
-
+import static com.sbu.utils.ResponseUtil.*;
+import static com.sbu.utils.Utils.checkIfUserIsAdmin;
 
 @RestController
 @CrossOrigin
@@ -27,10 +22,9 @@ import static com.sbu.utils.ResponseUtil.build409;
 public class AppUserController {
 
 
-    private static final GrantedAuthority ROLE_USER = new SimpleGrantedAuthority("ROLE_USER");
-
     @Autowired
     AppUserService appUserService;
+
     @Autowired
     private final InMemoryUserDetailsManager userManager;
 
@@ -43,14 +37,10 @@ public class AppUserController {
     @RequestMapping(method = RequestMethod.POST)
     public Response postUser(@RequestBody AppUser user) throws BadRequestException {
 
-        if (userManager.userExists(user.getUsername())) {
+        if (checkIfUserExists(user)) {
             return build409();
         }
-
-        List<GrantedAuthority> roles = new ArrayList<>();
-        roles.add(ROLE_USER);
-        userManager.createUser(new User(user.getUsername(), user.getUser_password(), roles));
-
+        appUserService.createAppUser(user,userManager);
         return build201(user.getUsername());
     }
 
@@ -58,31 +48,76 @@ public class AppUserController {
     @RequestMapping(value = "/{username}",method = RequestMethod.GET)
     Response getUserByUsername(@PathVariable(value="username") String username){
 
+        if (handleAdminCall()) {
+            return build401();
+        }
+
         return build200(appUserService.getUserByUsername(username));
     }
 
     @RequestMapping(value = "/all",method = RequestMethod.GET)
     Response getAllUsers(){
+
+        if (handleAdminCall()) {
+            return build401();
+        }
+
         return build200(appUserService.getAllUsers());
     }
 
 
+
     @RequestMapping(value = "/edit",method = RequestMethod.PUT)
     Response putEditUser(@RequestBody AppUser user){
+            //TODO: can user make this call?
 
-        return build200("Test");
+        if (!checkIfUserExists(user)) {
+            return build404(Constants.USER_NOT_FOUND);
+        }
+
+        if(!userManager.userExists(user.getUsername())){
+            return build404(Constants.USER_NOT_FOUND);
+        }
+
+
+        return build200(appUserService.editUser(user,userManager));
     }
 
     @RequestMapping(value = "/{username}",method = RequestMethod.DELETE)
     Response deleteUser(@PathVariable(value="username") String username){
 
-        return build200("Test");
+        if (handleAdminCall()) return build401();
+
+        if(!userManager.userExists(username)){
+            return build404(Constants.USER_NOT_FOUND);
+        }
+        AppUser appUser = (AppUser) appUserService.getUserByUsername(username);
+        appUserService.removeUser(appUser,userManager);
+
+        return build204();
     }
 
     @RequestMapping(value = "/vd/{username}",method = RequestMethod.GET)
     Response getVotingDistrictByUsername(@PathVariable(value="username") String username){
 
+        //TODO: HOW DO WE EVEN DO THIS?
         return build200("Test");
+    }
+
+    private boolean handleAdminCall() {
+        String requesting_username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if(!checkIfUserIsAdmin(requesting_username,userManager)){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkIfUserExists(AppUser user) {
+        if (userManager.userExists(user.getUsername())) {
+            return true;
+        }
+        return false;
     }
 
 }

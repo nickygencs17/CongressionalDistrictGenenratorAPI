@@ -1,12 +1,24 @@
 package com.sbu.main;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 /**
  * Created by Nicholas Genco on 3/1/17.
  */
 public class Constants {
-    //Constants
 
-    public static String STATE_CONSTANT = "state",
+
+    public static final GrantedAuthority ROLE_USER = new SimpleGrantedAuthority("ROLE_USER");
+    public static final GrantedAuthority ROLE_ADMIN = new SimpleGrantedAuthority("ROLE_ADMIN");
+
+    public static final String STATE_CONSTANT = "state",
     USER_NOT_FOUND = "user not found",
-    USER_EXSITS = "user exists";
+    USER_EXISTS = "user exists",
+    CONGRESS = "CONGRESS",
+    STATE = "STATE",
+    UPPER = "UPPER",
+    LOWER = "LOWER";
+
+
 }
