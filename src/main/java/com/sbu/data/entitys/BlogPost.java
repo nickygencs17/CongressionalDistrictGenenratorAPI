@@ -27,7 +27,7 @@ public class BlogPost {
     int post_id;
 
     @NotNull
-    String time_date;\
+    String time_date;
 
 
     public BlogPost(String title, String image_url, String post_text, String author, String time_date) {
