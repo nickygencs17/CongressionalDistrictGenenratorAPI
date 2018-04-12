@@ -1,12 +1,10 @@
 package com.sbu.data.entitys;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "blog_post")
 public class BlogPost {
-
 
     @NotNull
     String title;
@@ -17,7 +15,6 @@ public class BlogPost {
 
     @NotNull
     String post_text;
-
 
     @NotNull
     String author;

@@ -1,6 +1,4 @@
 package com.sbu.data.entitys;
-
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -28,7 +26,6 @@ public class CurrentOfficial {
     @JoinColumn(name = "congressional_districts")
     CongressionalDistrict district_id;
 
-
     public CurrentOfficial() {
     }
 
@@ -39,8 +36,6 @@ public class CurrentOfficial {
         this.party = party;
         this.district_id = district_id;
     }
-
-
 
     public int getId() {
         return id;

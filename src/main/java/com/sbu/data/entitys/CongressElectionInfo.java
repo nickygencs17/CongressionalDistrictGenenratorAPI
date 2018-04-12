@@ -1,5 +1,4 @@
 package com.sbu.data.entitys;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -24,7 +23,6 @@ public class CongressElectionInfo {
     @NotNull
     CongressionalDistrict congress_id;
 
-
     @NotNull
     String party;
 
@@ -33,8 +31,6 @@ public class CongressElectionInfo {
 
     @NotNull
     boolean is_winner;
-
-
 
     public CongressElectionInfo() {
     }

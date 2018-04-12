@@ -1,5 +1,4 @@
 package com.sbu.controller;
-
 import com.sbu.main.Constants;
 import com.sbu.services.StateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import javax.ws.rs.core.Response;
 
 import static com.sbu.utils.ResponseUtil.build200;
 import static com.sbu.utils.ResponseUtil.build400;
-
 
 @RequestMapping("/state")
 @RestController
@@ -29,7 +27,6 @@ public class StateController {
 
     @RequestMapping(value = "/upper/{id}",method = RequestMethod.GET)
     Response getStateLegistaltiveGeo(@PathVariable(value="id") String id){
-
         if(!checkEagleState(id)){
             return build400(Constants.NOT_EAGLE_STATE);
         }
@@ -41,7 +38,6 @@ public class StateController {
         if(!checkEagleState(id)){
             return build400(Constants.NOT_EAGLE_STATE);
         }
-
         return build200( stateService.getBoundaries(Constants.LOWER,id));
     }
 
@@ -50,7 +46,6 @@ public class StateController {
         if(!checkEagleState(id)){
             return build400(Constants.NOT_EAGLE_STATE);
         }
-
         return build200(stateService.getBoundaries(Constants.STATE,id));
     }
 
@@ -68,24 +63,16 @@ public class StateController {
         if(!checkEagleState(id)){
             return build400(Constants.NOT_EAGLE_STATE);
         }
-
         //TODO: and this one....
         return build200("Test");
     }
 
-
     public boolean checkEagleState(String state_id){
-
         if(state_id.toUpperCase().equals(Constants.WEST_VIRGINA)
                 ||state_id.toUpperCase().equals(Constants.INDIANA)
                 ||state_id.toUpperCase().equals(Constants.ARKSANSAS)){
             return true;
         }
-
         return false;
     }
-
-
-
-
 }

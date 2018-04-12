@@ -14,16 +14,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.Properties;
 
-
-/**
- * Created by nicholasgenco on 4/23/17.
- */
-
 @CrossOrigin
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-
 
     @Autowired
     AppUserService userService;
@@ -44,8 +37,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/post/id/{id}").permitAll()
                 .antMatchers("/user").permitAll()
                 .anyRequest().authenticated()
-
-
                 //Allows HTTP Basic auth
                 .and().httpBasic()
                 .and().headers()
@@ -53,7 +44,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //
                 .csrf().disable();
     }
-
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -63,9 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
         final Properties users = new Properties();
-
         Iterable<AppUser> appUsers = userService.getAllUsers();
-
         for (AppUser appUser : appUsers) {
             users.put(appUser.getUsername(), appUser.getUser_password() + ',' + appUser.getRole() + ",enabled");
         }
@@ -76,8 +64,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         users.put("rahul", "pass,ROLE_ADMIN,enabled");
         users.put("nick", "pass,ROLE_ADMIN,enabled");
         users.put("g", "pass,ROLE_USER,enabled");
-
         return new InMemoryUserDetailsManager(users);
     }
-
 }

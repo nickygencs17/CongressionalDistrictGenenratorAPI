@@ -1,6 +1,4 @@
 package com.sbu.controller;
-
-
 import com.sbu.data.entitys.AppUser;
 import com.sbu.exceptions.BadRequestException;
 import com.sbu.main.Constants;
@@ -21,7 +19,6 @@ import static com.sbu.utils.Utils.checkIfUserIsAdmin;
 @RequestMapping("/user")
 public class AppUserController {
 
-
     @Autowired
     AppUserService appUserService;
 
@@ -36,11 +33,9 @@ public class AppUserController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST)
     public Response postUser(@RequestBody AppUser user) throws BadRequestException {
-
         if(user.getState_id().length()>2){
             return build400(Constants.STATE_ID_LENGTH_GREATER_THAN_TWO);
         }
-
         if (checkIfUserExists(user)) {
             return build409();
         }
@@ -48,71 +43,55 @@ public class AppUserController {
         return build201(user.getUsername());
     }
 
-
     @RequestMapping(value = "/{username}",method = RequestMethod.GET)
-    Response getUserByUsername(@PathVariable(value="username") String username){
-
+    Response getUserByUsername(@PathVariable(value="username") String username) {
         if (handleAdminCall()) {
             return build401();
         }
-
         return build200(appUserService.getUserByUsername(username));
     }
 
     @RequestMapping(value = "/all",method = RequestMethod.GET)
-    Response getAllUsers(){
-
+    Response getAllUsers() {
         if (handleAdminCall()) {
             return build401();
         }
-
         return build200(appUserService.getAllUsers());
     }
 
-
-
     @RequestMapping(value = "/edit",method = RequestMethod.PUT)
     Response putEditUser(@RequestBody AppUser user){
-
         if (handleAdminCall()) {
             return build401();
         }
-
         if(user.getState_id().length()>2){
             return build400(Constants.STATE_ID_LENGTH_GREATER_THAN_TWO);
         }
-
         if (!checkIfUserExists(user)) {
             return build404(Constants.USER_NOT_FOUND);
         }
-
         return build200(appUserService.editUser(user,userManager));
     }
 
     @RequestMapping(value = "/{username}",method = RequestMethod.DELETE)
     Response deleteUser(@PathVariable(value="username") String username){
-
         if (handleAdminCall()) return build401();
-
         if(!userManager.userExists(username)){
             return build404(Constants.USER_NOT_FOUND);
         }
         AppUser appUser = (AppUser) appUserService.getUserByUsername(username);
         appUserService.removeUser(appUser,userManager);
-
         return build204();
     }
 
     @RequestMapping(value = "/vd/{username}",method = RequestMethod.GET)
     Response getVotingDistrictByUsername(@PathVariable(value="username") String username){
-
         //TODO: HOW DO WE EVEN DO THIS?
         return build200("Test");
     }
 
     private boolean handleAdminCall() {
         String requesting_username = SecurityContextHolder.getContext().getAuthentication().getName();
-
         if(!checkIfUserIsAdmin(requesting_username,userManager)){
             return true;
         }

@@ -1,6 +1,4 @@
 package com.sbu.data.entitys;
-
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -22,9 +20,7 @@ public class CongressionalDistrict {
     @JoinColumn(name = "state_id")
     UsState state_id;
 
-
     boolean is_changed;
-
 
     public CongressionalDistrict(String congress_id, String voting_districts, long population, UsState state_id, boolean is_changed) {
         this.congress_id = congress_id;
@@ -68,7 +64,6 @@ public class CongressionalDistrict {
     public void setPopulation(long population) {
         this.population = population;
     }
-
 
     public boolean isIs_changed() {
         return is_changed;

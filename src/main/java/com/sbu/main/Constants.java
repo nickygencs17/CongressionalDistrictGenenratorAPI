@@ -1,18 +1,11 @@
 package com.sbu.main;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-/**
- * Created by Nicholas Genco on 3/1/17.
- */
 public class Constants {
-
-
     public static final GrantedAuthority ROLE_USER = new SimpleGrantedAuthority("ROLE_USER");
     public static final GrantedAuthority ROLE_ADMIN = new SimpleGrantedAuthority("ROLE_ADMIN");
     public static final String ROLE_ADMIN_STRING = "[ROLE_ADMIN]";
-
     public static final String
     USER_NOT_FOUND = "USER_NOT_FOUND",
     USER_EXISTS = "USER_EXISTS",

@@ -1,14 +1,10 @@
 package com.sbu.data.entitys;
-
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "president_election_info")
 public class PresidentElectionInfo {
-
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -35,14 +31,12 @@ public class PresidentElectionInfo {
     @NotNull
     int ec_vote;
 
-
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "state_id")
     UsState state_id;
 
     @NotNull
     boolean is_winner;
-
 
     public PresidentElectionInfo() {
     }

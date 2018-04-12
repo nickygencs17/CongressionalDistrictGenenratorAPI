@@ -1,12 +1,10 @@
 package com.sbu.data.entitys;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "log")
 public class Log {
-
 
     @NotNull
     String time_date;
@@ -17,7 +15,6 @@ public class Log {
 
     @NotNull
     String log_details;
-
 
     public Log(String time_date, String log_details) {
         this.time_date = time_date;
@@ -43,8 +40,6 @@ public class Log {
     public void setTime_date(String time_date) {
         this.time_date = time_date;
     }
-
-
 
     public String getLog_details() {
         return log_details;

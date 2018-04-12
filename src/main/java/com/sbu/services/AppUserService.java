@@ -1,6 +1,4 @@
 package com.sbu.services;
-
-
 import com.sbu.data.AppUserRepository;
 import com.sbu.data.entitys.AppUser;
 import com.sbu.main.Constants;
@@ -16,10 +14,8 @@ import java.util.List;
 @Component
 public class AppUserService {
 
-
      @Autowired
      AppUserRepository appUserRepository;
-
 
     public Iterable<AppUser> getAllUsers() {
         return appUserRepository.findAll();

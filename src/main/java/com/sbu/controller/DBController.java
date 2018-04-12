@@ -1,5 +1,4 @@
 package com.sbu.controller;
-
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,11 +13,8 @@ import static com.sbu.utils.ResponseUtil.build200;
 @RequestMapping("/db")
 public class DBController {
 
-    //TODO: are we even implementing this?
-
     @RequestMapping(method = RequestMethod.POST)
     Response postUpdateDatabase(String query){
-
         return build200(query);
     }
 

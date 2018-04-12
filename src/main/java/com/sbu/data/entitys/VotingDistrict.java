@@ -1,13 +1,10 @@
 package com.sbu.data.entitys;
-
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "voting_districts")
 public class VotingDistrict {
-
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "state_id")

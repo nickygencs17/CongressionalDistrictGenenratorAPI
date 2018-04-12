@@ -1,6 +1,4 @@
 package com.sbu.data.entitys;
-
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -24,21 +22,17 @@ public class AppUser {
     @NotNull
     String city;
 
-
     @NotNull
     String state_id;
 
-
     @NotNull
     String address;
-
 
     @NotNull
     int zip;
 
     @NotNull
     String role;
-
 
     public AppUser(String username, String user_password, String first_name, String last_name, String city, String state_id, String address, int zip, String role) {
         this.username = username;
@@ -62,7 +56,6 @@ public class AppUser {
     public void setState_id(String state_id) {
         this.state_id = state_id;
     }
-
 
     public String getUsername() {
         return username;
@@ -103,8 +96,6 @@ public class AppUser {
     public void setCity(String city) {
         this.city = city;
     }
-
-
 
     public String getAddress() {
         return address;

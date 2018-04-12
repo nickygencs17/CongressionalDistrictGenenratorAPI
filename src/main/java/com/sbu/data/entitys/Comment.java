@@ -1,9 +1,6 @@
 package com.sbu.data.entitys;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-
-
 
 @Entity
 @Table(name = "comment")

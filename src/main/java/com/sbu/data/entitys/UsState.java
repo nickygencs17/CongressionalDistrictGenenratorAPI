@@ -1,6 +1,4 @@
 package com.sbu.data.entitys;
-
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
@@ -10,7 +8,6 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "us_state")
 public class UsState {
-
 
     @Lob
     @NotNull
@@ -38,7 +35,6 @@ public class UsState {
     }
 
     public UsState(String state_boundaries, String lower_boundaries, String upper_boundaries, String congress_boundaries, int number_of_congress_districts, String state_id) {
-
         this.state_boundaries = state_boundaries;
         this.lower_boundaries = lower_boundaries;
         this.upper_boundaries = upper_boundaries;

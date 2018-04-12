@@ -1,5 +1,4 @@
 package com.sbu.controller;
-
 import com.sbu.data.entitys.Log;
 import com.sbu.services.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,6 @@ public class LogController {
         if (handleAdminCall()) {
             return build401();
         }
-
         return build200(logService.postLog(log));
     }
 
@@ -44,24 +42,20 @@ public class LogController {
         if (handleAdminCall()) {
             return build401();
         }
-
         return build200(logService.getAllLogs());
     }
 
     @RequestMapping(method = RequestMethod.GET)
     Response getSummary(){
-
         //TODO: what is this as well
         if (handleAdminCall()) {
             return build401();
         }
-
         return build200(logService.getAllLogs());
     }
 
     private boolean handleAdminCall() {
         String requesting_username = SecurityContextHolder.getContext().getAuthentication().getName();
-
         if(!checkIfUserIsAdmin(requesting_username,userManager)){
             return true;
         }
