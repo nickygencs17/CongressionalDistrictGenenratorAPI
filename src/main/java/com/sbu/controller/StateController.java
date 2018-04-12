@@ -55,7 +55,7 @@ public class StateController {
             return build400(Constants.NOT_EAGLE_STATE);
         }
         //TODO: this one....
-        return build200("Test");
+        return build200(stateService.getStateInfo(id));
     }
 
     @RequestMapping(value = "/electionInfo/{id}",method = RequestMethod.GET)
@@ -64,13 +64,13 @@ public class StateController {
             return build400(Constants.NOT_EAGLE_STATE);
         }
         //TODO: and this one....
-        return build200("Test");
+        return build200(stateService.getElectionInfo(id));
     }
 
     public boolean checkEagleState(String state_id){
         if(state_id.toUpperCase().equals(Constants.WEST_VIRGINA)
                 ||state_id.toUpperCase().equals(Constants.INDIANA)
-                ||state_id.toUpperCase().equals(Constants.ARKSANSAS)){
+                ||state_id.toUpperCase().equals(Constants.ARKANSAS)){
             return true;
         }
         return false;

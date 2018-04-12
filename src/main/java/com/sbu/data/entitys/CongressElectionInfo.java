@@ -11,37 +11,37 @@ public class CongressElectionInfo {
     int id;
 
     @NotNull
-    int election_year;
-
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "state_id")
-    @NotNull
-    UsState state_id;
-
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "congress_id")
-    @NotNull
-    CongressionalDistrict congress_id;
-
-    @NotNull
-    String party;
+    boolean is_winner;
 
     @NotNull
     float percent_of_votes;
 
     @NotNull
-    boolean is_winner;
+    String party;
+
+    @NotNull
+    String candidate_name;
+
+    @NotNull
+    String congress_id;
+
+    @NotNull
+    String state_id;
+
+    @NotNull
+    int election_year;
 
     public CongressElectionInfo() {
     }
 
-    public CongressElectionInfo(int election_year, UsState state_id, CongressionalDistrict congress_id, String party, float percent_of_votes, boolean is_winner) {
-        this.election_year = election_year;
-        this.state_id = state_id;
-        this.congress_id = congress_id;
-        this.party = party;
-        this.percent_of_votes = percent_of_votes;
+    public CongressElectionInfo(boolean is_winner, float percent_of_votes, String party, String candidate_name, String congress_id, String state_id, int election_year) {
         this.is_winner = is_winner;
+        this.percent_of_votes = percent_of_votes;
+        this.party = party;
+        this.candidate_name = candidate_name;
+        this.congress_id = congress_id;
+        this.state_id = state_id;
+        this.election_year = election_year;
     }
 
     public int getId() {
@@ -52,36 +52,12 @@ public class CongressElectionInfo {
         this.id = id;
     }
 
-    public CongressionalDistrict getCongress_id() {
-        return congress_id;
+    public boolean isIs_winner() {
+        return is_winner;
     }
 
-    public void setCongress_id(CongressionalDistrict congress_id) {
-        this.congress_id = congress_id;
-    }
-
-    public int getElection_year() {
-        return election_year;
-    }
-
-    public void setElection_year(int election_year) {
-        this.election_year = election_year;
-    }
-
-    public UsState getState_id() {
-        return state_id;
-    }
-
-    public void setState_id(UsState state_id) {
-        this.state_id = state_id;
-    }
-
-    public String getParty() {
-        return party;
-    }
-
-    public void setParty(String party) {
-        this.party = party;
+    public void setIs_winner(boolean is_winner) {
+        this.is_winner = is_winner;
     }
 
     public float getPercent_of_votes() {
@@ -92,12 +68,44 @@ public class CongressElectionInfo {
         this.percent_of_votes = percent_of_votes;
     }
 
-    public boolean isIs_winner() {
-        return is_winner;
+    public String getParty() {
+        return party;
     }
 
-    public void setIs_winner(boolean is_winner) {
-        this.is_winner = is_winner;
+    public void setParty(String party) {
+        this.party = party;
+    }
+
+    public String getCandidate_name() {
+        return candidate_name;
+    }
+
+    public void setCandidate_name(String candidate_name) {
+        this.candidate_name = candidate_name;
+    }
+
+    public String getCongress_id() {
+        return congress_id;
+    }
+
+    public void setCongress_id(String congress_id) {
+        this.congress_id = congress_id;
+    }
+
+    public String getState_id() {
+        return state_id;
+    }
+
+    public void setState_id(String state_id) {
+        this.state_id = state_id;
+    }
+
+    public int getElection_year() {
+        return election_year;
+    }
+
+    public void setElection_year(int election_year) {
+        this.election_year = election_year;
     }
 }
 

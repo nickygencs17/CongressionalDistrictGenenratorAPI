@@ -31,9 +31,8 @@ public class PresidentElectionInfo {
     @NotNull
     int ec_vote;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "state_id")
-    UsState state_id;
+    @NotNull
+    String state_id;
 
     @NotNull
     boolean is_winner;
@@ -41,7 +40,7 @@ public class PresidentElectionInfo {
     public PresidentElectionInfo() {
     }
 
-    public PresidentElectionInfo(int election_year, String party, String pres_name, String vpres_name, long votes_for, float vote_percent, int ec_vote, UsState state_id, boolean is_winner) {
+    public PresidentElectionInfo(int election_year, String party, String pres_name, String vpres_name, long votes_for, float vote_percent, int ec_vote, String state_id, boolean is_winner) {
         this.election_year = election_year;
         this.party = party;
         this.pres_name = pres_name;
@@ -117,11 +116,11 @@ public class PresidentElectionInfo {
         this.ec_vote = ec_vote;
     }
 
-    public UsState getState_id() {
+    public String getState_id() {
         return state_id;
     }
 
-    public void setState_id(UsState state_id) {
+    public void setState_id(String state_id) {
         this.state_id = state_id;
     }
 

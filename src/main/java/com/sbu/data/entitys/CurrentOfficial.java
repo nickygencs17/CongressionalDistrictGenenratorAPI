@@ -10,9 +10,8 @@ public class CurrentOfficial {
     @GeneratedValue(strategy = GenerationType.AUTO)
     int id;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "state_id")
-    UsState state_id;
+    @NotNull
+    String state_id;
 
     @NotNull
     String type_office;
@@ -20,21 +19,22 @@ public class CurrentOfficial {
     @NotNull
     String full_name;
 
+    @NotNull
     String party;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "congressional_districts")
-    CongressionalDistrict district_id;
+    @NotNull
+    String district_id;
 
-    public CurrentOfficial() {
-    }
 
-    public CurrentOfficial(UsState state_id, String type_office, String full_name, String party, CongressionalDistrict district_id) {
+    public CurrentOfficial(String state_id, String type_office, String full_name, String party, String district_id) {
         this.state_id = state_id;
         this.type_office = type_office;
         this.full_name = full_name;
         this.party = party;
         this.district_id = district_id;
+    }
+
+    public CurrentOfficial() {
     }
 
     public int getId() {
@@ -45,11 +45,11 @@ public class CurrentOfficial {
         this.id = id;
     }
 
-    public UsState getState_id() {
+    public String getState_id() {
         return state_id;
     }
 
-    public void setState_id(UsState state_id) {
+    public void setState_id(String state_id) {
         this.state_id = state_id;
     }
 
@@ -77,11 +77,11 @@ public class CurrentOfficial {
         this.party = party;
     }
 
-    public CongressionalDistrict getDistrict_id() {
+    public String getDistrict_id() {
         return district_id;
     }
 
-    public void setDistrict_id(CongressionalDistrict district_id) {
+    public void setDistrict_id(String district_id) {
         this.district_id = district_id;
     }
 }
