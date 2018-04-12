@@ -34,7 +34,18 @@ public class AppUser {
     @NotNull
     String role;
 
-    public AppUser(String username, String user_password, String first_name, String last_name, String city, String state_id, String address, int zip, String role) {
+    @NotNull
+    float population_coefficient;
+
+    @NotNull
+    float fairness_coefficient;
+
+    @NotNull
+    float compactness_coefficient;
+
+    public AppUser(String username, String user_password, String first_name, String last_name,
+                   String city, String state_id, String address, int zip, String role,
+                   float population_coefficient, float fairness_coefficient, float compactness_coefficient) {
         this.username = username;
         this.user_password = user_password;
         this.first_name = first_name;
@@ -44,6 +55,9 @@ public class AppUser {
         this.address = address;
         this.zip = zip;
         this.role = role;
+        this.population_coefficient = population_coefficient;
+        this.fairness_coefficient = fairness_coefficient;
+        this.compactness_coefficient = compactness_coefficient;
     }
 
     public AppUser() {
@@ -119,5 +133,29 @@ public class AppUser {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public float getPopulation_coefficient() {
+        return population_coefficient;
+    }
+
+    public void setPopulation_coefficient(float population_coefficient) {
+        this.population_coefficient = population_coefficient;
+    }
+
+    public float getFairness_coefficient() {
+        return fairness_coefficient;
+    }
+
+    public void setFairness_coefficient(float fairness_coefficient) {
+        this.fairness_coefficient = fairness_coefficient;
+    }
+
+    public float getCompactness_coefficient() {
+        return compactness_coefficient;
+    }
+
+    public void setCompactness_coefficient(float compactness_coefficient) {
+        this.compactness_coefficient = compactness_coefficient;
     }
 }
