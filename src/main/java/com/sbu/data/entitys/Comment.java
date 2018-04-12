@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 
 
 @Entity
-@Table(name = "blog_post")
+@Table(name = "comment")
 public class Comment {
 
     @NotNull

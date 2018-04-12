@@ -3,6 +3,7 @@ package com.sbu.data.entitys;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -11,18 +12,19 @@ import javax.validation.constraints.NotNull;
 public class UsState {
 
 
-    @NotNull
-    String voting_district_ids;
-
+    @Lob
     @NotNull
     String state_boundaries;
 
+    @Lob
     @NotNull
     String lower_boundaries;
 
+    @Lob
     @NotNull
     String upper_boundaries;
 
+    @Lob
     @NotNull
     String congress_boundaries;
 
@@ -35,8 +37,8 @@ public class UsState {
     public UsState() {
     }
 
-    public UsState(String voting_district_ids, String state_boundaries, String lower_boundaries, String upper_boundaries, String congress_boundaries, int number_of_congress_districts, String state_id) {
-        this.voting_district_ids = voting_district_ids;
+    public UsState(String state_boundaries, String lower_boundaries, String upper_boundaries, String congress_boundaries, int number_of_congress_districts, String state_id) {
+
         this.state_boundaries = state_boundaries;
         this.lower_boundaries = lower_boundaries;
         this.upper_boundaries = upper_boundaries;
@@ -45,13 +47,6 @@ public class UsState {
         this.state_id = state_id;
     }
 
-    public String getVoting_district_ids() {
-        return voting_district_ids;
-    }
-
-    public void setVoting_district_ids(String voting_district_ids) {
-        this.voting_district_ids = voting_district_ids;
-    }
 
     public String getState_boundaries() {
         return state_boundaries;

@@ -1,5 +1,6 @@
 package com.sbu.main;
 
+import com.sbu.data.entitys.AppUser;
 import com.sbu.services.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -63,15 +64,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
         final Properties users = new Properties();
 
+        Iterable<AppUser> appUsers = userService.getAllUsers();
 
-
+        for (AppUser appUser : appUsers) {
+            users.put(appUser.getUsername(), appUser.getUser_password() + ',' + appUser.getRole() + ",enabled");
+        }
         //Iterable<AppUser> appUsers = userService.getAllUsers();
         //add whatever other user you need
         users.put("rama", "pass,ROLE_ADMIN,enabled");
         users.put("ethan", "pass,ROLE_ADMIN,enabled");
         users.put("rahul", "pass,ROLE_ADMIN,enabled");
         users.put("nick", "pass,ROLE_ADMIN,enabled");
-        users.put("genco","pass,ROLE_USER,enabled");
+        users.put("g", "pass,ROLE_USER,enabled");
 
         return new InMemoryUserDetailsManager(users);
     }

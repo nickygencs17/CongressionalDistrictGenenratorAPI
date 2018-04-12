@@ -37,6 +37,10 @@ public class AppUserController {
     @RequestMapping(method = RequestMethod.POST)
     public Response postUser(@RequestBody AppUser user) throws BadRequestException {
 
+        if(user.getState_id().length()>2){
+            return build400(Constants.STATE_ID_LENGTH_GREATER_THAN_TWO);
+        }
+
         if (checkIfUserExists(user)) {
             return build409();
         }
@@ -69,16 +73,18 @@ public class AppUserController {
 
     @RequestMapping(value = "/edit",method = RequestMethod.PUT)
     Response putEditUser(@RequestBody AppUser user){
-            //TODO: can user make this call?
+
+        if (handleAdminCall()) {
+            return build401();
+        }
+
+        if(user.getState_id().length()>2){
+            return build400(Constants.STATE_ID_LENGTH_GREATER_THAN_TWO);
+        }
 
         if (!checkIfUserExists(user)) {
             return build404(Constants.USER_NOT_FOUND);
         }
-
-        if(!userManager.userExists(user.getUsername())){
-            return build404(Constants.USER_NOT_FOUND);
-        }
-
 
         return build200(appUserService.editUser(user,userManager));
     }

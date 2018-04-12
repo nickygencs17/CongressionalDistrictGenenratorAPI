@@ -11,14 +11,21 @@ public class Constants {
 
     public static final GrantedAuthority ROLE_USER = new SimpleGrantedAuthority("ROLE_USER");
     public static final GrantedAuthority ROLE_ADMIN = new SimpleGrantedAuthority("ROLE_ADMIN");
+    public static final String ROLE_ADMIN_STRING = "[ROLE_ADMIN]";
 
-    public static final String STATE_CONSTANT = "state",
-    USER_NOT_FOUND = "user not found",
-    USER_EXISTS = "user exists",
+    public static final String
+    USER_NOT_FOUND = "USER_NOT_FOUND",
+    USER_EXISTS = "USER_EXISTS",
     CONGRESS = "CONGRESS",
     STATE = "STATE",
     UPPER = "UPPER",
-    LOWER = "LOWER";
-
-
+    LOWER = "LOWER",
+    POST = "POST",
+    COMMENTS = "COMMENTS",
+    POST_NOT_FOUND= "POST_NOT_FOUND",
+    STATE_ID_LENGTH_GREATER_THAN_TWO = "STATE_ID_LENGTH_GREATER_THAN_TWO ",
+    NOT_EAGLE_STATE = "NOT_EAGLE_STATE",
+    INDIANA = "IN",
+    WEST_VIRGINA = "WV",
+    ARKSANSAS = "AR";
 }

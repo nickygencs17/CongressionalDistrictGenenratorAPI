@@ -56,7 +56,7 @@ public class LogController {
             return build401();
         }
 
-        return build200(logService.getSummary());
+        return build200(logService.getAllLogs());
     }
 
     private boolean handleAdminCall() {
