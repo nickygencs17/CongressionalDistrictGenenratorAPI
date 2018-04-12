@@ -30,7 +30,7 @@ public class PostService {
     }
 
     public Object getPostById(String id) {
-        return blogPostRepository.findOne(Integer.getInteger(id));
+        return blogPostRepository.findOne(Integer.parseInt(id));
     }
 
     public Object addPost(BlogPost post) {
