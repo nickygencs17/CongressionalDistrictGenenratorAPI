@@ -25,6 +25,7 @@ public class PostService {
     public Object addComment(Comment comment) {
         BlogPost blogPost = blogPostRepository.findOne(Integer.getInteger(comment.getPost_id()));
         //TODO: add comment id to post array of comments
+
         return commentRepository.save(comment);
     }
 

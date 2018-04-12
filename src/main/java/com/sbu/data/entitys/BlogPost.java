@@ -15,8 +15,6 @@ public class BlogPost {
     String post_text;
 
 
-    String comment_ids;
-
     @NotNull
     String author;
 
@@ -28,10 +26,9 @@ public class BlogPost {
     String time_date;
 
 
-    public BlogPost(String image_url, String post_text, String comment_ids, String author,String time_date) {
+    public BlogPost(String image_url, String post_text, String author,String time_date) {
         this.image_url = image_url;
         this.post_text = post_text;
-        this.comment_ids = comment_ids;
         this.author = author;
         this.time_date = time_date;
     }
@@ -53,14 +50,6 @@ public class BlogPost {
 
     public void setPost_text(String post_text) {
         this.post_text = post_text;
-    }
-
-    public String getComment_ids() {
-        return comment_ids;
-    }
-
-    public void setComment_ids(String comment_ids) {
-        this.comment_ids = comment_ids;
     }
 
     public int getPost_id() {
