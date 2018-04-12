@@ -10,7 +10,7 @@ public class Constants {
 
 
     public static final GrantedAuthority ROLE_USER = new SimpleGrantedAuthority("ROLE_USER");
-    public static final GrantedAuthority ROLE_ADMIN = new SimpleGrantedAuthority("ROLE_ADMIN");
+    public static final String ROLE_ADMIN = "[ROLE_ADMIN]";
 
     public static final String STATE_CONSTANT = "state",
     USER_NOT_FOUND = "user not found",

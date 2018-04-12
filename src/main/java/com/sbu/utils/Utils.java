@@ -13,7 +13,9 @@ public class Utils {
 
     public static boolean checkIfUserIsAdmin(String requesting_username, InMemoryUserDetailsManager inMemoryUserDetailsManager) {
 
-        if(inMemoryUserDetailsManager.loadUserByUsername(requesting_username).getAuthorities() == Constants.ROLE_ADMIN){
+        String temp = inMemoryUserDetailsManager.loadUserByUsername(requesting_username).getAuthorities().toString();
+
+        if(inMemoryUserDetailsManager.loadUserByUsername(requesting_username).getAuthorities().toString().equals(Constants.ROLE_ADMIN)){
             return true;
         }
         return false;

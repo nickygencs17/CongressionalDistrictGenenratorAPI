@@ -75,11 +75,6 @@ public class AppUserController {
             return build404(Constants.USER_NOT_FOUND);
         }
 
-        if(!userManager.userExists(user.getUsername())){
-            return build404(Constants.USER_NOT_FOUND);
-        }
-
-
         return build200(appUserService.editUser(user,userManager));
     }
 
