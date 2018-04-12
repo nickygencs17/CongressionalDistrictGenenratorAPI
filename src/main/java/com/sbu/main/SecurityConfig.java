@@ -64,10 +64,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
         final Properties users = new Properties();
 
-        Iterable<AppUser> appUsers  = userService.getAllUsers();
+        Iterable<AppUser> appUsers = userService.getAllUsers();
 
-        for (AppUser appUser: appUsers){
-            users.put(appUser.getUsername(), appUser.getUsername() + ',' + appUser.getRole() + ",enabled" );
+        for (AppUser appUser : appUsers) {
+            users.put(appUser.getUsername(), appUser.getUser_password() + ',' + appUser.getRole() + ",enabled");
         }
         //Iterable<AppUser> appUsers = userService.getAllUsers();
         //add whatever other user you need
@@ -75,7 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         users.put("ethan", "pass,ROLE_ADMIN,enabled");
         users.put("rahul", "pass,ROLE_ADMIN,enabled");
         users.put("nick", "pass,ROLE_ADMIN,enabled");
-        users.put("g","pass,ROLE_USER,enabled");
+        users.put("g", "pass,ROLE_USER,enabled");
 
         return new InMemoryUserDetailsManager(users);
     }

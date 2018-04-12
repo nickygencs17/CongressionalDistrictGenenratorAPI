@@ -18,7 +18,9 @@ public class Constants {
     CONGRESS = "CONGRESS",
     STATE = "STATE",
     UPPER = "UPPER",
-    LOWER = "LOWER";
-
+    LOWER = "LOWER",
+    POST = "POST",
+    COMMENTS = "COMMENTS",
+    POST_NOT_FOUND= "POST_NOT_FOUND";
 
 }
