@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import javax.ws.rs.core.Response;
 
 import static com.sbu.utils.ResponseUtil.build200;
+import static com.sbu.utils.ResponseUtil.build201;
 import static com.sbu.utils.Utils.checkIfUserIsAdmin;
 
 @RestController
@@ -45,14 +46,14 @@ public class PostController {
     Response postComment(@RequestBody @Valid Comment comment){
 
 
-        return build200(postService.addComment(comment));
+        return build201(postService.addComment(comment));
     }
 
     @RequestMapping(method = RequestMethod.POST)
     Response postNewPost(@RequestBody @Valid BlogPost post){
 
 
-        return build200(postService.addPost(post));
+        return build201(postService.addPost(post));
     }
 
     private boolean handleAdminCall() {

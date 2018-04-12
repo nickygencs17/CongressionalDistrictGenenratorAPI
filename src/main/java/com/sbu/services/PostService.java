@@ -21,11 +21,17 @@ public class PostService {
     @Autowired
     CommentRepository commentRepository;
 
-    public Object getAllCommentsForAPost(String post_id) {
+    public Iterable<Comment> getAllCommentsForAPost(String post_id) {
+
         return commentRepository.findByPost_Id(post_id);
     }
 
     public Object addComment(Comment comment) {
+        Object blog_post = blogPostRepository.findOne(Integer.parseInt(comment.getPost_id()));
+
+        if(blog_post==null){
+            return build404(Constants.POST_NOT_FOUND);
+        }
 
         return commentRepository.save(comment);
     }
@@ -37,8 +43,7 @@ public class PostService {
             return build404(Constants.POST_NOT_FOUND);
         }
 
-        Iterable<Comment> comments = commentRepository.findByPost_Id(id);
-
+        Iterable<Comment> comments = getAllCommentsForAPost(id);
 
         JSONObject return_node = new JSONObject();
         return_node.put(Constants.POST,blog_post);

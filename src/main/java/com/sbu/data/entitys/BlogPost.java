@@ -9,6 +9,10 @@ public class BlogPost {
 
 
     @NotNull
+    String title;
+
+    //TODO: add title
+    @NotNull
     String image_url;
 
     @NotNull
@@ -23,10 +27,11 @@ public class BlogPost {
     int post_id;
 
     @NotNull
-    String time_date;
+    String time_date;\
 
 
-    public BlogPost(String image_url, String post_text, String author,String time_date) {
+    public BlogPost(String title, String image_url, String post_text, String author, String time_date) {
+        this.title = title;
         this.image_url = image_url;
         this.post_text = post_text;
         this.author = author;
@@ -74,5 +79,13 @@ public class BlogPost {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }
