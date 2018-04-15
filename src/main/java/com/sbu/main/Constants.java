@@ -10,6 +10,7 @@ public class Constants {
     public static final String
     USER_NOT_FOUND = "USER_NOT_FOUND",
     USER_EXISTS = "USER_EXISTS",
+    PREPROCESS_FAIL = "PREPROCESS_FAIL",
     CONGRESS = "CONGRESS",
     STATE = "STATE",
     UPPER = "UPPER",

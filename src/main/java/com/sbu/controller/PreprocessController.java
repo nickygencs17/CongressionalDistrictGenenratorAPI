@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.core.Response;
 
+import java.io.IOException;
+
 import static com.sbu.utils.ResponseUtil.build200;
 import static com.sbu.utils.ResponseUtil.build400;
 
@@ -19,6 +21,21 @@ public class PreprocessController {
 
     @RequestMapping(value = "/process",method = RequestMethod.PUT)
     Response putPreprocessing(){
-        return build200("Test");
+        boolean adjacent, congress, border;
+        try {
+            adjacent = (boolean)preprocessService.findAdjacency();
+            congress = (boolean)preprocessService.findCongress();
+            border = (boolean)preprocessService.findBorders();
+        }
+        catch(IOException e){
+            return build400(Constants.PREPROCESS_FAIL);
+        }
+        if(adjacent&&congress&&border){
+            return build200("Success");
+        }
+        else{
+            return build400(Constants.PREPROCESS_FAIL);
+        }
+
     }
 }
