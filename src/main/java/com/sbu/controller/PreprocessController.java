@@ -21,16 +21,14 @@ public class PreprocessController {
 
     @RequestMapping(value = "/process",method = RequestMethod.PUT)
     Response putPreprocessing(){
-        boolean adjacent, congress, border;
+        boolean finish;
         try {
-            adjacent = (boolean)preprocessService.findAdjacency();
-            congress = (boolean)preprocessService.findCongress();
-            border = (boolean)preprocessService.findBorders();
+            finish = (boolean)preprocessService.startPreprocess();
         }
         catch(IOException e){
             return build400(Constants.PREPROCESS_FAIL);
         }
-        if(adjacent&&congress&&border){
+        if(finish){
             return build200("Success");
         }
         else{

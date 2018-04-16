@@ -21,30 +21,45 @@ public class PreprocessService {
     VotingDistrictRepository votingDistrictRepository;
 
 
-    public Object findAdjacency() throws IOException {
-        Iterable<VotingDistrict> allVoting = votingDistrictRepository.findAll();
-        for(VotingDistrict vd: allVoting) {
+    public Object startPreprocess() throws IOException {
+        List<VotingDistrict> arVoting = votingDistrictRepository.findByVd_idStartingWith("ar");
+        List<VotingDistrict> inVoting = votingDistrictRepository.findByVd_idStartingWith("in");
+        List<VotingDistrict> wvVoting = votingDistrictRepository.findByVd_idStartingWith("wv");
+
+        arVoting = findAdjacency(arVoting);
+        inVoting = findAdjacency(inVoting);
+        wvVoting = findAdjacency(wvVoting);
+        arVoting = findCongress(arVoting);
+        inVoting = findCongress(inVoting);
+        wvVoting = findCongress(wvVoting);
+        arVoting = findBorders(arVoting);
+        inVoting = findBorders(inVoting);
+        wvVoting = findBorders(wvVoting);
+        return true;
+    }
+
+    private List<VotingDistrict> findCongress(List<VotingDistrict> vds){
+        return new ArrayList<>();
+    }
+
+    private List<VotingDistrict> findBorders(List<VotingDistrict> vds){
+        return new ArrayList<>();
+    }
+
+    private List<VotingDistrict> findAdjacency(List<VotingDistrict> vds) throws IOException {
+        for(VotingDistrict vd: vds) {
             vd.setNeighbor_vds("[");
         }
 
-        for(VotingDistrict vd: allVoting){
-            for(VotingDistrict vd2: allVoting){
-                if(isAdjacent(vd, vd2)){
+        for(VotingDistrict vd: vds){
+            for(VotingDistrict vd2: vds){
+                if(!(vd.getVd_id().equals(vd2.getVd_id())) && isAdjacent(vd, vd2)){
                     vd.setNeighbor_vds(vd.getNeighbor_vds() + "\\\"\\'" + vd2.getVd_id() + "\\'\\\", ");
                 }
             }
             vd.setNeighbor_vds(vd.getNeighbor_vds().substring(0, vd.getNeighbor_vds().length()-2) + "]");
         }
-        votingDistrictRepository.save(allVoting);
-        return true;
-    }
-
-    public Object findCongress(){
-        return true;
-    }
-
-    public Object findBorders(){
-        return true;
+        return (List<VotingDistrict>)votingDistrictRepository.save(vds);
     }
 
     private boolean isAdjacent(VotingDistrict vd1, VotingDistrict vd2) throws IOException {
