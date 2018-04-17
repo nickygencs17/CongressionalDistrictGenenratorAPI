@@ -2,29 +2,30 @@ package com.sbu.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sbu.data.VotingDistrictRepository;
 import com.sbu.data.entitys.VotingDistrict;
-import com.sbu.data.CongressionalDistrictRepository;
-import com.sbu.data.entitys.CongressionalDistrict;
+import com.sbu.main.Constants;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
 import org.geojson.MultiPolygon;
-import org.geojson.Point;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
-public class PreprocessService {
+@Component
+public class PreProcessingService {
 
 
     @Autowired
     VotingDistrictRepository votingDistrictRepository;
 
 
-    public Object startPreprocess() throws IOException {
-        List<VotingDistrict> arVoting = votingDistrictRepository.findByVd_idStartingWith("ar");
-        List<VotingDistrict> inVoting = votingDistrictRepository.findByVd_idStartingWith("in");
-        List<VotingDistrict> wvVoting = votingDistrictRepository.findByVd_idStartingWith("wv");
+    public boolean startPreprocessor() throws IOException {
+        List<VotingDistrict> arVoting = votingDistrictRepository.findByState_id(Constants.ARKANSAS);
+        List<VotingDistrict> inVoting = votingDistrictRepository.findByState_id(Constants.INDIANA);
+        List<VotingDistrict> wvVoting = votingDistrictRepository.findByState_id(Constants.WEST_VIRGINA);
+
 
         arVoting = findAdjacency(arVoting);
         inVoting = findAdjacency(inVoting);
@@ -48,7 +49,7 @@ public class PreprocessService {
 
     private List<VotingDistrict> findAdjacency(List<VotingDistrict> vds) throws IOException {
         for(VotingDistrict vd: vds) {
-            vd.setNeighbor_vds("[");
+            vd.setNeighbor_vds(Constants.ARRAY_START);
         }
 
         for(VotingDistrict vd: vds){
@@ -57,14 +58,15 @@ public class PreprocessService {
                     vd.setNeighbor_vds(vd.getNeighbor_vds() + "\\\"\\'" + vd2.getVd_id() + "\\'\\\", ");
                 }
             }
-            vd.setNeighbor_vds(vd.getNeighbor_vds().substring(0, vd.getNeighbor_vds().length()-2) + "]");
+            vd.setNeighbor_vds(vd.getNeighbor_vds().substring(0, vd.getNeighbor_vds().length()-2) + Constants.ARRAY_END);
         }
         return (List<VotingDistrict>)votingDistrictRepository.save(vds);
     }
 
     private boolean isAdjacent(VotingDistrict vd1, VotingDistrict vd2) throws IOException {
-        Feature feature1 = new ObjectMapper().readValue(vd1.getVd_boundaries(), Feature.class);
-        Feature feature2 = new ObjectMapper().readValue(vd2.getVd_boundaries(), Feature.class);
+        //TODO: fix why its dying here
+        Feature feature1 = new ObjectMapper().readValue(vd1.getVd_boundries(), Feature.class);
+        Feature feature2 = new ObjectMapper().readValue(vd2.getVd_boundries(), Feature.class);
         List<List<LngLatAlt>> mpoly1 = ((MultiPolygon)feature1.getGeometry()).getCoordinates().get(0);
         List<List<LngLatAlt>> mpoly2 = ((MultiPolygon)feature2.getGeometry()).getCoordinates().get(0);
 
