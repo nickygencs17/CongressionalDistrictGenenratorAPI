@@ -1,4 +1,5 @@
 package com.sbu.services;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sbu.data.VotingDistrictRepository;
 import com.sbu.data.entitys.VotingDistrict;
@@ -6,9 +7,14 @@ import com.sbu.main.Constants;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
 import org.geojson.MultiPolygon;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +71,50 @@ public class PreProcessingService {
 
     private boolean isAdjacent(VotingDistrict vd1, VotingDistrict vd2) throws IOException {
         //TODO: fix why its dying here
-        Feature feature1 = new ObjectMapper().readValue(vd1.getVd_boundries(), Feature.class);
+
+        /*
+
+        ObjectMapper mapper = new ObjectMapper();
+InputStream is = Test.class.getResourceAsStream("/test.json");
+testObj = mapper.readValue(is, Test.class);
+         */
+
+        System.out.println("Working Directory = " +
+                System.getProperty("user.dir"));
+
+        JSONParser jsonParser = new JSONParser();
+
+        String location = "src/main/resources/individual_vtds/"+vd1.getState_id()+"_vtd/"+vd1.getVd_id()+".geojson";
+
+
+        JSONObject person = new JSONObject();
+
+        try (FileReader reader = new FileReader(location))
+        {
+            //Read JSON file
+            Object obj = jsonParser.parse(reader);
+
+            person = (JSONObject) obj;
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+//        ObjectMapper mapper = new ObjectMapper();
+//        InputStream is = Feature.class.getResourceAsStream(location);
+//        Feature testObj = mapper.readValue(is, Feature.class);
+
+        Feature feature1 = new ObjectMapper().readValue(person.get("type").toString(), Feature.class);
+
+        System.out.print("here");
         Feature feature2 = new ObjectMapper().readValue(vd2.getVd_boundries(), Feature.class);
         List<List<LngLatAlt>> mpoly1 = ((MultiPolygon)feature1.getGeometry()).getCoordinates().get(0);
         List<List<LngLatAlt>> mpoly2 = ((MultiPolygon)feature2.getGeometry()).getCoordinates().get(0);

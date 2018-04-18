@@ -57,6 +57,7 @@ dependencies {
     compile group: 'de.grundid.opendatalab', name: 'geojson-jackson', version: '1.8'
 
 
+
     // Use MySQL Connector-J
     compile 'mysql:mysql-connector-java'
     compile group: 'joda-time', name: 'joda-time-hibernate', version: '1.4'
