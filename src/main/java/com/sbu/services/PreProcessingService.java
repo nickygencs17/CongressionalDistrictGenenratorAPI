@@ -67,7 +67,7 @@ public class PreProcessingService {
 
             for(String s:neighborList){
                 for(VotingDistrict v:vds){
-                    if(v.getVd_id().equals(s) && !v.getCongress_id().equals(vd.getCongress_id())){
+                    if(s.contains(v.getVd_id()) && !v.getCongress_id().equals(vd.getCongress_id())){
                         borderDistricts.add(v);
                         borderDistricts.add(vd);
                     }
