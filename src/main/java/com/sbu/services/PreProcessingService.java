@@ -62,7 +62,7 @@ public class PreProcessingService {
             Matcher matcher = Pattern.compile("'(.*?)'").matcher(neighbors);
 
             while (matcher.find()) {
-                neighborList.add(matcher.group().substring(0,matcher.group().length()-1));
+                neighborList.add(matcher.group());
             }
 
             for(String s:neighborList){
