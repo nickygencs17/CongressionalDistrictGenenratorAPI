@@ -4,16 +4,25 @@ import com.sbu.data.entitys.CongressionalDistrict;
 import com.sbu.data.entitys.Move;
 import com.sbu.data.entitys.UsState;
 import com.sbu.data.entitys.VotingDistrict;
+import com.sbu.main.Constants;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-
+@Component
 public class AlgoService {
 
-//    ArrayList<Move> moves = new ArrayList<>();
-//    int unChangedChecks = 0;
-//    public ArrayList<Move> startAlgorithm(UsState state, int pCoefficient, int cCoefficient, int fCoefficient) {
+    ArrayList<Move> moves;
+    int unChangedChecks = 0;
+    int pCoefficient;
+    int cCoefficient;
+    int fCoefficient;
+//    public ArrayList<Move> startAlgorithm(UsState state, int pCoefficient, int cCoefficient, int fCoefficient, ArrayList<Move> moves) {
 //
+//        this.moves = moves;
+//        this.pCoefficient = pCoefficient;
+//        this.cCoefficient = cCoefficient;
+//        this.fCoefficient = fCoefficient;
 //        //Get all Congressional districts that share boundary with other congressional districts
 //        ArrayList<CongressionalDistrict> congressionalDistricts = state.getCongressDistricts();
 //
@@ -29,16 +38,14 @@ public class AlgoService {
 //        return moves;
 //    }
 //
-//    public boolean traversePrecinctsforChanges(UsState state, CongressionalDistrict congressDistrict,
-//                                               int pCoefficient, int cCoefficient, int fCoefficient) {
+//    public boolean traversePrecinctsforChanges(UsState state, CongressionalDistrict congressDistrict) {
 //
 //        //Get all voting districts that share boundary with other congressional districts
 //        ArrayList<VotingDistrict> boundaryPrecincts = congressDistrict.getBoundaryPrecincts();
 //        boolean anyChange = false;
 //        for(int i = 0; i < boundaryPrecincts.size(); i++) {
 //            VotingDistrict currentPrecinct = boundaryPrecincts.get(i);
-//            boolean change = traverseBoundaryCongressDistrictsforChanges(state, congressDistrict, currentPrecinct,
-//                                                        pCoefficient, cCoefficient, fCoefficient);
+//            boolean change = traverseBoundaryCongressDistrictsforChanges(state, congressDistrict, currentPrecinct);
 //            if(change) anyChange = true;
 //        }
 //        return anyChange;
@@ -46,8 +53,7 @@ public class AlgoService {
 //
 //    public boolean traverseBoundaryCongressDistrictsforChanges(UsState state,
 //                                                               CongressionalDistrict congressDistrict,
-//                                                               VotingDistrict currentPrecinct,
-//                                                               int pCoefficient, int cCoefficient, int fCoefficient) {
+//                                                               VotingDistrict currentPrecinct) {
 //
 //        //Get all congressional districts that share boundary with currentVotingDistrict
 //        ArrayList<CongressionalDistrict> boundaryCongressDistricts = currentPrecinct.getBoundaryCongressDistricts();
@@ -85,7 +91,7 @@ public class AlgoService {
 //    }
 //
 //    public boolean checkTermination() {
-//        if(unChangedChecks <= 100) return true;
+//        if(unChangedChecks <= Constants.MAX_UNCHANGED_CHECKS) return true;
 //        return false;
 //    }
 //
@@ -93,7 +99,7 @@ public class AlgoService {
 //        unChangedChecks = 0;
 //    }
 //
-//    public void calculateEnergy(UsState state, int pCoefficient, int cCoefficient, int fCoefficient) {
+//    public void calculateEnergy(UsState state) {
 //       /* return pCoefficient * state.getPopulationDeviation()
 //                + cCoefficient * (1 - boundaryCongressDistricts.get(i).getCompactnessScore())
 //                + fCoefficient * (1 - state.getPoliticalFairness()); */

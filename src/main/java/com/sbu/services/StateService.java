@@ -61,4 +61,8 @@ public class StateService {
         return return_node;
     }
 
+    public UsState getStatebyId(String id) {
+        return usStateRepository.findOne(id);
+    }
+
 }
