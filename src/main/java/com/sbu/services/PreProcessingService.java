@@ -18,6 +18,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class PreProcessingService {
@@ -39,18 +41,40 @@ public class PreProcessingService {
         arVoting = findCongress(arVoting);
         inVoting = findCongress(inVoting);
         wvVoting = findCongress(wvVoting);
-        arVoting = findBorders(arVoting);
-        inVoting = findBorders(inVoting);
-        wvVoting = findBorders(wvVoting);
+        //TODO: Use the border lists
+        List<VotingDistrict> arBorders = findBorders(arVoting);
+        List<VotingDistrict> inBorders = findBorders(inVoting);
+        List<VotingDistrict> wvBorders = findBorders(wvVoting);
         return true;
     }
 
     private List<VotingDistrict> findCongress(List<VotingDistrict> vds){
-        return new ArrayList<>();
+        return vds;
     }
 
     private List<VotingDistrict> findBorders(List<VotingDistrict> vds){
-        return new ArrayList<>();
+        List<VotingDistrict> borderDistricts = new ArrayList<>();
+        for(VotingDistrict vd: vds) {
+            if(borderDistricts.contains(vd)) continue;
+
+            String neighbors = vd.getNeighbor_vds();
+            List<String> neighborList = new ArrayList<>();
+            Matcher matcher = Pattern.compile("'(.*?)'").matcher(neighbors);
+
+            while (matcher.find()) {
+                neighborList.add(matcher.group().substring(0,matcher.group().length()-1));
+            }
+
+            for(String s:neighborList){
+                for(VotingDistrict v:vds){
+                    if(v.getVd_id().equals(s) && !v.getCongress_id().equals(vd.getCongress_id())){
+                        borderDistricts.add(v);
+                        borderDistricts.add(vd);
+                    }
+                }
+            }
+        }
+        return borderDistricts;
     }
 
     private List<VotingDistrict> findAdjacency(List<VotingDistrict> vds) throws IOException {
