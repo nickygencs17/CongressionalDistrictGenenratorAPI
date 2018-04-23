@@ -34,12 +34,15 @@ public class AppUser {
     @NotNull
     String role;
 
-
+    @NotNull
     float population_coefficient;
 
+    @NotNull
     float fairness_coefficient;
 
+    @NotNull
     float compactness_coefficient;
+
 
     public AppUser(String username, String user_password, String first_name, String last_name,
                    String city, String state_id, String address, int zip, String role,
