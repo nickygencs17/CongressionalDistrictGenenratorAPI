@@ -2,7 +2,6 @@ package com.sbu.data.entitys;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -20,9 +19,6 @@ public class CongressionalDistrict {
     long population;
 
     @NotNull
-    float compactness;
-
-    @NotNull
     String state_id;
 
     @NotNull
@@ -34,17 +30,39 @@ public class CongressionalDistrict {
     @Transient
     HashSet<String> boundaryPrecinct_ids;
 
-    public CongressionalDistrict(String congress_id, String precincts, long population, String state_id, boolean is_changed) {
+    int in_use;
+
+    float compactness;
+
+    public CongressionalDistrict(String congress_id, String precincts, long population, String state_id, boolean is_changed, int in_use, float compactness) {
+
         this.congress_id = congress_id;
         this.precincts = precincts;
         this.population = population;
         this.state_id = state_id;
         this.is_changed = is_changed;
+        this.in_use = in_use;
+        this.compactness = compactness;
     }
+
 
     public String getState_id() {
         return state_id;
     }
+
+    public CongressionalDistrict() {
+    }
+
+
+    public int getIn_use() {
+        return in_use;
+    }
+
+    public void setIn_use(int in_use) {
+        this.in_use = in_use;
+    }
+
+
 
     public void setState_id(String state_id) {
         this.state_id = state_id;
@@ -58,7 +76,9 @@ public class CongressionalDistrict {
         this.congress_id = congress_id;
     }
 
-    public String getPricincts() {
+
+    public String getPrecincts() {
+
         return precincts;
     }
 
@@ -72,6 +92,7 @@ public class CongressionalDistrict {
 
     public void setBoundaryPrecinct_ids(HashSet<String> boundaryPrecinct_ids) {
         this.boundaryPrecinct_ids = boundaryPrecinct_ids;
+
     }
 
     public long getPopulation() {
@@ -120,7 +141,8 @@ public class CongressionalDistrict {
         }
     }
 
-    public void updateBoundaryPrecincts(VotingDistrict precinct) {
+    public void updateBoundaryPrecincts(Precinct precinct) {
+
 
     }
 

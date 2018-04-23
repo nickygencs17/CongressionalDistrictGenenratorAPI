@@ -3,6 +3,7 @@ import com.google.common.collect.Lists;
 import com.sbu.data.*;
 import com.sbu.data.entitys.CongressElectionInfo;
 import com.sbu.data.entitys.CongressionalDistrict;
+import com.sbu.data.entitys.Precinct;
 import com.sbu.data.entitys.UsState;
 import com.sbu.data.entitys.VotingDistrict;
 import com.sbu.main.Constants;
@@ -25,7 +26,7 @@ public class StateService {
     CongressionalDistrictRepository congressionalDistrictRepository;
 
     @Autowired
-    VotingDistrictRepository votingDistrictRepository;
+    PrecinctRepository precinctRepository;
 
     @Autowired
     PresidentElectionInfoRepository presidentElectionInfoRepository;
@@ -84,11 +85,11 @@ public class StateService {
         return districtHashMap;
     }
 
-    public HashMap<String, VotingDistrict>getPrecinctsbyState(String id) {
-        Iterator<VotingDistrict> districts = votingDistrictRepository.findByState_id(id).iterator();
-        HashMap<String, VotingDistrict> precinctHashMap = new HashMap<>();
+    public HashMap<String, Precinct>getPrecinctsbyState(String id) {
+        Iterator<Precinct> districts = precinctRepository.findByState_id(id).iterator();
+        HashMap<String, Precinct> precinctHashMap = new HashMap<>();
         while(districts.hasNext()) {
-            VotingDistrict currentPrecinct = districts.next();
+            Precinct currentPrecinct = districts.next();
             precinctHashMap.put(currentPrecinct.getPrecinct_id(), currentPrecinct);
         }
         return precinctHashMap;

@@ -1,8 +1,12 @@
 package com.sbu.controller;
+import com.fasterxml.jackson.core.util.InternCache;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.sbu.data.entitys.AppUser;
 import com.sbu.exceptions.BadRequestException;
 import com.sbu.main.Constants;
 import com.sbu.services.AppUserService;
+import io.swagger.models.auth.In;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -59,22 +63,39 @@ public class AppUserController {
         return build200(appUserService.getAllUsers());
     }
 
-    @RequestMapping(value = "/edit",method = RequestMethod.PUT)
-    Response putEditUser(@RequestBody AppUser user){
+    @RequestMapping(value = "/edit",method = RequestMethod.POST)
+    Response putEditUser(@RequestBody JSONObject user){
+
+        AppUser appUser = new AppUser(user.get(Constants.USERNAME).toString(),
+                user.get(Constants.USER_PASSWORD).toString(),
+                user.get(Constants.FIRST_NAME).toString(),
+                user.get(Constants.LAST_NAME).toString(),
+                user.get(Constants.CITY).toString(),
+                user.get(Constants.STATE_ID).toString(),
+                user.get(Constants.ADDRESS).toString(),
+                Integer.parseInt(user.get(Constants.ZIP).toString()),
+                Constants.ROLE_USER_STRING,
+                Float.parseFloat(user.get(Constants.POP_COEF).toString()),
+                Float.parseFloat(user.get(Constants.FAIR_COEF).toString()),
+                Float.parseFloat(user.get(Constants.COMP_COEF).toString()));
+
+
+
         if (handleAdminCall()) {
             return build401();
         }
-        if(user.getState_id().length()>2){
+        if(appUser.getState_id().length()>2){
             return build400(Constants.STATE_ID_LENGTH_GREATER_THAN_TWO);
         }
-        if (!checkIfUserExists(user)) {
+        if (!checkIfUserExists(appUser)) {
             return build404(Constants.USER_NOT_FOUND);
         }
-        return build200(appUserService.editUser(user,userManager));
+        appUserService.editUser(appUser,userManager);
+        return build200(user);
     }
 
-    @RequestMapping(value = "/{username}",method = RequestMethod.DELETE)
-    Response deleteUser(@PathVariable(value="username") String username){
+    @RequestMapping(value = "/delete",method = RequestMethod.DELETE)
+    Response deleteUser(@RequestParam("username") String username){
         if (handleAdminCall()) return build401();
         if(!userManager.userExists(username)){
             return build404(Constants.USER_NOT_FOUND);

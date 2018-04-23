@@ -53,6 +53,10 @@ dependencies {
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.0")
     // JPA Data (We are going to use Repositories, Entities, Hibernate, etc...)
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // https://mvnrepository.com/artifact/de.grundid.opendatalab/geojson-jackson
+    compile group: 'de.grundid.opendatalab', name: 'geojson-jackson', version: '1.8'
+
+
 
     // Use MySQL Connector-J
     compile 'mysql:mysql-connector-java'
