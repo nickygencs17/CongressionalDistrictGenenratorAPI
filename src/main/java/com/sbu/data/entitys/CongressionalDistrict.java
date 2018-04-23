@@ -10,7 +10,7 @@ public class CongressionalDistrict {
     String congress_id;
 
     @NotNull
-    String voting_districts;
+    String precincts;
 
     @NotNull
     long population;
@@ -22,15 +22,38 @@ public class CongressionalDistrict {
 
     boolean is_changed;
 
-    public CongressionalDistrict(String congress_id, String voting_districts, long population, UsState state_id, boolean is_changed) {
+    int in_use;
+
+    float compactness;
+
+    public CongressionalDistrict(String congress_id, String precincts, long population, UsState state_id, boolean is_changed, int in_use, float compactness) {
         this.congress_id = congress_id;
-        this.voting_districts = voting_districts;
+        this.precincts = precincts;
         this.population = population;
         this.state_id = state_id;
         this.is_changed = is_changed;
+        this.in_use = in_use;
+        this.compactness = compactness;
     }
 
     public CongressionalDistrict() {
+    }
+
+
+    public int getIn_use() {
+        return in_use;
+    }
+
+    public void setIn_use(int in_use) {
+        this.in_use = in_use;
+    }
+
+    public float getCompactness() {
+        return compactness;
+    }
+
+    public void setCompactness(float compactness) {
+        this.compactness = compactness;
     }
 
     public UsState getState_id() {
@@ -49,12 +72,12 @@ public class CongressionalDistrict {
         this.congress_id = congress_id;
     }
 
-    public String getVoting_districts() {
-        return voting_districts;
+    public String getPrecincts() {
+        return precincts;
     }
 
-    public void setVoting_districts(String voting_districts) {
-        this.voting_districts = voting_districts;
+    public void setPrecincts(String precincts) {
+        this.precincts = precincts;
     }
 
     public long getPopulation() {

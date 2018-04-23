@@ -1,8 +1,8 @@
 package com.sbu.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sbu.data.VotingDistrictRepository;
-import com.sbu.data.entitys.VotingDistrict;
+import com.sbu.data.PrecinctRepository;
+import com.sbu.data.entitys.Precinct;
 import com.sbu.main.Constants;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
@@ -26,13 +26,13 @@ public class PreProcessingService {
 
 
     @Autowired
-    VotingDistrictRepository votingDistrictRepository;
+    PrecinctRepository precinctRepository;
 
 
     public boolean startPreprocessor() throws IOException {
-        List<VotingDistrict> arVoting = votingDistrictRepository.findByState_id(Constants.ARKANSAS);
-        List<VotingDistrict> inVoting = votingDistrictRepository.findByState_id(Constants.INDIANA);
-        List<VotingDistrict> wvVoting = votingDistrictRepository.findByState_id(Constants.WEST_VIRGINA);
+        List<Precinct> arVoting = precinctRepository.findByState_id(Constants.ARKANSAS);
+        List<Precinct> inVoting = precinctRepository.findByState_id(Constants.INDIANA);
+        List<Precinct> wvVoting = precinctRepository.findByState_id(Constants.WEST_VIRGINA);
 
 
         arVoting = findAdjacency(arVoting);
@@ -42,22 +42,22 @@ public class PreProcessingService {
         inVoting = findCongress(inVoting);
         wvVoting = findCongress(wvVoting);
         //TODO: Use the border lists
-        List<VotingDistrict> arBorders = findBorders(arVoting);
-        List<VotingDistrict> inBorders = findBorders(inVoting);
-        List<VotingDistrict> wvBorders = findBorders(wvVoting);
+        List<Precinct> arBorders = findBorders(arVoting);
+        List<Precinct> inBorders = findBorders(inVoting);
+        List<Precinct> wvBorders = findBorders(wvVoting);
         return true;
     }
 
-    private List<VotingDistrict> findCongress(List<VotingDistrict> vds){
+    private List<Precinct> findCongress(List<Precinct> vds){
         return vds;
     }
 
-    private List<VotingDistrict> findBorders(List<VotingDistrict> vds){
-        List<VotingDistrict> borderDistricts = new ArrayList<>();
-        for(VotingDistrict vd: vds) {
+    private List<Precinct> findBorders(List<Precinct> vds){
+        List<Precinct> borderDistricts = new ArrayList<>();
+        for(Precinct vd: vds) {
             if(borderDistricts.contains(vd)) continue;
 
-            String neighbors = vd.getNeighbor_vds();
+            String neighbors = vd.getNeighbor_precincts();
             List<String> neighborList = new ArrayList<>();
             Matcher matcher = Pattern.compile("'(.*?)'").matcher(neighbors);
 
@@ -66,8 +66,8 @@ public class PreProcessingService {
             }
 
             for(String s:neighborList){
-                for(VotingDistrict v:vds){
-                    if(s.contains(v.getVd_id()) && !v.getCongress_id().equals(vd.getCongress_id())){
+                for(Precinct v:vds){
+                    if(s.contains(v.getPrecinct_id()) && !v.getCongress_id().equals(vd.getCongress_id())){
                         borderDistricts.add(v);
                         borderDistricts.add(vd);
                     }
@@ -77,38 +77,30 @@ public class PreProcessingService {
         return borderDistricts;
     }
 
-    private List<VotingDistrict> findAdjacency(List<VotingDistrict> vds) throws IOException {
-        for(VotingDistrict vd: vds) {
-            vd.setNeighbor_vds(Constants.ARRAY_START);
+    private List<Precinct> findAdjacency(List<Precinct> vds) throws IOException {
+        for(Precinct vd: vds) {
+            vd.setNeighbor_precincts(Constants.ARRAY_START);
         }
 
-        for(VotingDistrict vd: vds){
-            for(VotingDistrict vd2: vds){
-                if(!(vd.getVd_id().equals(vd2.getVd_id())) && isAdjacent(vd, vd2)){
-                    vd.setNeighbor_vds(vd.getNeighbor_vds() + "\\\"\\'" + vd2.getVd_id() + "\\'\\\", ");
+        for(Precinct vd: vds){
+            for(Precinct vd2: vds){
+                if(!(vd.getPrecinct_id().equals(vd2.getPrecinct_id())) && isAdjacent(vd, vd2)){
+                    vd.setNeighbor_precincts(vd.getNeighbor_precincts() + "\\\"\\'" + vd2.getPrecinct_id() + "\\'\\\", ");
                 }
             }
-            vd.setNeighbor_vds(vd.getNeighbor_vds().substring(0, vd.getNeighbor_vds().length()-2) + Constants.ARRAY_END);
+            vd.setNeighbor_precincts(vd.getNeighbor_precincts().substring(0, vd.getNeighbor_precincts().length()-2) + Constants.ARRAY_END);
         }
-        return (List<VotingDistrict>)votingDistrictRepository.save(vds);
+        return (List<Precinct>) precinctRepository.save(vds);
     }
 
-    private boolean isAdjacent(VotingDistrict vd1, VotingDistrict vd2) throws IOException {
-        //TODO: fix why its dying here
-
-        /*
-
-        ObjectMapper mapper = new ObjectMapper();
-InputStream is = Test.class.getResourceAsStream("/test.json");
-testObj = mapper.readValue(is, Test.class);
-         */
+    private boolean isAdjacent(Precinct vd1, Precinct vd2) throws IOException {
 
         System.out.println("Working Directory = " +
                 System.getProperty("user.dir"));
 
         JSONParser jsonParser = new JSONParser();
 
-        String location = "src/main/resources/individual_vtds/"+vd1.getState_id()+"_vtd/"+vd1.getVd_id()+".geojson";
+        String location = "src/main/resources/individual_vtds/"+vd1.getState_id()+"_vtd/"+vd1.getPrecinct_id()+".geojson";
 
 
         JSONObject person = new JSONObject();
@@ -128,18 +120,10 @@ testObj = mapper.readValue(is, Test.class);
             e.printStackTrace();
         }
 
-
-
-
-
-//        ObjectMapper mapper = new ObjectMapper();
-//        InputStream is = Feature.class.getResourceAsStream(location);
-//        Feature testObj = mapper.readValue(is, Feature.class);
-
         Feature feature1 = new ObjectMapper().readValue(person.get("type").toString(), Feature.class);
 
         System.out.print("here");
-        Feature feature2 = new ObjectMapper().readValue(vd2.getVd_boundries(), Feature.class);
+        Feature feature2 = new ObjectMapper().readValue(vd2.getPrecinct_boundaries(), Feature.class);
         List<List<LngLatAlt>> mpoly1 = ((MultiPolygon)feature1.getGeometry()).getCoordinates().get(0);
         List<List<LngLatAlt>> mpoly2 = ((MultiPolygon)feature2.getGeometry()).getCoordinates().get(0);
 

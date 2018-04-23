@@ -31,16 +31,27 @@ public class UsState {
     @Id
     String state_id;
 
+    float compactness;
+
     public UsState() {
     }
 
-    public UsState(String state_boundaries, String lower_boundaries, String upper_boundaries, String congress_boundaries, int number_of_congress_districts, String state_id) {
+    public UsState(String state_boundaries, String lower_boundaries, String upper_boundaries, String congress_boundaries, int number_of_congress_districts, String state_id, float compactness) {
         this.state_boundaries = state_boundaries;
         this.lower_boundaries = lower_boundaries;
         this.upper_boundaries = upper_boundaries;
         this.congress_boundaries = congress_boundaries;
         this.number_of_congress_districts = number_of_congress_districts;
         this.state_id = state_id;
+        this.compactness = compactness;
+    }
+
+    public float getCompactness() {
+        return compactness;
+    }
+
+    public void setCompactness(float compactness) {
+        this.compactness = compactness;
     }
 
 
