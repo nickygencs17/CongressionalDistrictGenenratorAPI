@@ -10,6 +10,7 @@ public class Constants {
     public static final String
     USER_NOT_FOUND = "USER_NOT_FOUND",
     USER_EXISTS = "USER_EXISTS",
+    PREPROCESS_FAIL = "PREPROCESS_FAIL",
     CONGRESS = "CONGRESS",
     STATE = "STATE",
     UPPER = "UPPER",
@@ -26,6 +27,9 @@ public class Constants {
     PRESIDENT_ELECTION_INFO = "PRESIDENT_ELECTION_INFO",
     CURRENT_OFFICIALS = "CURRENT_OFFICIALS",
     NUMBER_OF_CONGRESS_DISTRICTS = "NUMBER_OF_CONGRESS_DISTRICTS",
+    SUCCESS ="SUCCESS",
+    ARRAY_START =  "[",
+    ARRAY_END = "]",
     USERNAME = "username",
     USER_PASSWORD= "user_password",
     FIRST_NAME = "first_name",
@@ -37,4 +41,5 @@ public class Constants {
     POP_COEF ="population_coefficient",
     FAIR_COEF ="fairness_coefficient",
     COMP_COEF ="compactness_coefficient";
+
 }

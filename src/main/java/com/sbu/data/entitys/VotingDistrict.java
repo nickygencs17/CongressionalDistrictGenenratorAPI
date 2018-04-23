@@ -6,35 +6,38 @@ import javax.validation.constraints.NotNull;
 @Table(name = "voting_districts")
 public class VotingDistrict {
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "state_id")
     @NotNull
-    UsState state_id;
+    String state_id;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "congress_id")
     @NotNull
-    CongressElectionInfo congress_id;
+    String congress_id;
 
     @Id
+    @NotNull
     String vd_id;
 
+    @Lob
     @NotNull
     String neighbor_vds;
 
-    @NotNull
-    float d_leaning;
 
     @NotNull
-    float r_leaning;
+    Float d_leaning;
 
     @NotNull
-    long population;
+    Float r_leaning;
 
     @NotNull
-    String vd_boundaries;
+    Long population;
 
-    public VotingDistrict(UsState state_id, CongressElectionInfo congress_id, String vd_id, String neighbor_vds, float d_leaning, float r_leaning, long population, String vd_boundaries) {
+    @Lob
+    @NotNull
+    String vd_boundries;
+
+    public VotingDistrict() {
+    }
+
+    public VotingDistrict(String state_id, String congress_id, String vd_id, String neighbor_vds, Float d_leaning, Float r_leaning, Long population, String vd_boundries) {
         this.state_id = state_id;
         this.congress_id = congress_id;
         this.vd_id = vd_id;
@@ -42,25 +45,22 @@ public class VotingDistrict {
         this.d_leaning = d_leaning;
         this.r_leaning = r_leaning;
         this.population = population;
-        this.vd_boundaries = vd_boundaries;
+        this.vd_boundries = vd_boundries;
     }
 
-    public VotingDistrict() {
-    }
-
-    public UsState getState_id() {
+    public String getState_id() {
         return state_id;
     }
 
-    public void setState_id(UsState state_id) {
+    public void setState_id(String state_id) {
         this.state_id = state_id;
     }
 
-    public CongressElectionInfo getCongress_id() {
+    public String getCongress_id() {
         return congress_id;
     }
 
-    public void setCongress_id(CongressElectionInfo congress_id) {
+    public void setCongress_id(String congress_id) {
         this.congress_id = congress_id;
     }
 
@@ -80,35 +80,35 @@ public class VotingDistrict {
         this.neighbor_vds = neighbor_vds;
     }
 
-    public float getD_leaning() {
+    public Float getD_leaning() {
         return d_leaning;
     }
 
-    public void setD_leaning(float d_leaning) {
+    public void setD_leaning(Float d_leaning) {
         this.d_leaning = d_leaning;
     }
 
-    public float getR_leaning() {
+    public Float getR_leaning() {
         return r_leaning;
     }
 
-    public void setR_leaning(float r_leaning) {
+    public void setR_leaning(Float r_leaning) {
         this.r_leaning = r_leaning;
     }
 
-    public long getPopulation() {
+    public Long getPopulation() {
         return population;
     }
 
-    public void setPopulation(long population) {
+    public void setPopulation(Long population) {
         this.population = population;
     }
 
-    public String getVd_boundaries() {
-        return vd_boundaries;
+    public String getVd_boundries() {
+        return vd_boundries;
     }
 
-    public void setVd_boundaries(String vd_boundaries) {
-        this.vd_boundaries = vd_boundaries;
+    public void setVd_boundries(String vd_boundries) {
+        this.vd_boundries = vd_boundries;
     }
 }
