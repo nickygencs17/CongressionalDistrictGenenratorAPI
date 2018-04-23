@@ -25,5 +25,16 @@ public class Constants {
     CONGRESS_ELECTION_INFO = "CONGRESS_ELECTION_INFO",
     PRESIDENT_ELECTION_INFO = "PRESIDENT_ELECTION_INFO",
     CURRENT_OFFICIALS = "CURRENT_OFFICIALS",
-    NUMBER_OF_CONGRESS_DISTRICTS = "NUMBER_OF_CONGRESS_DISTRICTS";
+    NUMBER_OF_CONGRESS_DISTRICTS = "NUMBER_OF_CONGRESS_DISTRICTS",
+    USERNAME = "username",
+    USER_PASSWORD= "user_password",
+    FIRST_NAME = "first_name",
+    LAST_NAME = "last_name",
+    CITY = "city",
+    STATE_ID = "state_id",
+    ADDRESS = "address",
+    ZIP = "zip",
+    POP_COEF ="population_coefficient",
+    FAIR_COEF ="fairness_coefficient",
+    COMP_COEF ="compactness_coefficient";
 }
