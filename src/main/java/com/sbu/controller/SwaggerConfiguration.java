@@ -15,9 +15,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class SwaggerConfiguration {
 
     @Bean
-    public Docket awesomeApi() {
+    public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(this.awesomeApiInfo())
+                .apiInfo(this.apiInfo())
                 .select()
                 .paths(PathSelectors.any())
                 .apis(RequestHandlerSelectors.basePackage("com.sbu.controller"))
@@ -25,7 +25,7 @@ public class SwaggerConfiguration {
 
     }
 
-    private ApiInfo awesomeApiInfo() {
+    private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("308API - build #1")
                 .description("Gerrymandering API")
