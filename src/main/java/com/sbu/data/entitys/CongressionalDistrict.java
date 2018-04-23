@@ -3,6 +3,8 @@ package com.sbu.data.entitys;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
 @Entity
 @Table(name = "congressional_districts")
@@ -27,7 +29,10 @@ public class CongressionalDistrict {
     boolean is_changed;
 
     @Transient
-    ArrayList<String> precinct_ids;
+    HashSet<String> precinct_ids;
+
+    @Transient
+    HashSet<String> boundaryPrecinct_ids;
 
     public CongressionalDistrict(String congress_id, String precincts, long population, String state_id, boolean is_changed) {
         this.congress_id = congress_id;
@@ -35,7 +40,6 @@ public class CongressionalDistrict {
         this.population = population;
         this.state_id = state_id;
         this.is_changed = is_changed;
-        
     }
 
     public String getState_id() {
@@ -60,6 +64,14 @@ public class CongressionalDistrict {
 
     public void setPrecincts(String precincts) {
         this.precincts = precincts;
+    }
+
+    public HashSet<String> getBoundaryPrecinct_ids() {
+        return boundaryPrecinct_ids;
+    }
+
+    public void setBoundaryPrecinct_ids(HashSet<String> boundaryPrecinct_ids) {
+        this.boundaryPrecinct_ids = boundaryPrecinct_ids;
     }
 
     public long getPopulation() {
@@ -93,4 +105,24 @@ public class CongressionalDistrict {
     public void setIs_changed(boolean is_changed) {
         this.is_changed = is_changed;
     }
+
+    public void addPrecinct(String id) {
+        this.precinct_ids.add(id);
+    }
+
+    public void removePrecinct(String id) {
+        Iterator<String> iterator = precinct_ids.iterator();
+        while(iterator.hasNext()) {
+            if(iterator.next().equals(id)) {
+                precinct_ids.remove(id);
+                break;
+            }
+        }
+    }
+
+    public void updateBoundaryPrecincts(VotingDistrict precinct) {
+
+    }
+
+
 }

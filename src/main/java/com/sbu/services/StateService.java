@@ -60,8 +60,6 @@ public class StateService {
         return_node.put(Constants.CONGRESS_ELECTION_INFO,congressElectionInfoRepository.findByState_id(id));
         return_node.put(Constants.PRESIDENT_ELECTION_INFO,presidentElectionInfoRepository.findByState_id(id));
         return return_node;
-
-
     }
 
     public Object getStateInfo(String id) {
@@ -91,11 +89,8 @@ public class StateService {
         HashMap<String, VotingDistrict> precinctHashMap = new HashMap<>();
         while(districts.hasNext()) {
             VotingDistrict currentPrecinct = districts.next();
-            precinctHashMap.put(currentPrecinct.getVd_id(), currentPrecinct);
+            precinctHashMap.put(currentPrecinct.getPrecinct_id(), currentPrecinct);
         }
         return precinctHashMap;
     }
-
-
-
 }
