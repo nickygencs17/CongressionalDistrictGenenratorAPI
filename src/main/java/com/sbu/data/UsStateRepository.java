@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import javax.transaction.Transactional;
 
 @Transactional
-public interface UsStateRepository extends CrudRepository<UsState, String> {
+public interface   UsStateRepository extends CrudRepository<UsState, String> {
 
 
 }

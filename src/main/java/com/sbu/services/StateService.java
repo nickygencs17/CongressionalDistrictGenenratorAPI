@@ -1,13 +1,15 @@
 package com.sbu.services;
-import com.sbu.data.CongressElectionInfoRepository;
-import com.sbu.data.CurrentOfficialRepository;
-import com.sbu.data.PresidentElectionInfoRepository;
-import com.sbu.data.UsStateRepository;
+import com.sbu.data.*;
+import com.sbu.data.entitys.CongressionalDistrict;
+import com.sbu.data.entitys.Precinct;
 import com.sbu.data.entitys.UsState;
 import com.sbu.main.Constants;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Iterator;
 
 @Component
 public class StateService {
@@ -15,6 +17,12 @@ public class StateService {
 
     @Autowired
     CongressElectionInfoRepository congressElectionInfoRepository;
+
+    @Autowired
+    CongressionalDistrictRepository congressionalDistrictRepository;
+
+    @Autowired
+    PrecinctRepository precinctRepository;
 
     @Autowired
     PresidentElectionInfoRepository presidentElectionInfoRepository;
@@ -49,8 +57,6 @@ public class StateService {
         return_node.put(Constants.CONGRESS_ELECTION_INFO,congressElectionInfoRepository.findByState_id(id));
         return_node.put(Constants.PRESIDENT_ELECTION_INFO,presidentElectionInfoRepository.findByState_id(id));
         return return_node;
-
-
     }
 
     public Object getStateInfo(String id) {
@@ -61,4 +67,27 @@ public class StateService {
         return return_node;
     }
 
+    public UsState getStatebyId(String id) {
+        return usStateRepository.findOne(id);
+    }
+
+    public HashMap<String, CongressionalDistrict>getCongressionalDistrictsbyState(String id) {
+        Iterator<CongressionalDistrict> districts = congressionalDistrictRepository.findByState_id(id).iterator();
+        HashMap<String, CongressionalDistrict> districtHashMap = new HashMap<>();
+        while(districts.hasNext()) {
+            CongressionalDistrict currentDistrict = districts.next();
+            districtHashMap.put(currentDistrict.getCongress_id(), currentDistrict);
+        }
+        return districtHashMap;
+    }
+
+    public HashMap<String, Precinct>getPrecinctsbyState(String id) {
+        Iterator<Precinct> districts = precinctRepository.findByState_id(id).iterator();
+        HashMap<String, Precinct> precinctHashMap = new HashMap<>();
+        while(districts.hasNext()) {
+            Precinct currentPrecinct = districts.next();
+            precinctHashMap.put(currentPrecinct.getPrecinct_id(), currentPrecinct);
+        }
+        return precinctHashMap;
+    }
 }

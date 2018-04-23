@@ -1,9 +1,8 @@
 package com.sbu.data.entitys;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @Entity
 @Table(name = "us_state")
@@ -25,11 +24,21 @@ public class UsState {
     @NotNull
     String congress_boundaries;
 
+    @Transient
+    @NotNull
+    double objective;
+
     @NotNull
     int number_of_congress_districts;
 
     @Id
     String state_id;
+
+    @Transient
+    HashMap<String, CongressionalDistrict> congressionalDistricts;
+
+    @Transient
+    HashMap<String, Precinct> precincts;
 
     float compactness;
 
@@ -101,5 +110,64 @@ public class UsState {
 
     public void setState_id(String state_id) {
         this.state_id = state_id;
+    }
+
+    public HashMap<String, CongressionalDistrict> getCongressionalDistricts() {
+        return congressionalDistricts;
+    }
+
+    public void setCongressionalDistricts(HashMap<String, CongressionalDistrict> congressionalDistricts) {
+        this.congressionalDistricts = congressionalDistricts;
+    }
+
+    public CongressionalDistrict getCongressionalDistrictbyId(String id) {
+        return congressionalDistricts.get(id);
+    }
+
+    public HashMap<String, Precinct> getPrecincts() {
+        return precincts;
+    }
+
+    public void setPrecincts(HashMap<String, Precinct> precincts) {
+        this.precincts = precincts;
+    }
+
+    public Precinct getPrecinctbyId(String id) {
+        return precincts.get(id);
+    }
+
+    public double getObjective() {
+        return objective;
+    }
+
+    public void setObjective(double objective) {
+        this.objective = objective;
+    }
+
+    public float calculateCompactness() {
+        String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
+        float totalCompactness = 0;
+        for(int i = 0; i < keys.length; i++) {
+            totalCompactness += congressionalDistricts.get(keys[i]).getCompactness();
+        }
+        return totalCompactness / keys.length;
+    }
+
+    public double calculatePopulationDeviation() {
+        String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
+        long highestPopulation = congressionalDistricts.get(keys[0]).getPopulation();
+        long lowestPopulation = highestPopulation;
+        long totalPopulation = 0;
+        for(int i = 0; i < keys.length; i++) {
+            long population = congressionalDistricts.get(keys[i]).getPopulation();
+            totalPopulation += population;
+            highestPopulation = Long.max(highestPopulation, population);
+            lowestPopulation = Long.min(lowestPopulation, population);
+        }
+        return ((highestPopulation - lowestPopulation) / totalPopulation) * 100;
+    }
+
+    public double calculateObjective(int pCoefficient, int cCoefficient, int fCoefficient) {
+        return pCoefficient * calculatePopulationDeviation() + cCoefficient * calculateCompactness();
     }
 }

@@ -42,4 +42,7 @@ public class Constants {
     FAIR_COEF ="fairness_coefficient",
     COMP_COEF ="compactness_coefficient";
 
+    public static final int MAX_UNCHANGED_CHECKS = 100;
+    public static final int MAX_MOVES_PER_UPDATE = 10;
+
 }

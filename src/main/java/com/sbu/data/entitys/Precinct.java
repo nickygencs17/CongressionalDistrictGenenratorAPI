@@ -6,15 +6,11 @@ import javax.validation.constraints.NotNull;
 @Table(name = "precinct")
 public class Precinct {
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "state_id")
     @NotNull
-    UsState state_id;
+    String state_id;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "congress_id")
     @NotNull
-    CongressionalDistrict congress_id;
+    String congress_id;
 
     @Id
     String precinct_id;
@@ -51,7 +47,7 @@ public class Precinct {
     float compactness;
 
 
-    public Precinct(UsState state_id, CongressionalDistrict congress_id, String precinct_id, String neighbor_precincts, float d_leaning, float r_leaning, long population, String precinct_boundaries, String precinct_name, String geo_id, float perimeter, float area, float compactness) {
+    public Precinct(String state_id, String congress_id, String precinct_id, String neighbor_precincts, float d_leaning, float r_leaning, long population, String precinct_boundaries, String precinct_name, String geo_id, float perimeter, float area, float compactness) {
         this.state_id = state_id;
         this.congress_id = congress_id;
         this.precinct_id = precinct_id;
@@ -70,19 +66,19 @@ public class Precinct {
     public Precinct() {
     }
 
-    public UsState getState_id() {
+    public String getState_id() {
         return state_id;
     }
 
-    public void setState_id(UsState state_id) {
+    public void setState_id(String state_id) {
         this.state_id = state_id;
     }
 
-    public CongressionalDistrict getCongress_id() {
+    public String getCongress_id() {
         return congress_id;
     }
 
-    public void setCongress_id(CongressionalDistrict congress_id) {
+    public void setCongress_id(String congress_id) {
         this.congress_id = congress_id;
     }
 
