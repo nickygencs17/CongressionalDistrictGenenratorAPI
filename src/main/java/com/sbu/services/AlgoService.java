@@ -117,13 +117,13 @@ public class AlgoService {
 
     public ArrayList<CongressionalDistrict> getBoundaryCongressionalDistricts(Precinct precinct) {
         ArrayList<CongressionalDistrict> neighbourDistricts = new ArrayList<>();
-//        Iterator<String> iterator = (Iterator<String>)precinct.getNeighbor_precincts().iterator();
-//        while(iterator.hasNext()) {
-//            String neighbourDistrictId = precincts.get(iterator.next()).getCongressionalDistrict_id();
-//            if(!neighbourDistrictId.equals(precinct.getPrecinct_id())) {
-//                neighbourDistricts.add(congressionalDistricts.get(neighbourDistrictId));
-//            }
-//        }
+        Iterator<String> iterator = precinct.getNeighbor_precinct_ids().iterator();
+        while(iterator.hasNext()) {
+            String neighbourDistrictId = precincts.get(iterator.next()).getCongress_id();
+            if(!neighbourDistrictId.equals(precinct.getPrecinct_id())) {
+                neighbourDistricts.add(congressionalDistricts.get(neighbourDistrictId));
+            }
+        }
         return neighbourDistricts;
     }
 }

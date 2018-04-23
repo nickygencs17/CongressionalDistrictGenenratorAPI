@@ -1,6 +1,7 @@
 package com.sbu.data.entitys;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 
 @Entity
 @Table(name = "precinct")
@@ -46,6 +47,8 @@ public class Precinct {
     @NotNull
     float compactness;
 
+    @Transient
+    HashSet<String> neighbor_precinct_ids;
 
     public Precinct(String state_id, String congress_id, String precinct_id, String neighbor_precincts, float d_leaning, float r_leaning, long population, String precinct_boundaries, String precinct_name, String geo_id, float perimeter, float area, float compactness) {
         this.state_id = state_id;
@@ -168,5 +171,13 @@ public class Precinct {
 
     public void setCompactness(float compactness) {
         this.compactness = compactness;
+    }
+
+    public HashSet<String> getNeighbor_precinct_ids() {
+        return neighbor_precinct_ids;
+    }
+
+    public void setNeighbor_precinct_ids(HashSet<String> neighbor_precinct_ids) {
+        this.neighbor_precinct_ids = neighbor_precinct_ids;
     }
 }
