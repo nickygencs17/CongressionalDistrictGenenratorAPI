@@ -6,115 +6,114 @@ import com.sbu.data.entitys.UsState;
 import com.sbu.data.entitys.VotingDistrict;
 import com.sbu.main.Constants;
 import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 @Component
 public class AlgoService {
 
-    ArrayList<Move> moves;
-    int unChangedChecks = 0;
-    int pCoefficient;
-    int cCoefficient;
-    int fCoefficient;
+//    ArrayList<Move> moves;
+//    int unChangedChecks;
+//    int maxMovesPerUpdate;
+//    int pCoefficient;
+//    int cCoefficient;
+//    int fCoefficient;
 //    public ArrayList<Move> startAlgorithm(UsState state, int pCoefficient, int cCoefficient, int fCoefficient, ArrayList<Move> moves) {
 //
 //        this.moves = moves;
 //        this.pCoefficient = pCoefficient;
 //        this.cCoefficient = cCoefficient;
 //        this.fCoefficient = fCoefficient;
+//        unChangedChecks = 0;
+//        maxMovesPerUpdate = 0;
 //        //Get all Congressional districts that share boundary with other congressional districts
-//        ArrayList<CongressionalDistrict> congressionalDistricts = state.getCongressDistricts();
-//
+//        HashMap<String, CongressionalDistrict> congressionalDistricts = state.getCongressionalDistricts();
+//        String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
 //        while(!checkTermination()) {
-//            sortByPoulation(congressionalDistricts);
-//            for(int i = 0; i < congressionalDistricts.size(); i++) {
-//                //Loop through voting districts for better changes and update them
-//                if(!congressionalDistricts.get(i).needsRevision()) continue;
+//            sortByPoulation(congressionalDistricts, keys);
+//            for(int i = 0; i < keys.length; i++) {
+//                //Loop through precincts for better changes and update them
+//                if(!congressionalDistricts.get(keys[i]).needsRevision()) continue;
 //                boolean districtChanged = traversePrecinctsforChanges(state, congressionalDistricts.get(i));
-//                if(districtChanged) break;
+//                if(districtChanged || checkTermination()) break;
 //            }
 //        }
 //        return moves;
 //    }
 //
-//    public boolean traversePrecinctsforChanges(UsState state, CongressionalDistrict congressDistrict) {
+//    public boolean traversePrecinctsforChanges(UsState state, CongressionalDistrict congressionalDistrict) {
 //
 //        //Get all voting districts that share boundary with other congressional districts
-//        ArrayList<VotingDistrict> boundaryPrecincts = congressDistrict.getBoundaryPrecincts();
+//        ArrayList<VotingDistrict> boundaryPrecincts = congressionalDistrict.getBoundaryPrecincts();
 //        boolean anyChange = false;
 //        for(int i = 0; i < boundaryPrecincts.size(); i++) {
 //            VotingDistrict currentPrecinct = boundaryPrecincts.get(i);
-//            boolean change = traverseBoundaryCongressDistrictsforChanges(state, congressDistrict, currentPrecinct);
+//            boolean change = traverseBoundarycongressionalDistrictsforChanges(state, congressionalDistrict, currentPrecinct);
 //            if(change) anyChange = true;
 //        }
 //        return anyChange;
 //    }
 //
-//    public boolean traverseBoundaryCongressDistrictsforChanges(UsState state,
-//                                                               CongressionalDistrict congressDistrict,
+//    public boolean traverseBoundarycongressionalDistrictsforChanges(UsState state,
+//                                                               CongressionalDistrict congressionalDistrict,
 //                                                               VotingDistrict currentPrecinct) {
 //
 //        //Get all congressional districts that share boundary with currentVotingDistrict
-//        ArrayList<CongressionalDistrict> boundaryCongressDistricts = currentPrecinct.getBoundaryCongressDistricts();
+//        ArrayList<CongressionalDistrict> boundarycongressionalDistricts = currentPrecinct.getBoundaryCongressionalDistricts();
 //        boolean anyAcceptedChange = false;
-//        for(int i = 0; i < boundaryCongressDistricts.size(); i++) {
+//        for(int i = 0; i < boundarycongressionalDistricts.size(); i++) {
 //
-//            double oldEnergy = state.calculateEnergy(pCoefficient, cCoefficient, fCoefficient);
+//            double oldObjective = state.calculateObjective(pCoefficient, cCoefficient, fCoefficient);
 //
 //            CongressionalDistrict currentCongressionalDistrict = currentPrecinct.getCongressionalDistrict();
-//            movePrecinct(currentCongressionalDistrict, boundaryCongressDistricts.get(i), currentPrecinct);
+//            movePrecinct(currentCongressionalDistrict, boundarycongressionalDistricts.get(i), currentPrecinct);
 //
-//            double newEnergy = state.calculateEnergy(pCoefficient, cCoefficient, fCoefficient);
-//            if(changeAccepted(newEnergy, oldEnergy)) {
-//                //Update the neighbours of currentprecinct to be the new voting districts that have boundary with congressional district
-//                congressDistrict.updateBoundaryprecincts(currentPrecinct);
-//                congressDistrict.setNeedsRevision(true);
+//            double newObjective = state.calculateObjective(pCoefficient, cCoefficient, fCoefficient);
+//            if(changeAccepted(newObjective, oldObjective)) {
+//                //Update the neighbours of current precinct to be the new voting districts that have boundary with congressional district
+//                congressionalDistrict.updateBoundaryprecincts(currentPrecinct);
+//                congressionalDistrict.setNeedsRevision(true);
 //                resetUnChangedChecks();
 //                anyAcceptedChange = true;
-//                addMove(state, currentCongressionalDistrict, boundaryCongressDistricts.get(i), currentPrecinct);
+//                addMove(state, currentCongressionalDistrict, boundarycongressionalDistricts.get(i), currentPrecinct);
 //            }
 //            else {
-//                movePrecinct(boundaryCongressDistricts.get(i), currentCongressionalDistrict, currentPrecinct);
+//                movePrecinct(boundarycongressionalDistricts.get(i), currentCongressionalDistrict, currentPrecinct);
 //                unChangedChecks++;
 //            }
 //        }
-//        if(!anyAcceptedChange) congressDistrict.setNeedsRevision(false);
+//        if(!anyAcceptedChange) congressionalDistrict.setNeedsRevision(false);
 //        return anyAcceptedChange;
 //    }
 //
-//    public void sortByPoulation(ArrayList<CongressionalDistrict> congressionalDistricts) {}
+//    public void sortByPoulation(HashMap<String,CongressionalDistrict> congressionalDistricts, String[] keys) {}
 //
-//    public boolean changeAccepted(double newEnergy, double oldEnergy) {
-//        if(newEnergy < oldEnergy) return true;
+//    public boolean changeAccepted(double newObjective, double oldObjective) {
+//        if(newObjective < oldObjective) return true;
 //        return false;
 //    }
 //
 //    public boolean checkTermination() {
-//        if(unChangedChecks <= Constants.MAX_UNCHANGED_CHECKS) return true;
-//        return false;
+//        if(unChangedChecks <= Constants.MAX_UNCHANGED_CHECKS || maxMovesPerUpdate <= Constants.MAX_MOVES_PER_UPDATE) return false;
+//        return true;
 //    }
 //
 //    public void resetUnChangedChecks() {
 //        unChangedChecks = 0;
 //    }
 //
-//    public void calculateEnergy(UsState state) {
-//       /* return pCoefficient * state.getPopulationDeviation()
-//                + cCoefficient * (1 - boundaryCongressDistricts.get(i).getCompactnessScore())
-//                + fCoefficient * (1 - state.getPoliticalFairness()); */
-//    }
-//
 //    public void movePrecinct(CongressionalDistrict originDistrict, CongressionalDistrict targetDistrict, VotingDistrict movingPrecinct) {
 //        targetDistrict.addPrecinct(movingPrecinct);
 //        originDistrict.removePrecinct(movingPrecinct);
-//        movingPrecinct.setCongressionalDistrict(targetDistrict);
+//        movingPrecinct.setCongress_id(targetDistrict.getCongress_id());
 //    }
 //
 //    public void addMove(UsState state, CongressionalDistrict originDistrict,
 //                        CongressionalDistrict targetDistrict, VotingDistrict currentPrecinct) {
-//        moves.add(new Move(state.getState_id(), originDistrict.getCongress_id(), targetDistrict.getCongress_id(), currentPrecinct.getVd_id()));
+//        this.maxMovesPerUpdate++;
+//       // moves.add(new Move(state.getState_id(), originDistrict.getCongress_id(), targetDistrict.getCongress_id(), currentPrecinct.getVd_id()));
 //    }
-
 }
 

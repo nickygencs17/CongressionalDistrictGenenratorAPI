@@ -1,13 +1,18 @@
 package com.sbu.services;
-import com.sbu.data.CongressElectionInfoRepository;
-import com.sbu.data.CurrentOfficialRepository;
-import com.sbu.data.PresidentElectionInfoRepository;
-import com.sbu.data.UsStateRepository;
+import com.google.common.collect.Lists;
+import com.sbu.data.*;
+import com.sbu.data.entitys.CongressElectionInfo;
+import com.sbu.data.entitys.CongressionalDistrict;
 import com.sbu.data.entitys.UsState;
+import com.sbu.data.entitys.VotingDistrict;
 import com.sbu.main.Constants;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 @Component
 public class StateService {
@@ -15,6 +20,12 @@ public class StateService {
 
     @Autowired
     CongressElectionInfoRepository congressElectionInfoRepository;
+
+    @Autowired
+    CongressionalDistrictRepository congressionalDistrictRepository;
+
+    @Autowired
+    VotingDistrictRepository votingDistrictRepository;
 
     @Autowired
     PresidentElectionInfoRepository presidentElectionInfoRepository;
@@ -64,5 +75,27 @@ public class StateService {
     public UsState getStatebyId(String id) {
         return usStateRepository.findOne(id);
     }
+
+    public HashMap<String, CongressionalDistrict>getCongressionalDistrictsbyState(String id) {
+        Iterator<CongressionalDistrict> districts = congressionalDistrictRepository.findByState_id(id).iterator();
+        HashMap<String, CongressionalDistrict> districtHashMap = new HashMap<>();
+        while(districts.hasNext()) {
+            CongressionalDistrict currentDistrict = districts.next();
+            districtHashMap.put(currentDistrict.getCongress_id(), currentDistrict);
+        }
+        return districtHashMap;
+    }
+
+    public HashMap<String, VotingDistrict>getPrecinctsbyState(String id) {
+        Iterator<VotingDistrict> districts = votingDistrictRepository.findByState_id(id).iterator();
+        HashMap<String, VotingDistrict> precinctHashMap = new HashMap<>();
+        while(districts.hasNext()) {
+            VotingDistrict currentPrecinct = districts.next();
+            precinctHashMap.put(currentPrecinct.getVd_id(), currentPrecinct);
+        }
+        return precinctHashMap;
+    }
+
+
 
 }

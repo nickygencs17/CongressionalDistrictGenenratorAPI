@@ -1,6 +1,8 @@
 package com.sbu.data.entitys;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "congressional_districts")
@@ -10,34 +12,37 @@ public class CongressionalDistrict {
     String congress_id;
 
     @NotNull
-    String voting_districts;
+    String precincts;
 
     @NotNull
     long population;
 
     @NotNull
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "state_id")
-    UsState state_id;
+    float compactness;
 
+    @NotNull
+    String state_id;
+
+    @NotNull
     boolean is_changed;
 
-    public CongressionalDistrict(String congress_id, String voting_districts, long population, UsState state_id, boolean is_changed) {
+    @Transient
+    ArrayList<String> precinct_ids;
+
+    public CongressionalDistrict(String congress_id, String precincts, long population, String state_id, boolean is_changed) {
         this.congress_id = congress_id;
-        this.voting_districts = voting_districts;
+        this.precincts = precincts;
         this.population = population;
         this.state_id = state_id;
         this.is_changed = is_changed;
+        
     }
 
-    public CongressionalDistrict() {
-    }
-
-    public UsState getState_id() {
+    public String getState_id() {
         return state_id;
     }
 
-    public void setState_id(UsState state_id) {
+    public void setState_id(String state_id) {
         this.state_id = state_id;
     }
 
@@ -49,12 +54,12 @@ public class CongressionalDistrict {
         this.congress_id = congress_id;
     }
 
-    public String getVoting_districts() {
-        return voting_districts;
+    public String getPricincts() {
+        return precincts;
     }
 
-    public void setVoting_districts(String voting_districts) {
-        this.voting_districts = voting_districts;
+    public void setPrecincts(String precincts) {
+        this.precincts = precincts;
     }
 
     public long getPopulation() {
@@ -63,6 +68,22 @@ public class CongressionalDistrict {
 
     public void setPopulation(long population) {
         this.population = population;
+    }
+
+    public boolean needsRevision() {
+        return is_changed;
+    }
+
+    public void setNeedsRevision(boolean is_changed) {
+        this.is_changed = is_changed;
+    }
+
+    public float getCompactness() {
+        return compactness;
+    }
+
+    public void setCompactness(float compactness) {
+        this.compactness = compactness;
     }
 
     public boolean isIs_changed() {

@@ -27,5 +27,6 @@ public class Constants {
     CURRENT_OFFICIALS = "CURRENT_OFFICIALS",
     NUMBER_OF_CONGRESS_DISTRICTS = "NUMBER_OF_CONGRESS_DISTRICTS";
     public static final int MAX_UNCHANGED_CHECKS = 100;
+    public static final int MAX_MOVES_PER_UPDATE = 10;
 
 }
