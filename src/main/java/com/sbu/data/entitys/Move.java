@@ -7,12 +7,12 @@ public class Move {
     String movingPrecinctId;
     String colorChange;
 
-    public Move(String stateId, String originCongressionalDistrictId, String targetCongressionalDistrictId, String movingPrecinctId) {
+    public Move(String stateId, String originCongressionalDistrictId, String targetCongressionalDistrictId, String movingPrecinctId, String colorChange) {
         this.stateId = stateId;
         this.originCongressionalDistrictId = originCongressionalDistrictId;
         this.targetCongressionalDistrictId = targetCongressionalDistrictId;
         this.movingPrecinctId = movingPrecinctId;
-        //this.colorChange = colorChange;
+        this.colorChange = colorChange;
     }
 
     public String getStateId() {

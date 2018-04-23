@@ -22,6 +22,9 @@ public class CongressionalDistrict {
     String state_id;
 
     @NotNull
+    String color;
+
+    @NotNull
     boolean is_changed;
 
     @Transient
@@ -34,7 +37,8 @@ public class CongressionalDistrict {
 
     float compactness;
 
-    public CongressionalDistrict(String congress_id, String precincts, long population, String state_id, boolean is_changed, int in_use, float compactness) {
+    public CongressionalDistrict(String congress_id, String precincts, long population, String state_id,
+                                 boolean is_changed, int in_use, float compactness, String color) {
 
         this.congress_id = congress_id;
         this.precincts = precincts;
@@ -43,6 +47,7 @@ public class CongressionalDistrict {
         this.is_changed = is_changed;
         this.in_use = in_use;
         this.compactness = compactness;
+        this.color = color;
     }
 
 
@@ -137,6 +142,14 @@ public class CongressionalDistrict {
                 break;
             }
         }
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public void updateBoundaryPrecincts(Precinct precinct) {

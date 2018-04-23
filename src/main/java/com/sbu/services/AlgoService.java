@@ -111,7 +111,7 @@ public class AlgoService {
     public void addMove(UsState state, CongressionalDistrict originDistrict,
                         CongressionalDistrict targetDistrict, Precinct currentPrecinct) {
         this.maxMovesPerUpdate++;
-        moves.add(new Move(state.getState_id(), originDistrict.getCongress_id(), targetDistrict.getCongress_id(), currentPrecinct.getPrecinct_id()));
+        moves.add(new Move(state.getState_id(), originDistrict.getCongress_id(), targetDistrict.getCongress_id(), currentPrecinct.getPrecinct_id(), targetDistrict.getColor()));
     }
 
     public ArrayList<CongressionalDistrict> getBoundaryCongressionalDistricts(Precinct precinct) {
