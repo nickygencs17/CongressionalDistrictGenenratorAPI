@@ -1,12 +1,8 @@
 package com.sbu.services;
-
-
 import com.sbu.data.entitys.*;
 import com.sbu.main.Constants;
 import org.springframework.stereotype.Component;
-
 import java.util.*;
-
 
 @Component
 public class AlgoService {
@@ -42,7 +38,7 @@ public class AlgoService {
                     if (i == keys.length - 1)  isFinished = true;
                     continue;
                 }
-                boolean districtChanged = traversePrecinctsforChanges(state, congressionalDistricts.get(i));
+                boolean districtChanged = traversePrecinctsforChanges(state, congressionalDistricts.get(keys[i]));
                 if(districtChanged || checkTermination()) break;
             }
         }
@@ -65,7 +61,6 @@ public class AlgoService {
     public boolean traverseBoundarycongressionalDistrictsforChanges(UsState state,
                                                                CongressionalDistrict congressionalDistrict,
                                                                Precinct currentPrecinct) {
-
         //Get all congressional districts that share boundary with currentPrecinct
         ArrayList<CongressionalDistrict> boundarycongressionalDistricts = getBoundaryCongressionalDistricts(currentPrecinct);
         boolean anyAcceptedChange = false;

@@ -3,6 +3,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 @Entity
 @Table(name = "us_state")
@@ -131,6 +132,10 @@ public class UsState {
 
     public void setPrecincts(HashMap<String, Precinct> precincts) {
         this.precincts = precincts;
+        String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
+        for(String key: keys) {
+            // TO DO
+        }
     }
 
     public Precinct getPrecinctbyId(String id) {

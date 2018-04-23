@@ -187,6 +187,7 @@ public class Precinct {
     }
 
     public void resolveNeighbour_Ids() {
-        //JSONArray array = new JSONArray(this.neighbor_precincts);
+       // JSONParser parser = new JSONParser();
+       // JSONArray array = (JSONArray)parser.parse(this.neighbor_precincts);
     }
 }

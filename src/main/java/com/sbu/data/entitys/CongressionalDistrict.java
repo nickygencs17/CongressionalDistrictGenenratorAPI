@@ -141,8 +141,5 @@ public class CongressionalDistrict {
 
     public void updateBoundaryPrecincts(Precinct precinct) {
 
-
     }
-
-
 }
