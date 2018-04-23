@@ -1,17 +1,13 @@
 package com.sbu.services;
-import com.google.common.collect.Lists;
 import com.sbu.data.*;
-import com.sbu.data.entitys.CongressElectionInfo;
 import com.sbu.data.entitys.CongressionalDistrict;
 import com.sbu.data.entitys.Precinct;
 import com.sbu.data.entitys.UsState;
-import com.sbu.data.entitys.VotingDistrict;
 import com.sbu.main.Constants;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
