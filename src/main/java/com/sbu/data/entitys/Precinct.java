@@ -1,11 +1,12 @@
 package com.sbu.data.entitys;
-import com.oracle.javafx.jmx.json.JSONException;
-import jdk.nashorn.internal.parser.JSONParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.HashSet;
 
 @Entity
@@ -186,8 +187,10 @@ public class Precinct {
         this.neighbor_precinct_ids = neighbor_precinct_ids;
     }
 
-    public void resolveNeighbour_Ids() {
-       // JSONParser parser = new JSONParser();
-       // JSONArray array = (JSONArray)parser.parse(this.neighbor_precincts);
+    public void resolveNeighbour_Ids() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode actualObj = mapper.readTree(this.neighbor_precincts);
+
+
     }
 }
