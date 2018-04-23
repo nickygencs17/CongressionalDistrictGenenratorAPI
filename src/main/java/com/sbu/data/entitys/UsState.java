@@ -45,7 +45,8 @@ public class UsState {
     public UsState() {
     }
 
-    public UsState(String state_boundaries, String lower_boundaries, String upper_boundaries, String congress_boundaries, int number_of_congress_districts, String state_id, float compactness) {
+    public UsState(String state_boundaries, String lower_boundaries, String upper_boundaries, String congress_boundaries,
+                   int number_of_congress_districts, String state_id, float compactness) {
         this.state_boundaries = state_boundaries;
         this.lower_boundaries = lower_boundaries;
         this.upper_boundaries = upper_boundaries;

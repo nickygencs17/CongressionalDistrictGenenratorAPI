@@ -26,7 +26,6 @@ public class AlgoController {
 
     @Autowired
     StateService stateService;
-    ArrayList<Move> moves = new ArrayList<>();
     UsState selectedState;
     int pcoefficient;
     int ccoefficient;
@@ -45,9 +44,7 @@ public class AlgoController {
 
     @RequestMapping(value = "/update",method = RequestMethod.GET)
     Response getUpdate() {
-        algoService.startAlgorithm(selectedState, pcoefficient, ccoefficient, fcoefficient, moves);
-        Update update = new Update(moves);
-        moves.clear();
+        Update update = algoService.startAlgorithm(selectedState, pcoefficient, ccoefficient, fcoefficient);
         return build200(update);
     }
 }

@@ -1,4 +1,9 @@
 package com.sbu.data.entitys;
+import com.oracle.javafx.jmx.json.JSONException;
+import jdk.nashorn.internal.parser.JSONParser;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -179,5 +184,9 @@ public class Precinct {
 
     public void setNeighbor_precinct_ids(HashSet<String> neighbor_precinct_ids) {
         this.neighbor_precinct_ids = neighbor_precinct_ids;
+    }
+
+    public void resolveNeighbour_Ids() {
+        //JSONArray array = new JSONArray(this.neighbor_precincts);
     }
 }

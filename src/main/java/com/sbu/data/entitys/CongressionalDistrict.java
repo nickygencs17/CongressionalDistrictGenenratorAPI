@@ -62,8 +62,6 @@ public class CongressionalDistrict {
         this.in_use = in_use;
     }
 
-
-
     public void setState_id(String state_id) {
         this.state_id = state_id;
     }

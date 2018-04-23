@@ -1,10 +1,7 @@
 package com.sbu.services;
 
 
-import com.sbu.data.entitys.CongressionalDistrict;
-import com.sbu.data.entitys.Move;
-import com.sbu.data.entitys.Precinct;
-import com.sbu.data.entitys.UsState;
+import com.sbu.data.entitys.*;
 import com.sbu.main.Constants;
 import org.springframework.stereotype.Component;
 
@@ -15,19 +12,23 @@ import java.util.*;
 public class AlgoService {
 
     ArrayList<Move> moves;
+    Update update;
     int unChangedChecks;
     int maxMovesPerUpdate;
     int pCoefficient;
     int cCoefficient;
     int fCoefficient;
+    boolean isFinished;
     HashMap<String, CongressionalDistrict> congressionalDistricts;
     HashMap<String, Precinct> precincts;
-    public ArrayList<Move> startAlgorithm(UsState state, int pCoefficient, int cCoefficient, int fCoefficient, ArrayList<Move> moves) {
+    public Update startAlgorithm(UsState state, int pCoefficient, int cCoefficient, int fCoefficient) {
 
-        this.moves = moves;
+        this.moves = new ArrayList<>();
+        this.update = new Update(moves);
         this.pCoefficient = pCoefficient;
         this.cCoefficient = cCoefficient;
         this.fCoefficient = fCoefficient;
+        this.isFinished = false;
         unChangedChecks = 0;
         maxMovesPerUpdate = 0;
         //Get all Congressional districts that share boundary with other congressional districts
@@ -37,12 +38,15 @@ public class AlgoService {
             sortByPoulation(congressionalDistricts, keys);
             for(int i = 0; i < keys.length; i++) {
                 //Loop through precincts for better changes and update them
-                if(!congressionalDistricts.get(keys[i]).needsRevision()) continue;
+                if(!congressionalDistricts.get(keys[i]).needsRevision()) {
+                    if (i == keys.length - 1)  isFinished = true;
+                    continue;
+                }
                 boolean districtChanged = traversePrecinctsforChanges(state, congressionalDistricts.get(i));
                 if(districtChanged || checkTermination()) break;
             }
         }
-        return moves;
+        return fillUpdate();
     }
 
     public boolean traversePrecinctsforChanges(UsState state, CongressionalDistrict congressionalDistrict) {
@@ -95,7 +99,7 @@ public class AlgoService {
     }
 
     public boolean checkTermination() {
-        if(unChangedChecks <= Constants.MAX_UNCHANGED_CHECKS || maxMovesPerUpdate <= Constants.MAX_MOVES_PER_UPDATE) return false;
+        if((unChangedChecks <= Constants.MAX_UNCHANGED_CHECKS || maxMovesPerUpdate <= Constants.MAX_MOVES_PER_UPDATE) && !isFinished) return false;
         return true;
     }
 
@@ -125,6 +129,11 @@ public class AlgoService {
             }
         }
         return neighbourDistricts;
+    }
+
+    public Update fillUpdate() {
+        update.setFinished(isFinished);
+        return update;
     }
 }
 
