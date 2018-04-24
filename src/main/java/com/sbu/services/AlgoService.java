@@ -15,6 +15,7 @@ public class AlgoService {
     int cCoefficient;
     int fCoefficient;
     boolean isFinished;
+    UsState selectedState;
     HashMap<String, CongressionalDistrict> congressionalDistricts;
     HashMap<String, Precinct> precincts;
     public Update startAlgorithm(UsState state, int pCoefficient, int cCoefficient, int fCoefficient) {
@@ -25,6 +26,7 @@ public class AlgoService {
         this.cCoefficient = cCoefficient;
         this.fCoefficient = fCoefficient;
         this.isFinished = false;
+        this.selectedState = state;
         unChangedChecks = 0;
         maxMovesPerUpdate = 0;
         //Get all Congressional districts that share boundary with other congressional districts
@@ -48,48 +50,46 @@ public class AlgoService {
     public boolean traversePrecinctsforChanges(UsState state, CongressionalDistrict congressionalDistrict) {
 
         //Get all voting districts that share boundary with other congressional districts
-        Iterator<String> boundaryPrecincts_Ids = congressionalDistrict.getBoundaryPrecinct_ids().iterator();
-        boolean anyChange = false;
-        while(boundaryPrecincts_Ids.hasNext()) {
-            Precinct currentPrecinct = precincts.get(boundaryPrecincts_Ids.next());
-            boolean change = traverseBoundarycongressionalDistrictsforChanges(state, congressionalDistrict, currentPrecinct);
-            if(change) anyChange = true;
+        Iterator<Precinct> boundaryPrecincts = congressionalDistrict.getBoundaryPrecinctHashSet().iterator();
+        while(boundaryPrecincts.hasNext()) {
+            Precinct currentPrecinct = boundaryPrecincts.next();
+            boolean change = checkBoundarycongressionalDistrictforChanges(state, congressionalDistrict, currentPrecinct);
+            if(change) {
+                return true;
+            }
         }
-        return anyChange;
+        return false;
     }
 
-    public boolean traverseBoundarycongressionalDistrictsforChanges(UsState state,
+    public boolean checkBoundarycongressionalDistrictforChanges(UsState state,
                                                                CongressionalDistrict congressionalDistrict,
                                                                Precinct currentPrecinct) {
-        //Get all congressional districts that share boundary with currentPrecinct
-        ArrayList<CongressionalDistrict> boundarycongressionalDistricts = getBoundaryCongressionalDistricts(currentPrecinct);
-        boolean anyAcceptedChange = false;
-        for(int i = 0; i < boundarycongressionalDistricts.size(); i++) {
-            double oldObjective = state.calculateObjective(pCoefficient, cCoefficient, fCoefficient);
-            CongressionalDistrict currentCongressionalDistrict = congressionalDistricts.get(currentPrecinct.getCongress_id());
-            movePrecinct(currentCongressionalDistrict, boundarycongressionalDistricts.get(i), currentPrecinct);
-            double newObjective = state.calculateObjective(pCoefficient, cCoefficient, fCoefficient);
-            if(changeAccepted(newObjective, oldObjective)) {
-                //Update the neighbours of current precinct to be the new voting districts that have boundary with congressional district
-                congressionalDistrict.updateBoundaryPrecincts(currentPrecinct);
-                congressionalDistrict.setNeedsRevision(true);
-                resetUnChangedChecks();
-                anyAcceptedChange = true;
-                addMove(state, currentCongressionalDistrict, boundarycongressionalDistricts.get(i), currentPrecinct);
-            }
-            else {
-                movePrecinct(boundarycongressionalDistricts.get(i), currentCongressionalDistrict, currentPrecinct);
-                unChangedChecks++;
-            }
+        //Get congressional district that share boundary with currentPrecinct
+        CongressionalDistrict boundarycongressionalDistrict = getBoundaryCongressionalDistrict(currentPrecinct);
+        double oldObjective = state.calculateObjective(pCoefficient, cCoefficient, fCoefficient);
+        CongressionalDistrict currentCongressionalDistrict = congressionalDistricts.get(currentPrecinct.getCongress_id());
+        movePrecinct(currentCongressionalDistrict, boundarycongressionalDistrict, currentPrecinct);
+        double newObjective = state.calculateObjective(pCoefficient, cCoefficient, fCoefficient);
+        if(changeAccepted(newObjective, oldObjective)) {
+            //Update the neighbours of current precinct to be the new voting districts that have boundary with congressional district
+            congressionalDistrict.updateBoundaryPrecincts();
+            congressionalDistrict.setNeedsRevision(true);
+            resetUnChangedChecks();
+            addMove(state, currentCongressionalDistrict, boundarycongressionalDistrict, currentPrecinct);
+            return true;
         }
-        if(!anyAcceptedChange) congressionalDistrict.setNeedsRevision(false);
-        return anyAcceptedChange;
+        else {
+            movePrecinct(boundarycongressionalDistrict, currentCongressionalDistrict, currentPrecinct);
+            unChangedChecks++;
+        }
+        congressionalDistrict.setNeedsRevision(false);
+        return false;
     }
 
     public void sortByPoulation(HashMap<String,CongressionalDistrict> congressionalDistricts, String[] keys) {}
 
     public boolean changeAccepted(double newObjective, double oldObjective) {
-        if(newObjective < oldObjective) return true;
+        if(newObjective > oldObjective) return true;
         return false;
     }
 
@@ -103,31 +103,32 @@ public class AlgoService {
     }
 
     public void movePrecinct(CongressionalDistrict originDistrict, CongressionalDistrict targetDistrict, Precinct movingPrecinct) {
-        targetDistrict.addPrecinct(movingPrecinct.getPrecinct_id());
-        originDistrict.removePrecinct(movingPrecinct.getPrecinct_id());
-        movingPrecinct.setCongress_id(targetDistrict.getCongress_id());
+        originDistrict.removePrecinct(movingPrecinct);
+        targetDistrict.addPrecinct(movingPrecinct);
     }
 
     public void addMove(UsState state, CongressionalDistrict originDistrict,
                         CongressionalDistrict targetDistrict, Precinct currentPrecinct) {
         this.maxMovesPerUpdate++;
-        moves.add(new Move(state.getState_id(), originDistrict.getCongress_id(), targetDistrict.getCongress_id(), currentPrecinct.getPrecinct_id(), targetDistrict.getColor()));
+        moves.add(new Move(state.getState_id(), originDistrict.getCongress_id(), targetDistrict.getCongress_id(),
+                currentPrecinct.getPrecinct_id(), targetDistrict.getColor()));
     }
 
-    public ArrayList<CongressionalDistrict> getBoundaryCongressionalDistricts(Precinct precinct) {
-        ArrayList<CongressionalDistrict> neighbourDistricts = new ArrayList<>();
-        Iterator<String> iterator = precinct.getNeighbor_precinct_ids().iterator();
+    public CongressionalDistrict getBoundaryCongressionalDistrict(Precinct precinct) {
+        Iterator<Precinct> iterator = precinct.getNeighborPrecinctSet().iterator();
         while(iterator.hasNext()) {
-            String neighbourDistrictId = precincts.get(iterator.next()).getCongress_id();
-            if(!neighbourDistrictId.equals(precinct.getPrecinct_id())) {
-                neighbourDistricts.add(congressionalDistricts.get(neighbourDistrictId));
+            String neighbourDistrictId = iterator.next().getCongress_id();
+            if(!neighbourDistrictId.equals(precinct.getCongress_id())) {
+                return congressionalDistricts.get(neighbourDistrictId);
             }
         }
-        return neighbourDistricts;
+        return null;
     }
 
     public Update fillUpdate() {
         update.setFinished(isFinished);
+        update.setCompactness(selectedState.getCompactness());
+        update.setPopulationDeviation(selectedState.calculatePopulationDeviation());
         return update;
     }
 }

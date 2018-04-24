@@ -54,7 +54,7 @@ public class Precinct {
     float compactness;
 
     @Transient
-    HashSet<String> neighbor_precinct_ids;
+    HashSet<Precinct> neighborPrecinctSet = new HashSet<>();
 
     public Precinct(String state_id, String congress_id, String precinct_id, String neighbor_precincts, float d_leaning, float r_leaning, long population, String precinct_boundaries, String precinct_name, String geo_id, float perimeter, float area, float compactness) {
         this.state_id = state_id;
@@ -179,18 +179,15 @@ public class Precinct {
         this.compactness = compactness;
     }
 
-    public HashSet<String> getNeighbor_precinct_ids() {
-        return neighbor_precinct_ids;
+    public HashSet<Precinct> getNeighborPrecinctSet() {
+        return neighborPrecinctSet;
     }
 
-    public void setNeighbor_precinct_ids(HashSet<String> neighbor_precinct_ids) {
-        this.neighbor_precinct_ids = neighbor_precinct_ids;
+    public void setNeighborPrecinctSet(HashSet<Precinct> neighborPrecinctSet) {
+        this.neighborPrecinctSet = neighborPrecinctSet;
     }
 
-    public void resolveNeighbour_Ids() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode actualObj = mapper.readTree(this.neighbor_precincts);
-
-
+    public void addNeighborPrecinct(Precinct precinct) {
+        neighborPrecinctSet.add(precinct);
     }
 }

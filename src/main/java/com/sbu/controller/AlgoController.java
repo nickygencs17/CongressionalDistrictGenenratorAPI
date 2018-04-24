@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.core.Response;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.sbu.utils.ResponseUtil.build200;
@@ -38,7 +39,11 @@ public class AlgoController {
         this.fcoefficient = fcoefficient;
         selectedState = stateService.getStatebyId(stateName);
         selectedState.setCongressionalDistricts(stateService.getCongressionalDistrictsbyState(selectedState.getState_id()));
-        selectedState.setPrecincts(stateService.getPrecinctsbyState(selectedState.getState_id()));
+        try {
+            selectedState.setCongressionalDistrictPrecincts(stateService.getPrecinctsbyState(selectedState.getState_id()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return getUpdate();
     }
 

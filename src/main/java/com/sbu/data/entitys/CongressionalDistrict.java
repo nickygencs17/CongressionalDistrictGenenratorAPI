@@ -28,10 +28,10 @@ public class CongressionalDistrict {
     boolean is_changed;
 
     @Transient
-    HashSet<String> precinct_ids;
+    HashSet<Precinct> precinctHashSet = new HashSet<>();
 
     @Transient
-    HashSet<String> boundaryPrecinct_ids;
+    HashSet<Precinct> boundaryPrecinctHashSet = new HashSet<>();
 
     int in_use;
 
@@ -89,16 +89,13 @@ public class CongressionalDistrict {
         this.precincts = precincts;
     }
 
-    public HashSet<String> getBoundaryPrecinct_ids() {
+    public HashSet<Precinct> getBoundaryPrecinctHashSet() {
 
-
-
-
-        return boundaryPrecinct_ids;
+        return boundaryPrecinctHashSet;
     }
 
-    public void setBoundaryPrecinct_ids(HashSet<String> boundaryPrecinct_ids) {
-        this.boundaryPrecinct_ids = boundaryPrecinct_ids;
+    public void setBoundaryPrecinctHashSet(HashSet<Precinct> boundaryPrecinctHashSet) {
+        this.boundaryPrecinctHashSet = boundaryPrecinctHashSet;
 
     }
 
@@ -126,25 +123,18 @@ public class CongressionalDistrict {
         this.compactness = compactness;
     }
 
-    public boolean isIs_changed() {
-        return is_changed;
+    public void addPrecinct(Precinct precinct) {
+        precinct.setCongress_id(this.congress_id);
+        this.precinctHashSet.add(precinct);
+        this.population += precinct.getPopulation();
+        updateCompactness(precinct, true);
     }
 
-    public void setIs_changed(boolean is_changed) {
-        this.is_changed = is_changed;
-    }
-
-    public void addPrecinct(String id) {
-        this.precinct_ids.add(id);
-    }
-
-    public void removePrecinct(String id) {
-        Iterator<String> iterator = precinct_ids.iterator();
-        while(iterator.hasNext()) {
-            if(iterator.next().equals(id)) {
-                precinct_ids.remove(id);
-                break;
-            }
+    public void removePrecinct(Precinct precinct) {
+        if(precinctHashSet.contains(precinct)) {
+            precinctHashSet.remove(precinct);
+            this.population -= precinct.getPopulation();
+            updateCompactness(precinct, false);
         }
     }
 
@@ -156,7 +146,21 @@ public class CongressionalDistrict {
         this.color = color;
     }
 
-    public void updateBoundaryPrecincts(Precinct precinct) {
+    public void updateBoundaryPrecincts() {
+        Iterator<Precinct> precinctIterator = this.precinctHashSet.iterator();
+        while(precinctIterator.hasNext()) {
+            Precinct currentPrecinct = precinctIterator.next();
+            Iterator<Precinct> neighborIterator = currentPrecinct.getNeighborPrecinctSet().iterator();
+            while(neighborIterator.hasNext()) {
+                if(!neighborIterator.next().getCongress_id().equals(currentPrecinct.getCongress_id())) {
+                    boundaryPrecinctHashSet.add(currentPrecinct);
+                    break;
+                }
+            }
+        }
+    }
 
+    public void updateCompactness(Precinct precinct, boolean addition) {
+        compactness = (addition) ? compactness + precinct.getCompactness() : compactness - precinct.getCompactness();
     }
 }

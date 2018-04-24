@@ -1,6 +1,10 @@
 package com.sbu.data.entitys;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -130,11 +134,35 @@ public class UsState {
         return precincts;
     }
 
-    public void setPrecincts(HashMap<String, Precinct> precincts) {
+    public void setCongressionalDistrictPrecincts(HashMap<String, Precinct> precincts) throws IOException {
         this.precincts = precincts;
         String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
         for(String key: keys) {
-            // TO DO
+            CongressionalDistrict district = congressionalDistricts.get(key);
+            setPrecinctsforDistrict(district);
+        }
+    }
+
+    public void setPrecinctsforDistrict(CongressionalDistrict district) throws IOException {
+        String precinctsIds = district.getPrecincts();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode nodes = mapper.readTree(precinctsIds);
+        for(int i = 0; i < nodes.size(); i++) {
+            String precinctId = nodes.get(i).asText();
+            Precinct currentPrecinct = precincts.get(precinctId);
+            connectPrecinctDependencies(currentPrecinct);
+            district.addPrecinct(currentPrecinct);
+            district.updateBoundaryPrecincts();
+        }
+    }
+
+    public void connectPrecinctDependencies(Precinct currentPrecinct) throws IOException {
+        String neighborPrecinctIds = currentPrecinct.getNeighbor_precincts();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode nodes = mapper.readTree(neighborPrecinctIds);
+        for(int j = 0; j < nodes.size(); j++) {
+            Precinct neighbor = precincts.get(nodes.get(j).asText());
+            currentPrecinct.addNeighborPrecinct(neighbor);
         }
     }
 
@@ -173,7 +201,14 @@ public class UsState {
         return ((highestPopulation - lowestPopulation) / totalPopulation) * 100;
     }
 
+    public double calculatePoliticalFairness() {
+        return 0;
+    }
+
     public double calculateObjective(int pCoefficient, int cCoefficient, int fCoefficient) {
-        return pCoefficient * calculatePopulationDeviation() + cCoefficient * calculateCompactness();
+        double sum=    pCoefficient * calculatePopulationDeviation()
+                + cCoefficient * calculateCompactness()
+                + fCoefficient * calculatePoliticalFairness();
+        return sum;
     }
 }
