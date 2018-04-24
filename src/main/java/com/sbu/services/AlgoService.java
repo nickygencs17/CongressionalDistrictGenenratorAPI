@@ -68,17 +68,20 @@ public class AlgoService {
         CongressionalDistrict boundarycongressionalDistrict = getBoundaryCongressionalDistrict(currentPrecinct);
         double oldObjective = state.calculateObjective(pCoefficient, cCoefficient, fCoefficient);
         CongressionalDistrict currentCongressionalDistrict = congressionalDistricts.get(currentPrecinct.getCongress_id());
+        System.out.println("Initial Move");
         movePrecinct(currentCongressionalDistrict, boundarycongressionalDistrict, currentPrecinct);
         double newObjective = state.calculateObjective(pCoefficient, cCoefficient, fCoefficient);
         if(changeAccepted(newObjective, oldObjective)) {
             //Update the neighbours of current precinct to be the new voting districts that have boundary with congressional district
             congressionalDistrict.updateBoundaryPrecincts();
+            boundarycongressionalDistrict.updateBoundaryPrecincts();
             congressionalDistrict.setNeedsRevision(true);
+            boundarycongressionalDistrict.setNeedsRevision(true);
             resetUnChangedChecks();
             addMove(state, currentCongressionalDistrict, boundarycongressionalDistrict, currentPrecinct);
             return true;
         }
-        else {
+        else {System.out.println("Move Back");
             movePrecinct(boundarycongressionalDistrict, currentCongressionalDistrict, currentPrecinct);
             unChangedChecks++;
         }
@@ -103,6 +106,10 @@ public class AlgoService {
     }
 
     public void movePrecinct(CongressionalDistrict originDistrict, CongressionalDistrict targetDistrict, Precinct movingPrecinct) {
+        if(originDistrict == null || targetDistrict == null || movingPrecinct == null) {
+            System.out.println("Problem : " + originDistrict.getCongress_id() + targetDistrict + "Precinct : " + movingPrecinct.getPrecinct_id());
+        }
+        System.out.println("moving from :" + originDistrict.getCongress_id() + "moving to :" + targetDistrict.getCongress_id() + "Precinct : " + movingPrecinct.getPrecinct_id());
         originDistrict.removePrecinct(movingPrecinct);
         targetDistrict.addPrecinct(movingPrecinct);
     }

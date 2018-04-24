@@ -33,8 +33,10 @@ public class CongressionalDistrict {
     @Transient
     HashSet<Precinct> boundaryPrecinctHashSet = new HashSet<>();
 
+    @NotNull
     int in_use;
 
+    @NotNull
     float compactness;
 
     public CongressionalDistrict(String congress_id, String precincts, long population, String state_id,
@@ -59,8 +61,8 @@ public class CongressionalDistrict {
     }
 
 
-    public int getIn_use() {
-        return in_use;
+    public boolean in_use() {
+        return in_use == 1;
     }
 
     public void setIn_use(int in_use) {
@@ -147,6 +149,7 @@ public class CongressionalDistrict {
     }
 
     public void updateBoundaryPrecincts() {
+        boundaryPrecinctHashSet.clear();
         Iterator<Precinct> precinctIterator = this.precinctHashSet.iterator();
         while(precinctIterator.hasNext()) {
             Precinct currentPrecinct = precinctIterator.next();

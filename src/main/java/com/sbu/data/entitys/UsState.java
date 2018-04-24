@@ -140,10 +140,12 @@ public class UsState {
         for(String key: keys) {
             CongressionalDistrict district = congressionalDistricts.get(key);
             setPrecinctsforDistrict(district);
+            district.updateBoundaryPrecincts();
         }
     }
 
     public void setPrecinctsforDistrict(CongressionalDistrict district) throws IOException {
+        if(!district.in_use()) return;
         String precinctsIds = district.getPrecincts();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode nodes = mapper.readTree(precinctsIds);
@@ -152,7 +154,6 @@ public class UsState {
             Precinct currentPrecinct = precincts.get(precinctId);
             connectPrecinctDependencies(currentPrecinct);
             district.addPrecinct(currentPrecinct);
-            district.updateBoundaryPrecincts();
         }
     }
 
