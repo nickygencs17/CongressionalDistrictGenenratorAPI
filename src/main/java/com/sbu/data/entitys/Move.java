@@ -5,13 +5,16 @@ public class Move {
     String originCongressionalDistrictId;
     String targetCongressionalDistrictId;
     String movingPrecinctId;
+    String geoId;
     String colorChange;
 
-    public Move(String stateId, String originCongressionalDistrictId, String targetCongressionalDistrictId, String movingPrecinctId, String colorChange) {
+    public Move(String stateId, String originCongressionalDistrictId, String targetCongressionalDistrictId,
+                String movingPrecinctId, String geoId, String colorChange) {
         this.stateId = stateId;
         this.originCongressionalDistrictId = originCongressionalDistrictId;
         this.targetCongressionalDistrictId = targetCongressionalDistrictId;
         this.movingPrecinctId = movingPrecinctId;
+        this.geoId = geoId;
         this.colorChange = colorChange;
     }
 
@@ -53,5 +56,13 @@ public class Move {
 
     public void setColorChange(String colorChange) {
         this.colorChange = colorChange;
+    }
+
+    public String getGeoId() {
+        return geoId;
+    }
+
+    public void setGeoId(String geoId) {
+        this.geoId = geoId;
     }
 }

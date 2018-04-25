@@ -21,7 +21,7 @@ public class AlgoService {
     public Update startAlgorithm(UsState state, int pCoefficient, int cCoefficient, int fCoefficient) {
 
         this.moves = new ArrayList<>();
-        this.update = new Update(moves);
+        this.update = new Update();
         this.pCoefficient = pCoefficient;
         this.cCoefficient = cCoefficient;
         this.fCoefficient = fCoefficient;
@@ -97,8 +97,8 @@ public class AlgoService {
     }
 
     public boolean checkTermination() {
+        if(unChangedChecks >= Constants.MAX_UNCHANGED_CHECKS) isFinished = true;
         if(unChangedChecks <= Constants.MAX_UNCHANGED_CHECKS && maxMovesPerUpdate <= Constants.MAX_MOVES_PER_UPDATE && !isFinished) {
-            if(unChangedChecks <= Constants.MAX_UNCHANGED_CHECKS) isFinished = true;
             return false;
         }
         return true;
@@ -120,7 +120,7 @@ public class AlgoService {
                         CongressionalDistrict targetDistrict, Precinct currentPrecinct) {
         this.maxMovesPerUpdate++;
         moves.add(new Move(state.getState_id(), originDistrict.getCongress_id(), targetDistrict.getCongress_id(),
-                currentPrecinct.getPrecinct_id(), targetDistrict.getColor()));
+                currentPrecinct.getPrecinct_id(), currentPrecinct.getGeo_id(), targetDistrict.getColor()));
     }
 
     public CongressionalDistrict getBoundaryCongressionalDistrict(Precinct precinct) {
@@ -135,6 +135,7 @@ public class AlgoService {
     }
 
     public Update fillUpdate() {
+        update.setMoves(moves);
         update.setFinished(isFinished);
         update.setCompactness(selectedState.getCompactness());
         update.setPopulationDeviation(selectedState.calculatePopulationDeviation());

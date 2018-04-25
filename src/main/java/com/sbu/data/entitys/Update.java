@@ -13,8 +13,8 @@ public class Update {
         this.populationDeviation = populationDeviation;
         this.finished = finished;
     }
-    public Update(List<Move> moves) {
-        this.moves = moves;
+    public Update() {
+
     }
 
     public List<Move> getMoves() {
