@@ -125,6 +125,24 @@ public class CongressionalDistrict {
         this.compactness = compactness;
     }
 
+    public boolean isContiguous() {
+        Iterator<Precinct> precinctIterator = this.precinctHashSet.iterator();
+        while(precinctIterator.hasNext()) {
+            Precinct currentPrecinct = precinctIterator.next();
+            Iterator<Precinct> neighborIterator = currentPrecinct.getNeighborPrecinctSet().iterator();
+            int neighbours = 0;
+            while(neighborIterator.hasNext()) {
+                if(precinctHashSet.contains(neighborIterator.next())) {
+                    neighbours++;
+                    break;
+                }
+            }
+            if(neighbours == 0) return false;
+        }
+        return true;
+    }
+
+
     public void addPrecinct(Precinct precinct) {
         precinct.setCongress_id(this.congress_id);
         this.precinctHashSet.add(precinct);

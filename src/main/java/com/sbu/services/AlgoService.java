@@ -92,7 +92,7 @@ public class AlgoService {
 
     public boolean changeAccepted(double newObjective, double oldObjective) {
         //System.out.println("newObjective : " + newObjective + "   oldObjective : " + oldObjective);
-        if(newObjective > oldObjective) return true;
+        if(selectedState.isContiguous() && newObjective < oldObjective) return true;
         return false;
     }
 
