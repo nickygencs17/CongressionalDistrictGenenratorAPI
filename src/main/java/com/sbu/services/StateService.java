@@ -8,6 +8,7 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -68,7 +69,14 @@ public class StateService {
     }
 
     public UsState getStatebyId(String id) {
-        return usStateRepository.findOne(id);
+        UsState selectedState = usStateRepository.findOne(id);
+        selectedState.setCongressionalDistricts(this.getCongressionalDistrictsbyState(selectedState.getState_id()));
+        try {
+            selectedState.setCongressionalDistrictPrecincts(this.getPrecinctsbyState(selectedState.getState_id()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return selectedState;
     }
 
     public HashMap<String, CongressionalDistrict>getCongressionalDistrictsbyState(String id) {

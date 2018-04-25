@@ -145,7 +145,6 @@ public class UsState {
     }
 
     public void setPrecinctsforDistrict(CongressionalDistrict district) throws IOException {
-        if(!district.in_use()) return;
         String precinctsIds = district.getPrecincts();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode nodes = mapper.readTree(precinctsIds);
@@ -183,7 +182,7 @@ public class UsState {
         String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
         float totalCompactness = 0;
         for(int i = 0; i < keys.length; i++) {
-            totalCompactness += congressionalDistricts.get(keys[i]).getCompactness();
+            totalCompactness += congressionalDistricts.get(keys[i]).getActualCompactness();
         }
         return totalCompactness / keys.length;
     }

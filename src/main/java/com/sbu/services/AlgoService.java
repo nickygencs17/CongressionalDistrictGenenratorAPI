@@ -68,7 +68,6 @@ public class AlgoService {
         CongressionalDistrict boundarycongressionalDistrict = getBoundaryCongressionalDistrict(currentPrecinct);
         double oldObjective = state.calculateObjective(pCoefficient, cCoefficient, fCoefficient);
         CongressionalDistrict currentCongressionalDistrict = congressionalDistricts.get(currentPrecinct.getCongress_id());
-        System.out.println("Initial Move");
         movePrecinct(currentCongressionalDistrict, boundarycongressionalDistrict, currentPrecinct);
         double newObjective = state.calculateObjective(pCoefficient, cCoefficient, fCoefficient);
         if(changeAccepted(newObjective, oldObjective)) {
@@ -81,7 +80,7 @@ public class AlgoService {
             addMove(state, currentCongressionalDistrict, boundarycongressionalDistrict, currentPrecinct);
             return true;
         }
-        else {System.out.println("Move Back");
+        else {
             movePrecinct(boundarycongressionalDistrict, currentCongressionalDistrict, currentPrecinct);
             unChangedChecks++;
         }
@@ -92,6 +91,7 @@ public class AlgoService {
     public void sortByPoulation(HashMap<String,CongressionalDistrict> congressionalDistricts, String[] keys) {}
 
     public boolean changeAccepted(double newObjective, double oldObjective) {
+        System.out.println("newObjective : " + newObjective + "   oldObjective : " + oldObjective);
         if(newObjective > oldObjective) return true;
         return false;
     }
@@ -109,7 +109,6 @@ public class AlgoService {
         if(originDistrict == null || targetDistrict == null || movingPrecinct == null) {
             System.out.println("Problem : " + originDistrict.getCongress_id() + targetDistrict + "Precinct : " + movingPrecinct.getPrecinct_id());
         }
-        System.out.println("moving from :" + originDistrict.getCongress_id() + "moving to :" + targetDistrict.getCongress_id() + "Precinct : " + movingPrecinct.getPrecinct_id());
         originDistrict.removePrecinct(movingPrecinct);
         targetDistrict.addPrecinct(movingPrecinct);
     }

@@ -117,8 +117,8 @@ public class CongressionalDistrict {
         this.is_changed = is_changed;
     }
 
-    public float getCompactness() {
-        return compactness;
+    public float getActualCompactness() {
+        return compactness / precinctHashSet.size();
     }
 
     public void setCompactness(float compactness) {
@@ -151,8 +151,13 @@ public class CongressionalDistrict {
     public void updateBoundaryPrecincts() {
         boundaryPrecinctHashSet.clear();
         Iterator<Precinct> precinctIterator = this.precinctHashSet.iterator();
+        //System.out.println("currentCongress : " + congress_id);
         while(precinctIterator.hasNext()) {
             Precinct currentPrecinct = precinctIterator.next();
+           // System.out.println("currentPrecinct : " + currentPrecinct.getPrecinct_id());
+            if(currentPrecinct == null) {
+                System.out.println("NULL");
+            }
             Iterator<Precinct> neighborIterator = currentPrecinct.getNeighborPrecinctSet().iterator();
             while(neighborIterator.hasNext()) {
                 if(!neighborIterator.next().getCongress_id().equals(currentPrecinct.getCongress_id())) {

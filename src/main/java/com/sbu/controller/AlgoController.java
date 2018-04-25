@@ -38,12 +38,6 @@ public class AlgoController {
         this.ccoefficient = ccoefficient;
         this.fcoefficient = fcoefficient;
         selectedState = stateService.getStatebyId(stateName);
-        selectedState.setCongressionalDistricts(stateService.getCongressionalDistrictsbyState(selectedState.getState_id()));
-        try {
-            selectedState.setCongressionalDistrictPrecincts(stateService.getPrecinctsbyState(selectedState.getState_id()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return getUpdate();
     }
 
