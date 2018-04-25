@@ -91,13 +91,16 @@ public class AlgoService {
     public void sortByPoulation(HashMap<String,CongressionalDistrict> congressionalDistricts, String[] keys) {}
 
     public boolean changeAccepted(double newObjective, double oldObjective) {
-        System.out.println("newObjective : " + newObjective + "   oldObjective : " + oldObjective);
+        //System.out.println("newObjective : " + newObjective + "   oldObjective : " + oldObjective);
         if(newObjective > oldObjective) return true;
         return false;
     }
 
     public boolean checkTermination() {
-        if((unChangedChecks <= Constants.MAX_UNCHANGED_CHECKS || maxMovesPerUpdate <= Constants.MAX_MOVES_PER_UPDATE) && !isFinished) return false;
+        if(unChangedChecks <= Constants.MAX_UNCHANGED_CHECKS && maxMovesPerUpdate <= Constants.MAX_MOVES_PER_UPDATE && !isFinished) {
+            if(unChangedChecks <= Constants.MAX_UNCHANGED_CHECKS) isFinished = true;
+            return false;
+        }
         return true;
     }
 
