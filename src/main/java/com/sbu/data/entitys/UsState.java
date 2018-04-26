@@ -1,7 +1,7 @@
 package com.sbu.data.entitys;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 @Entity
@@ -147,7 +147,7 @@ public class UsState {
     public float calculateCompactness() {
         String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
         float totalCompactness = 0;
-        for(int i = 0; i < keys.length; i++) {
+        for (int i = 0; i < keys.length; i++) {
             totalCompactness += congressionalDistricts.get(keys[i]).getCompactness();
         }
         return totalCompactness / keys.length;
@@ -158,7 +158,7 @@ public class UsState {
         long highestPopulation = congressionalDistricts.get(keys[0]).getPopulation();
         long lowestPopulation = highestPopulation;
         long totalPopulation = 0;
-        for(int i = 0; i < keys.length; i++) {
+        for (int i = 0; i < keys.length; i++) {
             long population = congressionalDistricts.get(keys[i]).getPopulation();
             totalPopulation += population;
             highestPopulation = Long.max(highestPopulation, population);

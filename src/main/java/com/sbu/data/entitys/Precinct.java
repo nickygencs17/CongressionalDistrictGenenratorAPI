@@ -1,5 +1,9 @@
 package com.sbu.data.entitys;
-import javax.persistence.*;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity

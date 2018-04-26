@@ -1,5 +1,5 @@
 package com.sbu.controller;
-import com.sbu.data.UsStateRepository;
+
 import com.sbu.data.entitys.Move;
 import com.sbu.data.entitys.Update;
 import com.sbu.data.entitys.UsState;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.core.Response;
-
 import java.util.ArrayList;
 
 import static com.sbu.utils.ResponseUtil.build200;
@@ -31,6 +30,7 @@ public class AlgoController {
     int pcoefficient;
     int ccoefficient;
     int fcoefficient;
+
     @RequestMapping(method = RequestMethod.GET)
     Response getStartAlgo(@RequestParam("state") String stateName, @RequestParam("pcoefficient") int pcoefficient,
                           @RequestParam("ccoefficient") int ccoefficient, @RequestParam("fcoefficient") int fcoefficient) {
@@ -43,7 +43,7 @@ public class AlgoController {
         return getUpdate();
     }
 
-    @RequestMapping(value = "/update",method = RequestMethod.GET)
+    @RequestMapping(value = "/update", method = RequestMethod.GET)
     Response getUpdate() {
         algoService.startAlgorithm(selectedState, pcoefficient, ccoefficient, fcoefficient, moves);
         Update update = new Update(moves);

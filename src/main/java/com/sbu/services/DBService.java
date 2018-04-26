@@ -1,4 +1,5 @@
 package com.sbu.services;
+
 import org.springframework.stereotype.Component;
 
 @Component

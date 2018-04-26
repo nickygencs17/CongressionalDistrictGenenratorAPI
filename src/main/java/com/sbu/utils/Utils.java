@@ -15,13 +15,11 @@ public class Utils {
 
         String temp = inMemoryUserDetailsManager.loadUserByUsername(requesting_username).getAuthorities().toString();
 
-        if(inMemoryUserDetailsManager.loadUserByUsername(requesting_username).getAuthorities().toString().equals(Constants.ROLE_ADMIN_STRING)){
+        if (inMemoryUserDetailsManager.loadUserByUsername(requesting_username).getAuthorities().toString().equals(Constants.ROLE_ADMIN_STRING)) {
             return true;
         }
         return false;
     }
-
-
 
 
 }

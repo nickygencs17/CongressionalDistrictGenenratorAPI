@@ -1,4 +1,5 @@
 package com.sbu.services;
+
 import com.sbu.data.*;
 import com.sbu.data.entitys.CongressionalDistrict;
 import com.sbu.data.entitys.Precinct;
@@ -34,19 +35,15 @@ public class StateService {
     UsStateRepository usStateRepository;
 
 
-
     public Object getBoundaries(String type, String state_id) {
         UsState usState = usStateRepository.findOne(state_id);
-        if(type.equals(Constants.STATE)){
+        if (type.equals(Constants.STATE)) {
             return usState.getState_boundaries();
-        }
-        else if(type.equals(Constants.LOWER)){
+        } else if (type.equals(Constants.LOWER)) {
             return usState.getLower_boundaries();
-        }
-        else if(type.equals(Constants.UPPER)){
+        } else if (type.equals(Constants.UPPER)) {
             return usState.getUpper_boundaries();
-        }
-        else {
+        } else {
             return usState.getCongress_boundaries();
 
         }
@@ -54,16 +51,16 @@ public class StateService {
 
     public Object getElectionInfo(String id) {
         JSONObject return_node = new JSONObject();
-        return_node.put(Constants.CONGRESS_ELECTION_INFO,congressElectionInfoRepository.findByState_id(id));
-        return_node.put(Constants.PRESIDENT_ELECTION_INFO,presidentElectionInfoRepository.findByState_id(id));
+        return_node.put(Constants.CONGRESS_ELECTION_INFO, congressElectionInfoRepository.findByState_id(id));
+        return_node.put(Constants.PRESIDENT_ELECTION_INFO, presidentElectionInfoRepository.findByState_id(id));
         return return_node;
     }
 
     public Object getStateInfo(String id) {
         JSONObject return_node = new JSONObject();
         UsState usState = usStateRepository.findOne(id);
-        return_node.put(Constants.NUMBER_OF_CONGRESS_DISTRICTS,usState.getNumber_of_congress_districts());
-        return_node.put(Constants.CURRENT_OFFICIALS,currentOfficialRepository.findByState_id(id));
+        return_node.put(Constants.NUMBER_OF_CONGRESS_DISTRICTS, usState.getNumber_of_congress_districts());
+        return_node.put(Constants.CURRENT_OFFICIALS, currentOfficialRepository.findByState_id(id));
         return return_node;
     }
 
@@ -71,20 +68,20 @@ public class StateService {
         return usStateRepository.findOne(id);
     }
 
-    public HashMap<String, CongressionalDistrict>getCongressionalDistrictsbyState(String id) {
+    public HashMap<String, CongressionalDistrict> getCongressionalDistrictsbyState(String id) {
         Iterator<CongressionalDistrict> districts = congressionalDistrictRepository.findByState_id(id).iterator();
         HashMap<String, CongressionalDistrict> districtHashMap = new HashMap<>();
-        while(districts.hasNext()) {
+        while (districts.hasNext()) {
             CongressionalDistrict currentDistrict = districts.next();
             districtHashMap.put(currentDistrict.getCongress_id(), currentDistrict);
         }
         return districtHashMap;
     }
 
-    public HashMap<String, Precinct>getPrecinctsbyState(String id) {
+    public HashMap<String, Precinct> getPrecinctsbyState(String id) {
         Iterator<Precinct> districts = precinctRepository.findByState_id(id).iterator();
         HashMap<String, Precinct> precinctHashMap = new HashMap<>();
-        while(districts.hasNext()) {
+        while (districts.hasNext()) {
             Precinct currentPrecinct = districts.next();
             precinctHashMap.put(currentPrecinct.getPrecinct_id(), currentPrecinct);
         }

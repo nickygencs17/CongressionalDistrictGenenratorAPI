@@ -1,4 +1,5 @@
 package com.sbu.services;
+
 import com.sbu.data.AppUserRepository;
 import com.sbu.data.entitys.AppUser;
 import com.sbu.main.Constants;
@@ -14,8 +15,8 @@ import java.util.List;
 @Component
 public class AppUserService {
 
-     @Autowired
-     AppUserRepository appUserRepository;
+    @Autowired
+    AppUserRepository appUserRepository;
 
     public Iterable<AppUser> getAllUsers() {
         return appUserRepository.findAll();
@@ -34,11 +35,11 @@ public class AppUserService {
 
     public AppUser editUser(AppUser user, InMemoryUserDetailsManager inMemoryUserDetailsManager) {
         AppUser old_app_user = (AppUser) getUserByUsername(user.getUsername());
-        removeUser(old_app_user,inMemoryUserDetailsManager);
-        return createAppUser(user,inMemoryUserDetailsManager);
+        removeUser(old_app_user, inMemoryUserDetailsManager);
+        return createAppUser(user, inMemoryUserDetailsManager);
     }
 
-    public void removeUser(AppUser user,InMemoryUserDetailsManager inMemoryUserDetailsManager) {
+    public void removeUser(AppUser user, InMemoryUserDetailsManager inMemoryUserDetailsManager) {
         inMemoryUserDetailsManager.deleteUser(user.getUsername());
         appUserRepository.delete(user.getUsername());
     }

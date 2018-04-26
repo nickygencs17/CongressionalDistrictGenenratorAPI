@@ -1,4 +1,5 @@
 package com.sbu.data.entitys;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -20,9 +21,9 @@ public class Comment {
     String author;
 
     @NotNull
-    String post_id;
+    int post_id;
 
-    public Comment(String comment_text, String comment_time_date, String author, String post_id) {
+    public Comment(String comment_text, String comment_time_date, String author, int post_id) {
         this.comment_text = comment_text;
         this.comment_time_date = comment_time_date;
         this.author = author;
@@ -40,11 +41,11 @@ public class Comment {
         this.author = author;
     }
 
-    public String getPost_id() {
+    public int getPost_id() {
         return post_id;
     }
 
-    public void setPost_id(String post_id) {
+    public void setPost_id(int post_id) {
         this.post_id = post_id;
     }
 
@@ -71,12 +72,6 @@ public class Comment {
     public void setComment_time_date(String comment_time_date) {
         this.comment_time_date = comment_time_date;
     }
-
-
-
-
-
-
 
 
 }

@@ -1,4 +1,5 @@
 package com.sbu.data.entitys;
+
 import java.util.List;
 
 public class Update {
@@ -13,6 +14,7 @@ public class Update {
         this.populationDeviation = populationDeviation;
         this.finished = finished;
     }
+
     public Update(List<Move> moves) {
         this.moves = moves;
     }

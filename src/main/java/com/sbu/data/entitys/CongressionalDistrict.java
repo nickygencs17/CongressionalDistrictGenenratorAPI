@@ -1,6 +1,9 @@
 package com.sbu.data.entitys;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -46,13 +49,16 @@ public class CongressionalDistrict {
     }
 
 
+    public CongressionalDistrict() {
+    }
+
     public String getState_id() {
         return state_id;
     }
 
-    public CongressionalDistrict() {
+    public void setState_id(String state_id) {
+        this.state_id = state_id;
     }
-
 
     public int getIn_use() {
         return in_use;
@@ -60,12 +66,6 @@ public class CongressionalDistrict {
 
     public void setIn_use(int in_use) {
         this.in_use = in_use;
-    }
-
-
-
-    public void setState_id(String state_id) {
-        this.state_id = state_id;
     }
 
     public String getCongress_id() {
@@ -133,8 +133,8 @@ public class CongressionalDistrict {
 
     public void removePrecinct(String id) {
         Iterator<String> iterator = precinct_ids.iterator();
-        while(iterator.hasNext()) {
-            if(iterator.next().equals(id)) {
+        while (iterator.hasNext()) {
+            if (iterator.next().equals(id)) {
                 precinct_ids.remove(id);
                 break;
             }

@@ -1,4 +1,5 @@
 package com.sbu.data;
+
 import com.sbu.data.entitys.BlogPost;
 import org.springframework.data.repository.CrudRepository;
 
