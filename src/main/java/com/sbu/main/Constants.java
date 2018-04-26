@@ -43,5 +43,5 @@ public class Constants {
     COMP_COEF ="compactness_coefficient";
 
     public static final int MAX_UNCHANGED_CHECKS = 100000;
-    public static final int MAX_MOVES_PER_UPDATE = 100000;
+    public static final int MAX_MOVES_PER_UPDATE = 1000;
 }

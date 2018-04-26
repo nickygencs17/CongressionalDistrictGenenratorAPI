@@ -40,20 +40,20 @@ public class AlgoService {
                     if (i == keys.length - 1)  isFinished = true;
                     continue;
                 }
-                boolean districtChanged = traversePrecinctsforChanges(state, congressionalDistricts.get(keys[i]));
+                boolean districtChanged = traversePrecinctsforChanges(congressionalDistricts.get(keys[i]));
                 if(districtChanged || checkTermination()) break;
             }
         }
         return fillUpdate();
     }
 
-    public boolean traversePrecinctsforChanges(UsState state, CongressionalDistrict congressionalDistrict) {
+    public boolean traversePrecinctsforChanges(CongressionalDistrict congressionalDistrict) {
 
         //Get all voting districts that share boundary with other congressional districts
         Iterator<Precinct> boundaryPrecincts = congressionalDistrict.getBoundaryPrecinctHashSet().iterator();
         while(boundaryPrecincts.hasNext()) {
             Precinct currentPrecinct = boundaryPrecincts.next();
-            boolean change = checkBoundarycongressionalDistrictforChanges(state, congressionalDistrict, currentPrecinct);
+            boolean change = checkBoundarycongressionalDistrictforChanges(congressionalDistrict, currentPrecinct);
             if(change) {
                 return true;
             }
@@ -61,23 +61,22 @@ public class AlgoService {
         return false;
     }
 
-    public boolean checkBoundarycongressionalDistrictforChanges(UsState state,
-                                                               CongressionalDistrict congressionalDistrict,
+    public boolean checkBoundarycongressionalDistrictforChanges(CongressionalDistrict congressionalDistrict,
                                                                Precinct currentPrecinct) {
         //Get congressional district that share boundary with currentPrecinct
         CongressionalDistrict boundarycongressionalDistrict = getBoundaryCongressionalDistrict(currentPrecinct);
-        double oldObjective = state.calculateObjective(pCoefficient, cCoefficient, fCoefficient);
+        double oldObjective = selectedState.calculateObjective(pCoefficient, cCoefficient, fCoefficient);
         CongressionalDistrict currentCongressionalDistrict = congressionalDistricts.get(currentPrecinct.getCongress_id());
         movePrecinct(currentCongressionalDistrict, boundarycongressionalDistrict, currentPrecinct);
-        double newObjective = state.calculateObjective(pCoefficient, cCoefficient, fCoefficient);
-        if(changeAccepted(newObjective, oldObjective)) {
+        double newObjective = selectedState.calculateObjective(pCoefficient, cCoefficient, fCoefficient);
+        if(changeAccepted(newObjective, oldObjective) && currentCongressionalDistrict.isContiguous(currentPrecinct)) {
             //Update the neighbours of current precinct to be the new voting districts that have boundary with congressional district
             congressionalDistrict.updateBoundaryPrecincts();
             boundarycongressionalDistrict.updateBoundaryPrecincts();
             congressionalDistrict.setNeedsRevision(true);
             boundarycongressionalDistrict.setNeedsRevision(true);
             resetUnChangedChecks();
-            addMove(state, currentCongressionalDistrict, boundarycongressionalDistrict, currentPrecinct);
+            addMove(selectedState, currentCongressionalDistrict, boundarycongressionalDistrict, currentPrecinct);
             return true;
         }
         else {
@@ -92,7 +91,7 @@ public class AlgoService {
 
     public boolean changeAccepted(double newObjective, double oldObjective) {
         //System.out.println("newObjective : " + newObjective + "   oldObjective : " + oldObjective);
-        if(selectedState.isContiguous() && newObjective < oldObjective) return true;
+        if(newObjective > oldObjective) return true;
         return false;
     }
 

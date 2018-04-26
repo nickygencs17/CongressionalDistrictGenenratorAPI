@@ -2,8 +2,7 @@ package com.sbu.data.entitys;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 
 @Entity
 @Table(name = "congressional_districts")
@@ -125,21 +124,77 @@ public class CongressionalDistrict {
         this.compactness = compactness;
     }
 
-    public boolean isContiguous() {
-        Iterator<Precinct> precinctIterator = this.precinctHashSet.iterator();
-        while(precinctIterator.hasNext()) {
-            Precinct currentPrecinct = precinctIterator.next();
-            Iterator<Precinct> neighborIterator = currentPrecinct.getNeighborPrecinctSet().iterator();
-            int neighbours = 0;
-            while(neighborIterator.hasNext()) {
-                if(precinctHashSet.contains(neighborIterator.next())) {
-                    neighbours++;
-                    break;
-                }
+    public boolean isContiguous(Precinct movePrecinct) {
+
+        Iterator<Precinct> iterator = movePrecinct.getNeighborPrecinctSet().iterator();
+        ArrayList<Precinct> finalSet = new ArrayList<>();
+        while(iterator.hasNext()) {
+            Precinct currentPrecinct = iterator.next();
+            if(!currentPrecinct.getCongress_id().equals(this.congress_id)) continue;
+            finalSet.add(currentPrecinct);
+        }
+        HashMap<String, Boolean> pathChecked = new HashMap<>();
+        for(int i = 0; i < finalSet.size(); i++) {
+            for(int j = 0; j < finalSet.size(); j++) {
+                if(pathChecked.containsKey(pathChecked.get(finalSet.get(i).getPrecinct_id() + finalSet.get(j).getPrecinct_id()))) continue;
+                if(i == j) continue;
+                pathChecked.put(finalSet.get(i).getPrecinct_id() + finalSet.get(j).getPrecinct_id(), true);
+                pathChecked.put(finalSet.get(j).getPrecinct_id() + finalSet.get(i).getPrecinct_id(), true);
+                if(!isReachable(finalSet.get(i), finalSet.get(j))) return false;
             }
-            if(neighbours == 0) return false;
         }
         return true;
+    }
+
+    public boolean isReachable(Precinct start, Precinct end) {
+        LinkedList<Integer>temp;
+
+        HashMap<String, Boolean> visitedMap = new HashMap<>();
+        Iterator<Precinct> iterator = precinctHashSet.iterator();
+        while(iterator.hasNext()) {
+            visitedMap.put(iterator.next().getPrecinct_id(), false);
+        }
+        // Create a queue for BFS
+        LinkedList<Precinct> queue = new LinkedList<>();
+
+        // Mark the current node as visited and enqueue it
+        visitedMap.put(start.getPrecinct_id(), true);
+        queue.add(start);
+
+        // 'i' will be used to get all adjacent vertices of a vertex
+        Iterator<Precinct> neighborsIterator;
+        while (queue.size()!=0)
+        {
+            // Dequeue a vertex from queue and print it
+            start = queue.poll();
+
+            Precinct next;
+            neighborsIterator = start.getNeighborPrecinctSet().iterator();
+
+            // Get all adjacent vertices of the dequeued vertex s
+            // If a adjacent has not been visited, then mark it
+            // visited and enqueue it
+            while (neighborsIterator.hasNext())
+            {
+                next = neighborsIterator.next();
+                if(!next.getCongress_id().equals(this.congress_id)) continue;
+
+                // If this adjacent node is the destination node,
+                // then return true
+                if (next.getPrecinct_id().equals(end.getPrecinct_id()))
+                    return true;
+
+                // Else, continue to do BFS
+                if (!visitedMap.get(next.getPrecinct_id()))
+                {
+                    visitedMap.put(next.getPrecinct_id(), true);
+                    queue.add(next);
+                }
+            }
+        }
+
+        // If BFS is complete without visited d
+        return false;
     }
 
 

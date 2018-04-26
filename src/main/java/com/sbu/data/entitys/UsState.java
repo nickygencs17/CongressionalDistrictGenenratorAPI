@@ -178,15 +178,6 @@ public class UsState {
         this.objective = objective;
     }
 
-    public boolean isContiguous() {
-        String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
-        for(int i = 0; i < keys.length; i++) {
-            if(!congressionalDistricts.get(keys[i]).isContiguous()) return false;
-        }
-        return true;
-    }
-
-
     public float calculateCompactness() {
         String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
         float totalCompactness = 0;
@@ -207,8 +198,7 @@ public class UsState {
             highestPopulation = Long.max(highestPopulation, population);
             lowestPopulation = Long.min(lowestPopulation, population);
         }
-        //return ((highestPopulation - lowestPopulation) / totalPopulation) * 100;
-        return 0;
+        return ((highestPopulation - lowestPopulation) / totalPopulation) * 100;
     }
 
     public double calculatePoliticalFairness() {
@@ -220,4 +210,5 @@ public class UsState {
                 + cCoefficient * calculateCompactness()
                 + fCoefficient * calculatePoliticalFairness();
     }
+
 }
