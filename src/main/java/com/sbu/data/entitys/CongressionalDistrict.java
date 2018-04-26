@@ -1,8 +1,25 @@
 package com.sbu.data.entitys;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sbu.main.Constants;
+import org.geojson.Feature;
+import org.geojson.LngLatAlt;
+import org.geojson.MultiPolygon;
+import org.geojson.Polygon;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.awt.geom.Area;
+import java.awt.geom.PathIterator;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 @Entity
 @Table(name = "congressional_districts")
@@ -124,77 +141,21 @@ public class CongressionalDistrict {
         this.compactness = compactness;
     }
 
-    public boolean isContiguous(Precinct movePrecinct) {
-
-        Iterator<Precinct> iterator = movePrecinct.getNeighborPrecinctSet().iterator();
-        ArrayList<Precinct> finalSet = new ArrayList<>();
-        while(iterator.hasNext()) {
-            Precinct currentPrecinct = iterator.next();
-            if(!currentPrecinct.getCongress_id().equals(this.congress_id)) continue;
-            finalSet.add(currentPrecinct);
-        }
-        HashMap<String, Boolean> pathChecked = new HashMap<>();
-        for(int i = 0; i < finalSet.size(); i++) {
-            for(int j = 0; j < finalSet.size(); j++) {
-                if(pathChecked.containsKey(pathChecked.get(finalSet.get(i).getPrecinct_id() + finalSet.get(j).getPrecinct_id()))) continue;
-                if(i == j) continue;
-                pathChecked.put(finalSet.get(i).getPrecinct_id() + finalSet.get(j).getPrecinct_id(), true);
-                pathChecked.put(finalSet.get(j).getPrecinct_id() + finalSet.get(i).getPrecinct_id(), true);
-                if(!isReachable(finalSet.get(i), finalSet.get(j))) return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean isReachable(Precinct start, Precinct end) {
-        LinkedList<Integer>temp;
-
-        HashMap<String, Boolean> visitedMap = new HashMap<>();
-        Iterator<Precinct> iterator = precinctHashSet.iterator();
-        while(iterator.hasNext()) {
-            visitedMap.put(iterator.next().getPrecinct_id(), false);
-        }
-        // Create a queue for BFS
-        LinkedList<Precinct> queue = new LinkedList<>();
-
-        // Mark the current node as visited and enqueue it
-        visitedMap.put(start.getPrecinct_id(), true);
-        queue.add(start);
-
-        // 'i' will be used to get all adjacent vertices of a vertex
-        Iterator<Precinct> neighborsIterator;
-        while (queue.size()!=0)
-        {
-            // Dequeue a vertex from queue and print it
-            start = queue.poll();
-
-            Precinct next;
-            neighborsIterator = start.getNeighborPrecinctSet().iterator();
-
-            // Get all adjacent vertices of the dequeued vertex s
-            // If a adjacent has not been visited, then mark it
-            // visited and enqueue it
-            while (neighborsIterator.hasNext())
-            {
-                next = neighborsIterator.next();
-                if(!next.getCongress_id().equals(this.congress_id)) continue;
-
-                // If this adjacent node is the destination node,
-                // then return true
-                if (next.getPrecinct_id().equals(end.getPrecinct_id()))
-                    return true;
-
-                // Else, continue to do BFS
-                if (!visitedMap.get(next.getPrecinct_id()))
-                {
-                    visitedMap.put(next.getPrecinct_id(), true);
-                    queue.add(next);
+    public boolean isContiguous() {
+        Iterator<Precinct> precinctIterator = this.precinctHashSet.iterator();
+        while(precinctIterator.hasNext()) {
+            Precinct currentPrecinct = precinctIterator.next();
+            Iterator<Precinct> neighborIterator = currentPrecinct.getNeighborPrecinctSet().iterator();
+            int neighbours = 0;
+            while(neighborIterator.hasNext()) {
+                if(precinctHashSet.contains(neighborIterator.next())) {
+                    neighbours++;
+                    break;
                 }
             }
+            if(neighbours == 0) return false;
         }
-
-        // If BFS is complete without visited d
-        return false;
+        return true;
     }
 
 
@@ -227,7 +188,7 @@ public class CongressionalDistrict {
         //System.out.println("currentCongress : " + congress_id);
         while(precinctIterator.hasNext()) {
             Precinct currentPrecinct = precinctIterator.next();
-           // System.out.println("currentPrecinct : " + currentPrecinct.getPrecinct_id());
+            // System.out.println("currentPrecinct : " + currentPrecinct.getPrecinct_id());
             if(currentPrecinct == null) {
                 System.out.println("NULL");
             }
@@ -243,5 +204,77 @@ public class CongressionalDistrict {
 
     public void updateCompactness(Precinct precinct, boolean addition) {
         compactness = (addition) ? compactness + precinct.getCompactness() : compactness - precinct.getCompactness();
+    }
+
+    public float getPerimeter(Feature border){
+        List<LngLatAlt> points = ((Polygon)border.getGeometry()).getExteriorRing();
+        float perim = 0;
+        for(int i = 0; i < points.size()-1; i++){
+            perim += Math.sqrt(Math.pow(points.get(i+1).getLongitude()-points.get(i).getLongitude(), 2) + Math.pow(points.get(i+1).getLatitude()-points.get(i).getLatitude(), 2));
+        }
+        return perim;
+    }
+
+    public Area createArea(String districtLocation, String type) throws IOException {
+
+        FileReader reader = new FileReader(districtLocation);
+        Feature location = new ObjectMapper().readValue(reader, Feature.class);
+
+        //Geojson polygon or multipolygon
+        List<LngLatAlt> locationLngLatAlt;
+        if(type.equalsIgnoreCase(Constants.VD)){
+            locationLngLatAlt = ((MultiPolygon)location.getGeometry()).getCoordinates().get(0).get(0);
+        }
+        else if(type.equalsIgnoreCase(Constants.CD)){
+            locationLngLatAlt = ((Polygon)location.getGeometry()).getExteriorRing();
+        }
+        else{
+            locationLngLatAlt = new ArrayList<>();
+        }
+
+        //java.awt Polygons
+        java.awt.Polygon locationPolygon = new java.awt.Polygon();
+
+        for(LngLatAlt point: locationLngLatAlt){
+            locationPolygon.addPoint((int)(point.getLongitude()*1000000), (int)(point.getLatitude()*1000000));
+        }
+
+        return new Area(locationPolygon);
+    }
+
+    public Feature createFeature(Area toConvert) throws IOException {
+
+        PathIterator lngPath = toConvert.getPathIterator(null);
+        List<LngLatAlt> lngFinal = new ArrayList<>();
+        while(!lngPath.isDone()){
+            float[] point = new float[6];
+            int numPoints = lngPath.currentSegment(point);
+            switch(numPoints){
+                case 0:
+                    lngFinal.add((new LngLatAlt(point[0]/1000000, point[1]/1000000)));
+                    break;
+                case 1:
+                    lngFinal.add((new LngLatAlt(point[0]/1000000, point[1]/1000000)));
+                    break;
+                case 2:
+                    lngFinal.add((new LngLatAlt(point[0]/1000000, point[1]/1000000)));
+                    lngFinal.add((new LngLatAlt(point[2]/1000000, point[3]/1000000)));
+                    break;
+                case 3:
+                    lngFinal.add((new LngLatAlt(point[0]/1000000, point[1]/1000000)));
+                    lngFinal.add((new LngLatAlt(point[2]/1000000, point[3]/1000000)));
+                    lngFinal.add((new LngLatAlt(point[4]/1000000, point[5]/1000000)));
+                    break;
+                default:
+                    break;
+            }
+            lngPath.next();
+        }
+
+        Feature featureFinal = new Feature();
+        org.geojson.Polygon polyFinal = new org.geojson.Polygon();
+        polyFinal.setExteriorRing(lngFinal);
+        featureFinal.setGeometry(polyFinal);
+        return featureFinal;
     }
 }
