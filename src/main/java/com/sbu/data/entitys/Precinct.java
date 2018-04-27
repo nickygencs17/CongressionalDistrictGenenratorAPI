@@ -1,13 +1,22 @@
 package com.sbu.data.entitys;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sbu.main.Constants;
+import org.geojson.Feature;
+import org.geojson.LngLatAlt;
+import org.geojson.MultiPolygon;
+import org.geojson.Polygon;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.awt.geom.Area;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 @Entity
 @Table(name = "precinct")
@@ -55,6 +64,9 @@ public class Precinct {
 
     @Transient
     HashSet<Precinct> neighborPrecinctSet = new HashSet<>();
+
+    @Transient
+    Area areaObject;
 
     public Precinct(String state_id, String congress_id, String precinct_id, String neighbor_precincts, float d_leaning, float r_leaning, long population, String precinct_boundaries, String precinct_name, String geo_id, float perimeter, float area, float compactness) {
         this.state_id = state_id;
@@ -186,8 +198,31 @@ public class Precinct {
     public void setNeighborPrecinctSet(HashSet<Precinct> neighborPrecinctSet) {
         this.neighborPrecinctSet = neighborPrecinctSet;
     }
-
     public void addNeighborPrecinct(Precinct precinct) {
         neighborPrecinctSet.add(precinct);
     }
+
+    public Area getAreaObject() {
+        return areaObject;
+    }
+
+    public void createArea(String type) throws IOException {
+
+        String dir = System.getProperty("user.dir");
+        FileReader reader = new FileReader(dir + "/src/main/resources/" + this.precinct_boundaries);
+        Feature location = new ObjectMapper().readValue(reader, Feature.class);
+        List<LngLatAlt> locationLngLatAlt;
+        if(type.equalsIgnoreCase(Constants.VD)){
+            locationLngLatAlt = ((MultiPolygon)location.getGeometry()).getCoordinates().get(0).get(0);
+        }
+        else{
+            locationLngLatAlt = new ArrayList<>();
+        }
+        java.awt.Polygon locationPolygon = new java.awt.Polygon();
+        for(LngLatAlt point: locationLngLatAlt){
+            locationPolygon.addPoint((int)(point.getLongitude()*1000000), (int)(point.getLatitude()*1000000));
+        }
+        this.areaObject = new Area(locationPolygon);
+    }
+
 }

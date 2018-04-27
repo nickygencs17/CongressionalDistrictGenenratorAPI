@@ -1,6 +1,7 @@
 package com.sbu.data.entitys;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sbu.main.Constants;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -38,6 +39,9 @@ public class UsState {
 
     @Id
     String state_id;
+
+    @Transient
+    double populationDeviation;
 
     @Transient
     HashMap<String, CongressionalDistrict> congressionalDistricts;
@@ -126,6 +130,14 @@ public class UsState {
         this.congressionalDistricts = congressionalDistricts;
     }
 
+    public double getPopulationDeviation() {
+        return populationDeviation;
+    }
+
+    public void setPopulationDeviation(double populationDeviation) {
+        this.populationDeviation = populationDeviation;
+    }
+
     public CongressionalDistrict getCongressionalDistrictbyId(String id) {
         return congressionalDistricts.get(id);
     }
@@ -139,6 +151,8 @@ public class UsState {
         String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
         for(String key: keys) {
             CongressionalDistrict district = congressionalDistricts.get(key);
+            district.setPopulation(0);
+            district.createArea(Constants.CD);
             setPrecinctsforDistrict(district);
             district.updateBoundaryPrecincts();
         }
@@ -151,8 +165,9 @@ public class UsState {
         for(int i = 0; i < nodes.size(); i++) {
             String precinctId = nodes.get(i).asText();
             Precinct currentPrecinct = precincts.get(precinctId);
+            currentPrecinct.createArea(Constants.VD);
             connectPrecinctDependencies(currentPrecinct);
-            district.addPrecinct(currentPrecinct);
+            district.addPrecinct(currentPrecinct, false);
         }
     }
 
@@ -178,11 +193,11 @@ public class UsState {
         this.objective = objective;
     }
 
-    public float calculateCompactness() {
+    public double calculateCompactness() {
         String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
-        float totalCompactness = 0;
+        double totalCompactness = 0;
         for(int i = 0; i < keys.length; i++) {
-            totalCompactness += congressionalDistricts.get(keys[i]).getActualCompactness();
+            totalCompactness += congressionalDistricts.get(keys[i]).getCompactness();
         }
         return totalCompactness / keys.length;
     }
@@ -198,16 +213,16 @@ public class UsState {
             highestPopulation = Long.max(highestPopulation, population);
             lowestPopulation = Long.min(lowestPopulation, population);
         }
-        return ((highestPopulation - lowestPopulation) / totalPopulation) * 100;
+        this.setPopulationDeviation(((double) (highestPopulation - lowestPopulation) / (double)totalPopulation) * 100);
+        return this.getPopulationDeviation();
     }
 
     public double calculatePoliticalFairness() {
         return 0;
     }
 
-    public double calculateObjective(int pCoefficient, int cCoefficient, int fCoefficient) {
-        return    pCoefficient * calculatePopulationDeviation()
-                + cCoefficient * calculateCompactness()
+    public double calculateObjective(int cCoefficient, int fCoefficient) {
+        return    cCoefficient * calculateCompactness()
                 + fCoefficient * calculatePoliticalFairness();
     }
 

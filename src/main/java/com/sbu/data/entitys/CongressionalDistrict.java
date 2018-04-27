@@ -16,10 +16,7 @@ import java.awt.geom.PathIterator;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "congressional_districts")
@@ -49,14 +46,23 @@ public class CongressionalDistrict {
     @Transient
     HashSet<Precinct> boundaryPrecinctHashSet = new HashSet<>();
 
+    @Transient
+    Area areaObject;
+
+    @Transient
+    float area;
+
     @NotNull
     int in_use;
 
     @NotNull
     float compactness;
 
+    @NotNull
+    String boundaries;
+
     public CongressionalDistrict(String congress_id, String precincts, long population, String state_id,
-                                 boolean is_changed, int in_use, float compactness, String color) {
+                                 boolean is_changed, int in_use, float compactness, String color, String boundaries) {
 
         this.congress_id = congress_id;
         this.precincts = precincts;
@@ -66,6 +72,7 @@ public class CongressionalDistrict {
         this.in_use = in_use;
         this.compactness = compactness;
         this.color = color;
+        this.boundaries = boundaries;
     }
 
 
@@ -133,44 +140,86 @@ public class CongressionalDistrict {
         this.is_changed = is_changed;
     }
 
-    public float getActualCompactness() {
-        return compactness / precinctHashSet.size();
+    public double getCompactness() {
+        double r = Math.sqrt(area/Math.PI);
+        double equalAreaPerimeter = 2 * Math.PI * r;
+        double perimeter = getPerimeter();
+        double score = 1 / (perimeter/equalAreaPerimeter);
+        return score;
     }
 
     public void setCompactness(float compactness) {
         this.compactness = compactness;
     }
 
-    public boolean isContiguous() {
-        Iterator<Precinct> precinctIterator = this.precinctHashSet.iterator();
-        while(precinctIterator.hasNext()) {
-            Precinct currentPrecinct = precinctIterator.next();
-            Iterator<Precinct> neighborIterator = currentPrecinct.getNeighborPrecinctSet().iterator();
-            int neighbours = 0;
-            while(neighborIterator.hasNext()) {
-                if(precinctHashSet.contains(neighborIterator.next())) {
-                    neighbours++;
-                    break;
-                }
+    public boolean isContiguous(Precinct movePrecinct) {
+
+        Iterator<Precinct> iterator = movePrecinct.getNeighborPrecinctSet().iterator();
+        ArrayList<Precinct> finalSet = new ArrayList<>();
+        while(iterator.hasNext()) {
+            Precinct currentPrecinct = iterator.next();
+            if(!currentPrecinct.getCongress_id().equals(this.congress_id)) continue;
+            finalSet.add(currentPrecinct);
+        }
+        HashMap<String, Boolean> pathChecked = new HashMap<>();
+        for(int i = 0; i < finalSet.size(); i++) {
+            for(int j = 0; j < finalSet.size(); j++) {
+                if(pathChecked.containsKey(pathChecked.get(finalSet.get(i).getPrecinct_id() + finalSet.get(j).getPrecinct_id()))) continue;
+                if(i == j) continue;
+                pathChecked.put(finalSet.get(i).getPrecinct_id() + finalSet.get(j).getPrecinct_id(), true);
+                pathChecked.put(finalSet.get(j).getPrecinct_id() + finalSet.get(i).getPrecinct_id(), true);
+                if(!isReachable(finalSet.get(i), finalSet.get(j))) return false;
             }
-            if(neighbours == 0) return false;
         }
         return true;
     }
 
+    public boolean isReachable(Precinct start, Precinct end) {
+        LinkedList<Integer>temp;
+        HashMap<String, Boolean> visitedMap = new HashMap<>();
+        Iterator<Precinct> iterator = precinctHashSet.iterator();
+        while(iterator.hasNext()) {
+            visitedMap.put(iterator.next().getPrecinct_id(), false);
+        }
+        LinkedList<Precinct> queue = new LinkedList<>();
+        visitedMap.put(start.getPrecinct_id(), true);
+        queue.add(start);
+        Iterator<Precinct> neighborsIterator;
+        while (queue.size()!=0)
+        {
+            start = queue.poll();
+            Precinct next;
+            neighborsIterator = start.getNeighborPrecinctSet().iterator();
+            while (neighborsIterator.hasNext())
+            {
+                next = neighborsIterator.next();
+                if(!next.getCongress_id().equals(this.congress_id)) continue;
+                if (next.getPrecinct_id().equals(end.getPrecinct_id()))
+                    return true;
+                if (!visitedMap.get(next.getPrecinct_id()))
+                {
+                    visitedMap.put(next.getPrecinct_id(), true);
+                    queue.add(next);
+                }
+            }
+        }
+        return false;
+    }
 
-    public void addPrecinct(Precinct precinct) {
+    public void addPrecinct(Precinct precinct, boolean updateAreaObj) {
         precinct.setCongress_id(this.congress_id);
         this.precinctHashSet.add(precinct);
         this.population += precinct.getPopulation();
-        updateCompactness(precinct, true);
+        if(updateAreaObj) updateAreaObject(precinct.getAreaObject(), true);
+        updateArea(precinct.getArea(), true);
     }
 
     public void removePrecinct(Precinct precinct) {
         if(precinctHashSet.contains(precinct)) {
             precinctHashSet.remove(precinct);
             this.population -= precinct.getPopulation();
-            updateCompactness(precinct, false);
+            updateAreaObject(precinct.getAreaObject(), false);
+            updateArea(precinct.getArea(), false);
         }
     }
 
@@ -185,13 +234,8 @@ public class CongressionalDistrict {
     public void updateBoundaryPrecincts() {
         boundaryPrecinctHashSet.clear();
         Iterator<Precinct> precinctIterator = this.precinctHashSet.iterator();
-        //System.out.println("currentCongress : " + congress_id);
         while(precinctIterator.hasNext()) {
             Precinct currentPrecinct = precinctIterator.next();
-            // System.out.println("currentPrecinct : " + currentPrecinct.getPrecinct_id());
-            if(currentPrecinct == null) {
-                System.out.println("NULL");
-            }
             Iterator<Precinct> neighborIterator = currentPrecinct.getNeighborPrecinctSet().iterator();
             while(neighborIterator.hasNext()) {
                 if(!neighborIterator.next().getCongress_id().equals(currentPrecinct.getCongress_id())) {
@@ -206,41 +250,52 @@ public class CongressionalDistrict {
         compactness = (addition) ? compactness + precinct.getCompactness() : compactness - precinct.getCompactness();
     }
 
-    public float getPerimeter(Feature border){
-        List<LngLatAlt> points = ((Polygon)border.getGeometry()).getExteriorRing();
-        float perim = 0;
-        for(int i = 0; i < points.size()-1; i++){
-            perim += Math.sqrt(Math.pow(points.get(i+1).getLongitude()-points.get(i).getLongitude(), 2) + Math.pow(points.get(i+1).getLatitude()-points.get(i).getLatitude(), 2));
+    public double getPerimeter() {
+        Feature border = null;
+        try {
+            border = createFeature(this.areaObject);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return perim;
+        List<LngLatAlt> points = ((Polygon)border.getGeometry()).getExteriorRing();
+        double perimeter = 0;
+        for(int i = 0; i < points.size()-1; i++){
+            perimeter += Math.sqrt(Math.pow(points.get(i+1).getLongitude()-points.get(i).getLongitude(), 2) + Math.pow(points.get(i+1).getLatitude()-points.get(i).getLatitude(), 2));
+        }
+        return perimeter;
     }
 
-    public Area createArea(String districtLocation, String type) throws IOException {
+    public void createArea(String type) throws IOException {
 
-        FileReader reader = new FileReader(districtLocation);
+        String dir = System.getProperty("user.dir");
+        FileReader reader = new FileReader(dir + "/src/main/resources/" + this.boundaries);
         Feature location = new ObjectMapper().readValue(reader, Feature.class);
-
-        //Geojson polygon or multipolygon
         List<LngLatAlt> locationLngLatAlt;
-        if(type.equalsIgnoreCase(Constants.VD)){
-            locationLngLatAlt = ((MultiPolygon)location.getGeometry()).getCoordinates().get(0).get(0);
-        }
-        else if(type.equalsIgnoreCase(Constants.CD)){
+        if(type.equalsIgnoreCase(Constants.CD)){
             locationLngLatAlt = ((Polygon)location.getGeometry()).getExteriorRing();
         }
         else{
             locationLngLatAlt = new ArrayList<>();
         }
-
-        //java.awt Polygons
         java.awt.Polygon locationPolygon = new java.awt.Polygon();
-
         for(LngLatAlt point: locationLngLatAlt){
             locationPolygon.addPoint((int)(point.getLongitude()*1000000), (int)(point.getLatitude()*1000000));
         }
-
-        return new Area(locationPolygon);
+        this.areaObject = new Area(locationPolygon);
     }
+
+    public void updateAreaObject(Area precinctArea, boolean additon) {
+        if(additon) this.areaObject.add(precinctArea);
+        else this.areaObject.subtract(precinctArea);
+    }
+
+    public void updateArea(float precinctArea, boolean additon) {
+        this.area = (additon) ? area + precinctArea : area - precinctArea;
+    }
+
+    public Area getAreaObject() { return this.areaObject; }
+
+    public float getArea() { return this.area; }
 
     public Feature createFeature(Area toConvert) throws IOException {
 
@@ -270,7 +325,6 @@ public class CongressionalDistrict {
             }
             lngPath.next();
         }
-
         Feature featureFinal = new Feature();
         org.geojson.Polygon polyFinal = new org.geojson.Polygon();
         polyFinal.setExteriorRing(lngFinal);

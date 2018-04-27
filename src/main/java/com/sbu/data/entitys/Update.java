@@ -3,7 +3,7 @@ import java.util.List;
 
 public class Update {
     List<Move> moves;
-    float compactness;
+    double compactness;
     double populationDeviation;
     boolean finished;
 
@@ -29,11 +29,11 @@ public class Update {
         this.moves = moves;
     }
 
-    public float getCompactness() {
+    public double getCompactness() {
         return compactness;
     }
 
-    public void setCompactness(float compactness) {
+    public void setCompactness(double compactness) {
         this.compactness = compactness;
     }
 

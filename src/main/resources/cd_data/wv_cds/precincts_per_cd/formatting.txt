@@ -1,0 +1,2 @@
+Each file is a 1-indexed list, based on the index of the feature for the polling district 
+in the full geojson for West Virginia

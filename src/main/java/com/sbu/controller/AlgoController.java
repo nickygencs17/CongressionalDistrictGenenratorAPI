@@ -28,13 +28,13 @@ public class AlgoController {
     @Autowired
     StateService stateService;
     UsState selectedState;
-    int pcoefficient;
+    float populationDeviation;
     int ccoefficient;
     int fcoefficient;
     @RequestMapping(method = RequestMethod.GET)
-    Response getStartAlgo(@RequestParam("state") String stateName, @RequestParam("pcoefficient") int pcoefficient,
+    Response getStartAlgo(@RequestParam("state") String stateName, @RequestParam("populationDeviation") float populationDeviation,
                           @RequestParam("ccoefficient") int ccoefficient, @RequestParam("fcoefficient") int fcoefficient) {
-        this.pcoefficient = pcoefficient;
+        this.populationDeviation = populationDeviation;
         this.ccoefficient = ccoefficient;
         this.fcoefficient = fcoefficient;
         selectedState = stateService.getStatebyId(stateName);
@@ -43,7 +43,7 @@ public class AlgoController {
 
     @RequestMapping(value = "/update",method = RequestMethod.GET)
     Response getUpdate() {
-        Update update = algoService.startAlgorithm(selectedState, pcoefficient, ccoefficient, fcoefficient);
+        Update update = algoService.startAlgorithm(selectedState, populationDeviation, ccoefficient, fcoefficient);
         return build200(update);
     }
 }
