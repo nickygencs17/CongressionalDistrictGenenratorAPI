@@ -172,12 +172,20 @@ public class UsState {
     }
 
     public void connectPrecinctDependencies(Precinct currentPrecinct) throws IOException {
+        if(currentPrecinct.isIs_inner()) return;
         String neighborPrecinctIds = currentPrecinct.getNeighbor_precincts();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode nodes = mapper.readTree(neighborPrecinctIds);
         for(int j = 0; j < nodes.size(); j++) {
             Precinct neighbor = precincts.get(nodes.get(j).asText());
             currentPrecinct.addNeighborPrecinct(neighbor);
+        }
+        String innerPrecinctIds = currentPrecinct.getInner_precincts();
+        mapper = new ObjectMapper();
+        nodes = mapper.readTree(innerPrecinctIds);
+        for(int j = 0; j < nodes.size(); j++) {
+            Precinct innerPrecinct = precincts.get(nodes.get(j).asText());
+            currentPrecinct.addInnerPrecinct(innerPrecinct);
         }
     }
 

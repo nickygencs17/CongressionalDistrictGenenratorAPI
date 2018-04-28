@@ -141,7 +141,7 @@ public class CongressionalDistrict {
     }
 
     public double getCompactness() {
-        double r = Math.sqrt(area/Math.PI);
+        double r = Math.sqrt((area / 2589988)/Math.PI);
         double equalAreaPerimeter = 2 * Math.PI * r;
         double perimeter = getPerimeter();
         double score = 1 / (perimeter/equalAreaPerimeter);
@@ -209,6 +209,12 @@ public class CongressionalDistrict {
     public void addPrecinct(Precinct precinct, boolean updateAreaObj) {
         precinct.setCongress_id(this.congress_id);
         this.precinctHashSet.add(precinct);
+        Iterator<Precinct> iterator = precinct.getInnerPrecinctSet().iterator();
+        while(iterator.hasNext()) {
+            Precinct innerPrecinct = iterator.next();
+            innerPrecinct.setCongress_id(this.congress_id);
+            this.precinctHashSet.add(innerPrecinct);
+        }
         this.population += precinct.getPopulation();
         if(updateAreaObj) updateAreaObject(precinct.getAreaObject(), true);
         updateArea(precinct.getArea(), true);
@@ -217,6 +223,11 @@ public class CongressionalDistrict {
     public void removePrecinct(Precinct precinct) {
         if(precinctHashSet.contains(precinct)) {
             precinctHashSet.remove(precinct);
+            Iterator<Precinct> iterator = precinct.getInnerPrecinctSet().iterator();
+            while(iterator.hasNext()) {
+                Precinct innerPrecinct = iterator.next();
+                this.precinctHashSet.remove(innerPrecinct);
+            }
             this.population -= precinct.getPopulation();
             updateAreaObject(precinct.getAreaObject(), false);
             updateArea(precinct.getArea(), false);
@@ -259,8 +270,21 @@ public class CongressionalDistrict {
         }
         List<LngLatAlt> points = ((Polygon)border.getGeometry()).getExteriorRing();
         double perimeter = 0;
+        double latMiles, lngMiles;
+        if(this.state_id.equalsIgnoreCase(Constants.ARKANSAS)){
+            latMiles=68.935125;
+            lngMiles=56.723705;
+        }
+        else if(this.state_id.equalsIgnoreCase(Constants.INDIANA)){
+            latMiles=68.993567;
+            lngMiles=53.061157;
+        }
+        else{
+            latMiles=68.969859;
+            lngMiles=54.576432;
+        }
         for(int i = 0; i < points.size()-1; i++){
-            perimeter += Math.sqrt(Math.pow(points.get(i+1).getLongitude()-points.get(i).getLongitude(), 2) + Math.pow(points.get(i+1).getLatitude()-points.get(i).getLatitude(), 2));
+            perimeter += Math.sqrt(Math.pow(lngMiles*(points.get(i+1).getLongitude()-points.get(i).getLongitude()), 2) + Math.pow(latMiles*(points.get(i+1).getLatitude()-points.get(i).getLatitude()), 2));
         }
         return perimeter;
     }

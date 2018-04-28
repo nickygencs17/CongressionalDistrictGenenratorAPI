@@ -36,6 +36,9 @@ public class Precinct {
     String neighbor_precincts;
 
     @NotNull
+    String inner_precincts;
+
+    @NotNull
     float d_leaning;
 
     @NotNull
@@ -62,13 +65,21 @@ public class Precinct {
     @NotNull
     float compactness;
 
+    @NotNull
+    boolean is_inner;
+
     @Transient
     HashSet<Precinct> neighborPrecinctSet = new HashSet<>();
 
     @Transient
+    HashSet<Precinct> innerPrecinctSet = new HashSet<>();
+
+    @Transient
     Area areaObject;
 
-    public Precinct(String state_id, String congress_id, String precinct_id, String neighbor_precincts, float d_leaning, float r_leaning, long population, String precinct_boundaries, String precinct_name, String geo_id, float perimeter, float area, float compactness) {
+    public Precinct(String state_id, String congress_id, String precinct_id, String neighbor_precincts, float d_leaning,
+                    float r_leaning, long population, String precinct_boundaries, String precinct_name,
+                    String geo_id, float perimeter, float area, float compactness, String inner_precincts, boolean is_inner) {
         this.state_id = state_id;
         this.congress_id = congress_id;
         this.precinct_id = precinct_id;
@@ -82,6 +93,8 @@ public class Precinct {
         this.perimeter = perimeter;
         this.area = area;
         this.compactness = compactness;
+        this.inner_precincts = inner_precincts;
+        this.is_inner = is_inner;
     }
 
     public Precinct() {
@@ -187,6 +200,30 @@ public class Precinct {
         return compactness;
     }
 
+    public boolean isIs_inner() {
+        return is_inner;
+    }
+
+    public void setIs_inner(boolean is_inner) {
+        this.is_inner = is_inner;
+    }
+
+    public String getInner_precincts() {
+        return inner_precincts;
+    }
+
+    public void setInner_precincts(String inner_precincts) {
+        this.inner_precincts = inner_precincts;
+    }
+
+    public HashSet<Precinct> getInnerPrecinctSet() {
+        return innerPrecinctSet;
+    }
+
+    public void setInnerPrecinctSet(HashSet<Precinct> innerPrecinctSet) {
+        this.innerPrecinctSet = innerPrecinctSet;
+    }
+
     public void setCompactness(float compactness) {
         this.compactness = compactness;
     }
@@ -202,12 +239,18 @@ public class Precinct {
         neighborPrecinctSet.add(precinct);
     }
 
+    public void addInnerPrecinct(Precinct precinct) {
+        innerPrecinctSet.add(precinct);
+        this.area += precinct.getArea();
+        this.population += precinct.getPopulation();
+    }
+
     public Area getAreaObject() {
         return areaObject;
     }
 
     public void createArea(String type) throws IOException {
-
+        if(this.is_inner) return;
         String dir = System.getProperty("user.dir");
         FileReader reader = new FileReader(dir + "/src/main/resources/" + this.precinct_boundaries);
         Feature location = new ObjectMapper().readValue(reader, Feature.class);
