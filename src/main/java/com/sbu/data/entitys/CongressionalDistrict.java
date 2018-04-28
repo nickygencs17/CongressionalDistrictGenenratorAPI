@@ -56,7 +56,7 @@ public class CongressionalDistrict {
     int in_use;
 
     @NotNull
-    float compactness;
+    double compactness;
 
     @NotNull
     String boundaries;
@@ -141,15 +141,18 @@ public class CongressionalDistrict {
     }
 
     public double getCompactness() {
+        return this.compactness;
+    }
+
+    public void setCompactness(double compactness) {
+        this.compactness = compactness;
+    }
+
+    public double calculateCompactness() {
         double r = Math.sqrt((area / 2589988)/Math.PI);
         double equalAreaPerimeter = 2 * Math.PI * r;
         double perimeter = getPerimeter();
-        double score = 1 / (perimeter/equalAreaPerimeter);
-        return score;
-    }
-
-    public void setCompactness(float compactness) {
-        this.compactness = compactness;
+        return 1 / (perimeter/equalAreaPerimeter);
     }
 
     public boolean isContiguous(Precinct movePrecinct) {
