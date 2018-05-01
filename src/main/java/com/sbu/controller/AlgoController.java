@@ -1,5 +1,6 @@
 package com.sbu.controller;
 
+import com.sbu.data.AppUserRepository;
 import com.sbu.data.entitys.AppUser;
 import com.sbu.data.entitys.Update;
 import com.sbu.data.entitys.UsState;
@@ -26,6 +27,9 @@ public class AlgoController {
     AppUserService appUserService;
 
     @Autowired
+    AppUserRepository appUserRepository;
+
+    @Autowired
     StateService stateService;
     UsState selectedState;
     float populationDeviation;
@@ -43,6 +47,7 @@ public class AlgoController {
         appUser.setPopulation_coefficient(populationDeviation);
         appUser.setCompactness_coefficient(ccoefficient);
         appUser.setFairness_coefficient(fcoefficient);
+        appUserRepository.save(appUser);
 
         this.populationDeviation = populationDeviation;
         this.ccoefficient = ccoefficient;
