@@ -282,7 +282,7 @@ public class CongressionalDistrict {
     }
 
     public void createArea(String type) throws IOException {
-        FileReader reader = new FileReader(Constants.USER_DIR + Constants.RESOURCES + this.boundaries);
+        FileReader reader = new FileReader(System.getProperty(Constants.USER_DIR) + Constants.RESOURCES + this.boundaries);
         Feature location = new ObjectMapper().readValue(reader, Feature.class);
         List<LngLatAlt> locationLngLatAlt;
         if (type.equalsIgnoreCase(Constants.CD)) {
