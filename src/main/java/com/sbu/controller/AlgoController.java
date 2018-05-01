@@ -48,7 +48,6 @@ public class AlgoController {
         appUser.setCompactness_coefficient(ccoefficient);
         appUser.setFairness_coefficient(fcoefficient);
         appUserRepository.save(appUser);
-
         this.populationDeviation = populationDeviation;
         this.ccoefficient = ccoefficient;
         this.fcoefficient = fcoefficient;
