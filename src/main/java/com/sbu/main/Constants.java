@@ -1,5 +1,6 @@
 package com.sbu.main;
 
+import org.json.simple.JSONObject;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -49,7 +50,12 @@ public class Constants {
             VD_RESOURCES = "/src/main/resources/individual_vtds",
             VD_SUFFIX = "_vtd",
             GEOJSON = ".geojson",
-            COMP_COEF = "compactness_coefficient";
+            COMP_COEF = "compactness_coefficient",
+            LOGIN_SUCCESS = "success",
+            MESSAGE = "message",
+            LOGIN_SUCESS_MESSAGE = "Login Successful",
+            ROLES = "roles";
+
 
     public static final double AR_LAT = 68.935125;
     public static final double AR_LNG = 56.723705;

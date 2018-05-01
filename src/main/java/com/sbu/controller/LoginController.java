@@ -1,6 +1,7 @@
 package com.sbu.controller;
 
 import com.sbu.exceptions.UnauthorizedException;
+import com.sbu.main.Constants;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,6 +23,7 @@ import static com.sbu.utils.ResponseUtil.build200;
 
 @RestController
 @CrossOrigin
+@SuppressWarnings("Duplicates")
 public class LoginController {
 
     private static final Logger logger = Logger.getLogger(LoginController.class.getName());
@@ -32,6 +34,7 @@ public class LoginController {
         this.userManager = inMemoryUserDetailsManager;
     }
 
+
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public Response login() throws UnauthorizedException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -41,9 +44,9 @@ public class LoginController {
         roles.forEach((GrantedAuthority ga) -> roleNames.add(ga.getAuthority()));
         System.out.println("Attempting to login user: " + username + " with roles: " + roleNames);
         JSONObject response = new JSONObject();
-        response.put("success", true);
-        response.put("message", "Login Successful");
-        response.put("roles", roleNames);
+        response.put(Constants.LOGIN_SUCCESS, true);
+        response.put(Constants.MESSAGE, Constants.LOGIN_SUCESS_MESSAGE);
+        response.put(Constants.ROLES, roleNames);
         return build200(response);
     }
 
