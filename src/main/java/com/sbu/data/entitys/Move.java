@@ -7,15 +7,17 @@ public class Move {
     String movingPrecinctId;
     String geoId;
     String colorChange;
+    double compactness;
 
     public Move(String stateId, String originCongressionalDistrictId, String targetCongressionalDistrictId,
-                String movingPrecinctId, String geoId, String colorChange) {
+                String movingPrecinctId, String geoId, String colorChange, double compactness) {
         this.stateId = stateId;
         this.originCongressionalDistrictId = originCongressionalDistrictId;
         this.targetCongressionalDistrictId = targetCongressionalDistrictId;
         this.movingPrecinctId = movingPrecinctId;
         this.geoId = geoId;
         this.colorChange = colorChange;
+        this.compactness = compactness;
     }
 
     public String getStateId() {
@@ -64,5 +66,13 @@ public class Move {
 
     public void setGeoId(String geoId) {
         this.geoId = geoId;
+    }
+
+    public double getCompactness() {
+        return compactness;
+    }
+
+    public void setCompactness(double compactness) {
+        this.compactness = compactness;
     }
 }

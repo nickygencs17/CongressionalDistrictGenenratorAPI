@@ -41,7 +41,8 @@ public class ResponseUtil {
 
     }
 
-    public static Response build409(){ return Response.status(409).entity(Constants.USER_EXISTS).build();
+    public static Response build409() {
+        return Response.status(409).entity(Constants.USER_EXISTS).build();
     }
 
 

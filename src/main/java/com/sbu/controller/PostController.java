@@ -1,4 +1,5 @@
 package com.sbu.controller;
+
 import com.sbu.data.entitys.BlogPost;
 import com.sbu.data.entitys.Comment;
 import com.sbu.services.PostService;
@@ -31,28 +32,28 @@ public class PostController {
     }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
-    Response getAllPosts(){
+    Response getAllPosts() {
         return build200(postService.getAllPosts());
     }
 
-    @RequestMapping(value = "/id/{id}",method = RequestMethod.GET)
-    Response getPostByID(@PathVariable(value="id") String id){
+    @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
+    Response getPostByID(@PathVariable(value = "id") String id) {
         return build200(postService.getPostById(id));
     }
 
-    @RequestMapping(value = "/comment",method = RequestMethod.POST)
-    Response postComment(@RequestBody @Valid Comment comment){
+    @RequestMapping(value = "/comment", method = RequestMethod.POST)
+    Response postComment(@RequestBody @Valid Comment comment) {
         return build201(postService.addComment(comment));
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    Response postNewPost(@RequestBody @Valid BlogPost post){
+    Response postNewPost(@RequestBody @Valid BlogPost post) {
         return build201(postService.addPost(post));
     }
 
     private boolean handleAdminCall() {
         String requesting_username = SecurityContextHolder.getContext().getAuthentication().getName();
-        if(!checkIfUserIsAdmin(requesting_username,userManager)){
+        if (!checkIfUserIsAdmin(requesting_username, userManager)) {
             return true;
         }
         return false;

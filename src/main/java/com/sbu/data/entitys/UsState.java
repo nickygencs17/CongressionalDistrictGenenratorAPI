@@ -1,4 +1,5 @@
 package com.sbu.data.entitys;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sbu.main.Constants;
@@ -6,9 +7,7 @@ import com.sbu.main.Constants;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 @Entity
 @Table(name = "us_state")
@@ -149,7 +148,7 @@ public class UsState {
     public void setCongressionalDistrictPrecincts(HashMap<String, Precinct> precincts) throws IOException {
         this.precincts = precincts;
         String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
-        for(String key: keys) {
+        for (String key : keys) {
             CongressionalDistrict district = congressionalDistricts.get(key);
             district.setPopulation(0);
             district.createArea(Constants.CD);
@@ -162,7 +161,7 @@ public class UsState {
         String precinctsIds = district.getPrecincts();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode nodes = mapper.readTree(precinctsIds);
-        for(int i = 0; i < nodes.size(); i++) {
+        for (int i = 0; i < nodes.size(); i++) {
             String precinctId = nodes.get(i).asText();
             Precinct currentPrecinct = precincts.get(precinctId);
             currentPrecinct.createArea(Constants.VD);
@@ -172,18 +171,18 @@ public class UsState {
     }
 
     public void connectPrecinctDependencies(Precinct currentPrecinct) throws IOException {
-        if(currentPrecinct.isIs_inner()) return;
+        if (currentPrecinct.isIs_inner()) return;
         String neighborPrecinctIds = currentPrecinct.getNeighbor_precincts();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode nodes = mapper.readTree(neighborPrecinctIds);
-        for(int j = 0; j < nodes.size(); j++) {
+        for (int j = 0; j < nodes.size(); j++) {
             Precinct neighbor = precincts.get(nodes.get(j).asText());
             currentPrecinct.addNeighborPrecinct(neighbor);
         }
         String innerPrecinctIds = currentPrecinct.getInner_precincts();
         mapper = new ObjectMapper();
         nodes = mapper.readTree(innerPrecinctIds);
-        for(int j = 0; j < nodes.size(); j++) {
+        for (int j = 0; j < nodes.size(); j++) {
             Precinct innerPrecinct = precincts.get(nodes.get(j).asText());
             currentPrecinct.addInnerPrecinct(innerPrecinct);
         }
@@ -204,7 +203,7 @@ public class UsState {
     public double calculateCompactness() {
         String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
         double totalCompactness = 0;
-        for(int i = 0; i < keys.length; i++) {
+        for (int i = 0; i < keys.length; i++) {
             totalCompactness += congressionalDistricts.get(keys[i]).calculateCompactness();
         }
         return totalCompactness / keys.length;
@@ -215,22 +214,28 @@ public class UsState {
         long highestPopulation = congressionalDistricts.get(keys[0]).getPopulation();
         long lowestPopulation = highestPopulation;
         long totalPopulation = 0;
-        for(int i = 0; i < keys.length; i++) {
+        for (int i = 0; i < keys.length; i++) {
             long population = congressionalDistricts.get(keys[i]).getPopulation();
             totalPopulation += population;
             highestPopulation = Long.max(highestPopulation, population);
             lowestPopulation = Long.min(lowestPopulation, population);
         }
-        this.setPopulationDeviation(((double) (highestPopulation - lowestPopulation) / (double)totalPopulation) * 100);
+        this.setPopulationDeviation(((double) (highestPopulation - lowestPopulation) / (double) totalPopulation) * 100);
         return this.getPopulationDeviation();
     }
 
     public double calculatePoliticalFairness() {
-        return 0;
+        String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
+        double efficiencyGap = 0;
+        for (int i = 0; i < keys.length; i++) {
+            efficiencyGap += congressionalDistricts.get(keys[i]).calculateFairness();
+        }
+        efficiencyGap /= keys.length;
+        return efficiencyGap;
     }
 
     public double calculateObjective(int cCoefficient, int fCoefficient) {
-        return    cCoefficient * calculateCompactness()
+        return cCoefficient * calculateCompactness()
                 + fCoefficient * calculatePoliticalFairness();
     }
 

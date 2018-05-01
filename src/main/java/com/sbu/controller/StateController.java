@@ -1,4 +1,5 @@
 package com.sbu.controller;
+
 import com.sbu.main.Constants;
 import com.sbu.services.StateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,60 +18,60 @@ public class StateController {
     @Autowired
     StateService stateService;
 
-    @RequestMapping(value = "/congressional/{id}",method = RequestMethod.GET)
-    Response getCongressionalGeo(@PathVariable(value="id") String id){
-        if(!checkEagleState(id)){
+    @RequestMapping(value = "/congressional/{id}", method = RequestMethod.GET)
+    Response getCongressionalGeo(@PathVariable(value = "id") String id) {
+        if (!checkEagleState(id)) {
             return build400(Constants.NOT_EAGLE_STATE);
         }
-        return build200( stateService.getBoundaries(Constants.CONGRESS,id));
+        return build200(stateService.getBoundaries(Constants.CONGRESS, id));
     }
 
-    @RequestMapping(value = "/upper/{id}",method = RequestMethod.GET)
-    Response getStateLegistaltiveGeo(@PathVariable(value="id") String id){
-        if(!checkEagleState(id)){
+    @RequestMapping(value = "/upper/{id}", method = RequestMethod.GET)
+    Response getStateLegistaltiveGeo(@PathVariable(value = "id") String id) {
+        if (!checkEagleState(id)) {
             return build400(Constants.NOT_EAGLE_STATE);
         }
-        return build200( stateService.getBoundaries(Constants.UPPER,id));
+        return build200(stateService.getBoundaries(Constants.UPPER, id));
     }
 
-    @RequestMapping(value = "/lower/{id}",method = RequestMethod.GET)
-    Response getSenateGeo(@PathVariable(value="id") String id){
-        if(!checkEagleState(id)){
+    @RequestMapping(value = "/lower/{id}", method = RequestMethod.GET)
+    Response getSenateGeo(@PathVariable(value = "id") String id) {
+        if (!checkEagleState(id)) {
             return build400(Constants.NOT_EAGLE_STATE);
         }
-        return build200( stateService.getBoundaries(Constants.LOWER,id));
+        return build200(stateService.getBoundaries(Constants.LOWER, id));
     }
 
-    @RequestMapping(value = "/{id}",method = RequestMethod.GET)
-    Response getStateBoundriesGeo(@PathVariable(value="id") String id){
-        if(!checkEagleState(id)){
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    Response getStateBoundriesGeo(@PathVariable(value = "id") String id) {
+        if (!checkEagleState(id)) {
             return build400(Constants.NOT_EAGLE_STATE);
         }
-        return build200(stateService.getBoundaries(Constants.STATE,id));
+        return build200(stateService.getBoundaries(Constants.STATE, id));
     }
 
-    @RequestMapping(value = "/sateInfo/{id}",method = RequestMethod.GET)
-    Response getStateInfo(@PathVariable(value="id") String id){
-        if(!checkEagleState(id)){
+    @RequestMapping(value = "/sateInfo/{id}", method = RequestMethod.GET)
+    Response getStateInfo(@PathVariable(value = "id") String id) {
+        if (!checkEagleState(id)) {
             return build400(Constants.NOT_EAGLE_STATE);
         }
         //TODO: this one....
         return build200(stateService.getStateInfo(id));
     }
 
-    @RequestMapping(value = "/electionInfo/{id}",method = RequestMethod.GET)
-    Response getElectionInfo(@PathVariable(value="id") String id){
-        if(!checkEagleState(id)){
+    @RequestMapping(value = "/electionInfo/{id}", method = RequestMethod.GET)
+    Response getElectionInfo(@PathVariable(value = "id") String id) {
+        if (!checkEagleState(id)) {
             return build400(Constants.NOT_EAGLE_STATE);
         }
         //TODO: and this one....
         return build200(stateService.getElectionInfo(id));
     }
 
-    public boolean checkEagleState(String state_id){
-        if(state_id.toUpperCase().equals(Constants.WEST_VIRGINA)
-                ||state_id.toUpperCase().equals(Constants.INDIANA)
-                ||state_id.toUpperCase().equals(Constants.ARKANSAS)){
+    public boolean checkEagleState(String state_id) {
+        if (state_id.toUpperCase().equals(Constants.WEST_VIRGINA)
+                || state_id.toUpperCase().equals(Constants.INDIANA)
+                || state_id.toUpperCase().equals(Constants.ARKANSAS)) {
             return true;
         }
         return false;

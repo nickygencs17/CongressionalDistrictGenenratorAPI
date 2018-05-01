@@ -4,16 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sbu.main.Constants;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
-import org.geojson.MultiPolygon;
 import org.geojson.Polygon;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -75,14 +74,16 @@ public class CongressionalDistrict {
         this.boundaries = boundaries;
     }
 
+    public CongressionalDistrict() {
+    }
 
     public String getState_id() {
         return state_id;
     }
 
-    public CongressionalDistrict() {
+    public void setState_id(String state_id) {
+        this.state_id = state_id;
     }
-
 
     public boolean in_use() {
         return in_use == 1;
@@ -90,10 +91,6 @@ public class CongressionalDistrict {
 
     public void setIn_use(int in_use) {
         this.in_use = in_use;
-    }
-
-    public void setState_id(String state_id) {
-        this.state_id = state_id;
     }
 
     public String getCongress_id() {
@@ -106,7 +103,6 @@ public class CongressionalDistrict {
 
 
     public String getPrecincts() {
-
         return precincts;
     }
 
@@ -115,13 +111,11 @@ public class CongressionalDistrict {
     }
 
     public HashSet<Precinct> getBoundaryPrecinctHashSet() {
-
         return boundaryPrecinctHashSet;
     }
 
     public void setBoundaryPrecinctHashSet(HashSet<Precinct> boundaryPrecinctHashSet) {
         this.boundaryPrecinctHashSet = boundaryPrecinctHashSet;
-
     }
 
     public long getPopulation() {
@@ -149,58 +143,55 @@ public class CongressionalDistrict {
     }
 
     public double calculateCompactness() {
-        double r = Math.sqrt((area / 2589988)/Math.PI);
+        double r = Math.sqrt((area / 2589988) / Math.PI);
         double equalAreaPerimeter = 2 * Math.PI * r;
         double perimeter = getPerimeter();
-        return 1 / (perimeter/equalAreaPerimeter);
+        return 1 / (perimeter / equalAreaPerimeter);
     }
 
     public boolean isContiguous(Precinct movePrecinct) {
-
         Iterator<Precinct> iterator = movePrecinct.getNeighborPrecinctSet().iterator();
         ArrayList<Precinct> finalSet = new ArrayList<>();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             Precinct currentPrecinct = iterator.next();
-            if(!currentPrecinct.getCongress_id().equals(this.congress_id)) continue;
+            if (!currentPrecinct.getCongress_id().equals(this.congress_id)) continue;
             finalSet.add(currentPrecinct);
         }
         HashMap<String, Boolean> pathChecked = new HashMap<>();
-        for(int i = 0; i < finalSet.size(); i++) {
-            for(int j = 0; j < finalSet.size(); j++) {
-                if(pathChecked.containsKey(pathChecked.get(finalSet.get(i).getPrecinct_id() + finalSet.get(j).getPrecinct_id()))) continue;
-                if(i == j) continue;
+        for (int i = 0; i < finalSet.size(); i++) {
+            for (int j = 0; j < finalSet.size(); j++) {
+                if (pathChecked.containsKey(pathChecked.get(finalSet.get(i).getPrecinct_id() + finalSet.get(j).getPrecinct_id())))
+                    continue;
+                if (i == j) continue;
                 pathChecked.put(finalSet.get(i).getPrecinct_id() + finalSet.get(j).getPrecinct_id(), true);
                 pathChecked.put(finalSet.get(j).getPrecinct_id() + finalSet.get(i).getPrecinct_id(), true);
-                if(!isReachable(finalSet.get(i), finalSet.get(j))) return false;
+                if (!isReachable(finalSet.get(i), finalSet.get(j))) return false;
             }
         }
         return true;
     }
 
     public boolean isReachable(Precinct start, Precinct end) {
-        LinkedList<Integer>temp;
+        LinkedList<Integer> temp;
         HashMap<String, Boolean> visitedMap = new HashMap<>();
         Iterator<Precinct> iterator = precinctHashSet.iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             visitedMap.put(iterator.next().getPrecinct_id(), false);
         }
         LinkedList<Precinct> queue = new LinkedList<>();
         visitedMap.put(start.getPrecinct_id(), true);
         queue.add(start);
         Iterator<Precinct> neighborsIterator;
-        while (queue.size()!=0)
-        {
+        while (queue.size() != 0) {
             start = queue.poll();
             Precinct next;
             neighborsIterator = start.getNeighborPrecinctSet().iterator();
-            while (neighborsIterator.hasNext())
-            {
+            while (neighborsIterator.hasNext()) {
                 next = neighborsIterator.next();
-                if(!next.getCongress_id().equals(this.congress_id)) continue;
+                if (!next.getCongress_id().equals(this.congress_id)) continue;
                 if (next.getPrecinct_id().equals(end.getPrecinct_id()))
                     return true;
-                if (!visitedMap.get(next.getPrecinct_id()))
-                {
+                if (!visitedMap.get(next.getPrecinct_id())) {
                     visitedMap.put(next.getPrecinct_id(), true);
                     queue.add(next);
                 }
@@ -213,21 +204,21 @@ public class CongressionalDistrict {
         precinct.setCongress_id(this.congress_id);
         this.precinctHashSet.add(precinct);
         Iterator<Precinct> iterator = precinct.getInnerPrecinctSet().iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             Precinct innerPrecinct = iterator.next();
             innerPrecinct.setCongress_id(this.congress_id);
             this.precinctHashSet.add(innerPrecinct);
         }
         this.population += precinct.getPopulation();
-        if(updateAreaObj) updateAreaObject(precinct.getAreaObject(), true);
+        if (updateAreaObj) updateAreaObject(precinct.getAreaObject(), true);
         updateArea(precinct.getArea(), true);
     }
 
     public void removePrecinct(Precinct precinct) {
-        if(precinctHashSet.contains(precinct)) {
+        if (precinctHashSet.contains(precinct)) {
             precinctHashSet.remove(precinct);
             Iterator<Precinct> iterator = precinct.getInnerPrecinctSet().iterator();
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 Precinct innerPrecinct = iterator.next();
                 this.precinctHashSet.remove(innerPrecinct);
             }
@@ -248,11 +239,11 @@ public class CongressionalDistrict {
     public void updateBoundaryPrecincts() {
         boundaryPrecinctHashSet.clear();
         Iterator<Precinct> precinctIterator = this.precinctHashSet.iterator();
-        while(precinctIterator.hasNext()) {
+        while (precinctIterator.hasNext()) {
             Precinct currentPrecinct = precinctIterator.next();
             Iterator<Precinct> neighborIterator = currentPrecinct.getNeighborPrecinctSet().iterator();
-            while(neighborIterator.hasNext()) {
-                if(!neighborIterator.next().getCongress_id().equals(currentPrecinct.getCongress_id())) {
+            while (neighborIterator.hasNext()) {
+                if (!neighborIterator.next().getCongress_id().equals(currentPrecinct.getCongress_id())) {
                     boundaryPrecinctHashSet.add(currentPrecinct);
                     break;
                 }
@@ -271,23 +262,21 @@ public class CongressionalDistrict {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        List<LngLatAlt> points = ((Polygon)border.getGeometry()).getExteriorRing();
+        List<LngLatAlt> points = ((Polygon) border.getGeometry()).getExteriorRing();
         double perimeter = 0;
         double latMiles, lngMiles;
-        if(this.state_id.equalsIgnoreCase(Constants.ARKANSAS)){
-            latMiles=68.935125;
-            lngMiles=56.723705;
+        if (this.state_id.equalsIgnoreCase(Constants.ARKANSAS)) {
+            latMiles = 68.935125;
+            lngMiles = 56.723705;
+        } else if (this.state_id.equalsIgnoreCase(Constants.INDIANA)) {
+            latMiles = 68.993567;
+            lngMiles = 53.061157;
+        } else {
+            latMiles = 68.969859;
+            lngMiles = 54.576432;
         }
-        else if(this.state_id.equalsIgnoreCase(Constants.INDIANA)){
-            latMiles=68.993567;
-            lngMiles=53.061157;
-        }
-        else{
-            latMiles=68.969859;
-            lngMiles=54.576432;
-        }
-        for(int i = 0; i < points.size()-1; i++){
-            perimeter += Math.sqrt(Math.pow(lngMiles*(points.get(i+1).getLongitude()-points.get(i).getLongitude()), 2) + Math.pow(latMiles*(points.get(i+1).getLatitude()-points.get(i).getLatitude()), 2));
+        for (int i = 0; i < points.size() - 1; i++) {
+            perimeter += Math.sqrt(Math.pow(lngMiles * (points.get(i + 1).getLongitude() - points.get(i).getLongitude()), 2) + Math.pow(latMiles * (points.get(i + 1).getLatitude() - points.get(i).getLatitude()), 2));
         }
         return perimeter;
     }
@@ -298,21 +287,20 @@ public class CongressionalDistrict {
         FileReader reader = new FileReader(dir + "/src/main/resources/" + this.boundaries);
         Feature location = new ObjectMapper().readValue(reader, Feature.class);
         List<LngLatAlt> locationLngLatAlt;
-        if(type.equalsIgnoreCase(Constants.CD)){
-            locationLngLatAlt = ((Polygon)location.getGeometry()).getExteriorRing();
-        }
-        else{
+        if (type.equalsIgnoreCase(Constants.CD)) {
+            locationLngLatAlt = ((Polygon) location.getGeometry()).getExteriorRing();
+        } else {
             locationLngLatAlt = new ArrayList<>();
         }
         java.awt.Polygon locationPolygon = new java.awt.Polygon();
-        for(LngLatAlt point: locationLngLatAlt){
-            locationPolygon.addPoint((int)(point.getLongitude()*1000000), (int)(point.getLatitude()*1000000));
+        for (LngLatAlt point : locationLngLatAlt) {
+            locationPolygon.addPoint((int) (point.getLongitude() * 1000000), (int) (point.getLatitude() * 1000000));
         }
         this.areaObject = new Area(locationPolygon);
     }
 
     public void updateAreaObject(Area precinctArea, boolean additon) {
-        if(additon) this.areaObject.add(precinctArea);
+        if (additon) this.areaObject.add(precinctArea);
         else this.areaObject.subtract(precinctArea);
     }
 
@@ -320,32 +308,36 @@ public class CongressionalDistrict {
         this.area = (additon) ? area + precinctArea : area - precinctArea;
     }
 
-    public Area getAreaObject() { return this.areaObject; }
+    public Area getAreaObject() {
+        return this.areaObject;
+    }
 
-    public float getArea() { return this.area; }
+    public float getArea() {
+        return this.area;
+    }
 
     public Feature createFeature(Area toConvert) throws IOException {
 
         PathIterator lngPath = toConvert.getPathIterator(null);
         List<LngLatAlt> lngFinal = new ArrayList<>();
-        while(!lngPath.isDone()){
+        while (!lngPath.isDone()) {
             float[] point = new float[6];
             int numPoints = lngPath.currentSegment(point);
-            switch(numPoints){
+            switch (numPoints) {
                 case 0:
-                    lngFinal.add((new LngLatAlt(point[0]/1000000, point[1]/1000000)));
+                    lngFinal.add((new LngLatAlt(point[0] / 1000000, point[1] / 1000000)));
                     break;
                 case 1:
-                    lngFinal.add((new LngLatAlt(point[0]/1000000, point[1]/1000000)));
+                    lngFinal.add((new LngLatAlt(point[0] / 1000000, point[1] / 1000000)));
                     break;
                 case 2:
-                    lngFinal.add((new LngLatAlt(point[0]/1000000, point[1]/1000000)));
-                    lngFinal.add((new LngLatAlt(point[2]/1000000, point[3]/1000000)));
+                    lngFinal.add((new LngLatAlt(point[0] / 1000000, point[1] / 1000000)));
+                    lngFinal.add((new LngLatAlt(point[2] / 1000000, point[3] / 1000000)));
                     break;
                 case 3:
-                    lngFinal.add((new LngLatAlt(point[0]/1000000, point[1]/1000000)));
-                    lngFinal.add((new LngLatAlt(point[2]/1000000, point[3]/1000000)));
-                    lngFinal.add((new LngLatAlt(point[4]/1000000, point[5]/1000000)));
+                    lngFinal.add((new LngLatAlt(point[0] / 1000000, point[1] / 1000000)));
+                    lngFinal.add((new LngLatAlt(point[2] / 1000000, point[3] / 1000000)));
+                    lngFinal.add((new LngLatAlt(point[4] / 1000000, point[5] / 1000000)));
                     break;
                 default:
                     break;
@@ -357,5 +349,28 @@ public class CongressionalDistrict {
         polyFinal.setExteriorRing(lngFinal);
         featureFinal.setGeometry(polyFinal);
         return featureFinal;
+    }
+
+    public double calculateFairness() {
+        Iterator<Precinct> precinctIterator = precinctHashSet.iterator();
+        float demFloat = 0, repFloat = 0;
+        while(precinctIterator.hasNext()){
+            Precinct currentPrecinct = precinctIterator.next();
+            demFloat += currentPrecinct.getPopulation()*currentPrecinct.getD_leaning();
+            repFloat += currentPrecinct.getPopulation()*currentPrecinct.getR_leaning();
+        }
+        int demVotes = (int)demFloat;
+        int repVotes = (int)repFloat;
+        int totalVotesLosingParty, totalVotesCast, wastedVotesWinning;
+        totalVotesCast = demVotes + repVotes;
+        if(demVotes < repVotes){
+            totalVotesLosingParty = demVotes;
+            wastedVotesWinning = (int)Math.abs(repVotes - 0.5 * (totalVotesCast));
+        }
+        else{
+            totalVotesLosingParty = repVotes;
+            wastedVotesWinning = (int)Math.abs(demVotes - 0.5 * (totalVotesCast));
+        }
+        return (1 - ((double) (Math.abs(totalVotesLosingParty - wastedVotesWinning)) / totalVotesCast));
     }
 }

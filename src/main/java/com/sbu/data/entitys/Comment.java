@@ -1,4 +1,5 @@
 package com.sbu.data.entitys;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -71,12 +72,6 @@ public class Comment {
     public void setComment_time_date(String comment_time_date) {
         this.comment_time_date = comment_time_date;
     }
-
-
-
-
-
-
 
 
 }

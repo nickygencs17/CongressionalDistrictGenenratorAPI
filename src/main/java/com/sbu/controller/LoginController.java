@@ -1,4 +1,5 @@
 package com.sbu.controller;
+
 import com.sbu.exceptions.UnauthorizedException;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,8 @@ public class LoginController {
         this.userManager = inMemoryUserDetailsManager;
     }
 
-    @RequestMapping(value= "/login", method = RequestMethod.GET)
-    public Response login () throws UnauthorizedException {
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public Response login() throws UnauthorizedException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         //Auth handled in SecurityConfig we can just return 200 if we got this far
         Collection<GrantedAuthority> roles = (Collection<GrantedAuthority>) SecurityContextHolder.getContext().getAuthentication().getAuthorities();
@@ -47,7 +48,7 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-    public Response logout(){
+    public Response logout() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return build200(username);
     }

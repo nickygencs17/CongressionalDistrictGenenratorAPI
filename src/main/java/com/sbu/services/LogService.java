@@ -1,4 +1,5 @@
 package com.sbu.services;
+
 import com.sbu.data.LogRepository;
 import com.sbu.data.entitys.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ public class LogService {
 
     @Autowired
     LogRepository logRepository;
+
     public Object postLog(Log log) {
         return logRepository.save(log);
     }

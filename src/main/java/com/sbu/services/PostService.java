@@ -1,4 +1,5 @@
 package com.sbu.services;
+
 import com.sbu.data.BlogPostRepository;
 import com.sbu.data.CommentRepository;
 import com.sbu.data.entitys.BlogPost;
@@ -25,7 +26,7 @@ public class PostService {
 
     public Object addComment(Comment comment) {
         Object blog_post = blogPostRepository.findOne(Integer.parseInt(comment.getPost_id()));
-        if(blog_post==null){
+        if (blog_post == null) {
             return build404(Constants.POST_NOT_FOUND);
         }
         return commentRepository.save(comment);
@@ -33,13 +34,13 @@ public class PostService {
 
     public Object getPostById(String id) {
         Object blog_post = blogPostRepository.findOne(Integer.parseInt(id));
-        if(blog_post==null){
+        if (blog_post == null) {
             return build404(Constants.POST_NOT_FOUND);
         }
         Iterable<Comment> comments = getAllCommentsForAPost(id);
         JSONObject return_node = new JSONObject();
-        return_node.put(Constants.POST,blog_post);
-        return_node.put(Constants.COMMENTS,comments);
+        return_node.put(Constants.POST, blog_post);
+        return_node.put(Constants.COMMENTS, comments);
         return return_node;
     }
 

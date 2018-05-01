@@ -1,13 +1,10 @@
 package com.sbu.data.entitys;
-import com.fasterxml.jackson.databind.JsonNode;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sbu.main.Constants;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
 import org.geojson.MultiPolygon;
-import org.geojson.Polygon;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -200,6 +197,10 @@ public class Precinct {
         return compactness;
     }
 
+    public void setCompactness(float compactness) {
+        this.compactness = compactness;
+    }
+
     public boolean isIs_inner() {
         return is_inner;
     }
@@ -224,10 +225,6 @@ public class Precinct {
         this.innerPrecinctSet = innerPrecinctSet;
     }
 
-    public void setCompactness(float compactness) {
-        this.compactness = compactness;
-    }
-
     public HashSet<Precinct> getNeighborPrecinctSet() {
         return neighborPrecinctSet;
     }
@@ -235,6 +232,7 @@ public class Precinct {
     public void setNeighborPrecinctSet(HashSet<Precinct> neighborPrecinctSet) {
         this.neighborPrecinctSet = neighborPrecinctSet;
     }
+
     public void addNeighborPrecinct(Precinct precinct) {
         neighborPrecinctSet.add(precinct);
     }
@@ -250,20 +248,19 @@ public class Precinct {
     }
 
     public void createArea(String type) throws IOException {
-        if(this.is_inner) return;
+        if (this.is_inner) return;
         String dir = System.getProperty("user.dir");
         FileReader reader = new FileReader(dir + "/src/main/resources/" + this.precinct_boundaries);
         Feature location = new ObjectMapper().readValue(reader, Feature.class);
         List<LngLatAlt> locationLngLatAlt;
-        if(type.equalsIgnoreCase(Constants.VD)){
-            locationLngLatAlt = ((MultiPolygon)location.getGeometry()).getCoordinates().get(0).get(0);
-        }
-        else{
+        if (type.equalsIgnoreCase(Constants.VD)) {
+            locationLngLatAlt = ((MultiPolygon) location.getGeometry()).getCoordinates().get(0).get(0);
+        } else {
             locationLngLatAlt = new ArrayList<>();
         }
         java.awt.Polygon locationPolygon = new java.awt.Polygon();
-        for(LngLatAlt point: locationLngLatAlt){
-            locationPolygon.addPoint((int)(point.getLongitude()*1000000), (int)(point.getLatitude()*1000000));
+        for (LngLatAlt point : locationLngLatAlt) {
+            locationPolygon.addPoint((int) (point.getLongitude() * 1000000), (int) (point.getLatitude() * 1000000));
         }
         this.areaObject = new Area(locationPolygon);
     }
