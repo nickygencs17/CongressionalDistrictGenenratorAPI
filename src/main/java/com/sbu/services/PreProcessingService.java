@@ -27,25 +27,24 @@ public class PreProcessingService {
     @Autowired
     PrecinctRepository precinctRepository;
 
-    public boolean startPreprocessor() throws IOException {
-        List<Precinct> arVoting = precinctRepository.findByState_id(Constants.ARKANSAS);
-        List<Precinct> inVoting = precinctRepository.findByState_id(Constants.INDIANA);
-        List<Precinct> wvVoting = precinctRepository.findByState_id(Constants.WEST_VIRGINA);
-        arVoting = findAdjacency(arVoting);
-        inVoting = findAdjacency(inVoting);
-        wvVoting = findAdjacency(wvVoting);
-        arVoting = findCongress(arVoting);
-        inVoting = findCongress(inVoting);
-        wvVoting = findCongress(wvVoting);
-        //TODO: Use the border lists
-        List<Precinct> arBorders = findBorders(arVoting);
-        List<Precinct> inBorders = findBorders(inVoting);
-        List<Precinct> wvBorders = findBorders(wvVoting);
-        return true;
-    }
+    List<Precinct> arPrecincts;
+    List<Precinct> inPrecincts;
+    List<Precinct> wvPrecincts;
 
-    private List<Precinct> findCongress(List<Precinct> vds) {
-        return vds;
+    public boolean startPreprocessor() throws IOException {
+        arPrecincts = precinctRepository.findByState_id(Constants.ARKANSAS);
+        inPrecincts = precinctRepository.findByState_id(Constants.INDIANA);
+        wvPrecincts = precinctRepository.findByState_id(Constants.WEST_VIRGINA);
+
+        arPrecincts = findAdjacency(arPrecincts);
+        inPrecincts = findAdjacency(inPrecincts);
+        wvPrecincts = findAdjacency(wvPrecincts);
+
+        arPrecincts = findCongress(arPrecincts);
+        inPrecincts = findCongress(inPrecincts);
+        wvPrecincts = findCongress(wvPrecincts);
+
+        return true;
     }
 
     private List<Precinct> findBorders(List<Precinct> vds) {
@@ -73,26 +72,46 @@ public class PreProcessingService {
         return borderDistricts;
     }
 
-    private List<Precinct> findAdjacency(List<Precinct> vds) throws IOException {
-        for (Precinct vd : vds) {
-            vd.setNeighbor_precincts(Constants.ARRAY_START);
+    public List<Precinct> findCongressBorder(String state_id) {
+        List<Precinct> borderDistricts = new ArrayList<>();
+        switch (state_id) {
+            case Constants.ARKANSAS:
+                borderDistricts = findBorders(arPrecincts);
+                break;
+            case Constants.WEST_VIRGINA:
+                borderDistricts = findBorders(wvPrecincts);
+                break;
+            case Constants.INDIANA:
+                borderDistricts = findBorders(inPrecincts);
+                break;
         }
-        for (Precinct vd : vds) {
-            for (Precinct vd2 : vds) {
-                if (!(vd.getPrecinct_id().equals(vd2.getPrecinct_id())) && isAdjacent(vd, vd2)) {
-                    vd.setNeighbor_precincts(vd.getNeighbor_precincts() + "\\\"\\'" + vd2.getPrecinct_id() + "\\'\\\", ");
-                }
-            }
-            vd.setNeighbor_precincts(vd.getNeighbor_precincts().substring(0, vd.getNeighbor_precincts().length() - 2) + Constants.ARRAY_END);
-        }
-        return (List<Precinct>) precinctRepository.save(vds);
+        return borderDistricts;
     }
 
-    private boolean isAdjacent(Precinct vd1, Precinct vd2) throws IOException {
+    private List<Precinct> findAdjacency(List<Precinct> precincts) throws IOException {
+        for (Precinct precinct : precincts) {
+            precinct.setNeighbor_precincts(Constants.ARRAY_START);
+        }
+        for (Precinct precinct : precincts) {
+            for (Precinct precinct2 : precincts) {
+                if (!(precinct.getPrecinct_id().equals(precinct2.getPrecinct_id())) && isAdjacent(precinct, precinct2)) {
+                    precinct.setNeighbor_precincts(precinct.getNeighbor_precincts() + "\"\'" + precinct2.getPrecinct_id() + "\'\", ");
+                }
+            }
+            precinct.setNeighbor_precincts(precinct.getNeighbor_precincts().substring(0, precinct.getNeighbor_precincts().length() - 2) + Constants.ARRAY_END);
+        }
+        return (List<Precinct>) precinctRepository.save(precincts);
+    }
+
+    private List<Precinct> findCongress(List<Precinct> precincts) {
+        return precincts;
+    }
+
+    private boolean isAdjacent(Precinct precinct1, Precinct precinct2) throws IOException {
         System.out.println("Working Directory = " +
                 System.getProperty("user.dir"));
         JSONParser jsonParser = new JSONParser();
-        String location = "src/main/resources/individual_vtds/" + vd1.getState_id() + "_vtd/" + vd1.getPrecinct_id() + ".geojson";
+        String location = "src/main/resources/individual_vtds/" + precinct1.getState_id() + "_vtd/" + precinct1.getPrecinct_id() + ".geojson";
         JSONObject person = new JSONObject();
         try (FileReader reader = new FileReader(location)) {
             //Read JSON file
@@ -106,27 +125,28 @@ public class PreProcessingService {
             e.printStackTrace();
         }
         Feature feature1 = new ObjectMapper().readValue(person.get("type").toString(), Feature.class);
-        Feature feature2 = new ObjectMapper().readValue(vd2.getPrecinct_boundaries(), Feature.class);
-        List<List<LngLatAlt>> mpoly1 = ((MultiPolygon) feature1.getGeometry()).getCoordinates().get(0);
-        List<List<LngLatAlt>> mpoly2 = ((MultiPolygon) feature2.getGeometry()).getCoordinates().get(0);
+        Feature feature2 = new ObjectMapper().readValue(precinct2.getPrecinct_boundaries(), Feature.class);
+        List<List<LngLatAlt>> precinct1Mpoly = ((MultiPolygon) feature1.getGeometry()).getCoordinates().get(0);
+        List<List<LngLatAlt>> precinct2Mpoly = ((MultiPolygon) feature2.getGeometry()).getCoordinates().get(0);
+
         //put all polygon points in 1 array per multipolygon
-        List<LngLatAlt> points = new ArrayList<>();
-        List<LngLatAlt> points2 = new ArrayList<>();
-        for (List<LngLatAlt> poly : mpoly1) {
-            points.addAll(poly);
+        List<LngLatAlt> precinct1Points = new ArrayList<>();
+        List<LngLatAlt> precinct2Points = new ArrayList<>();
+        for (List<LngLatAlt> poly : precinct1Mpoly) {
+            precinct1Points.addAll(poly);
             //null to separate polygons
-            points.add(null);
+            precinct1Points.add(null);
         }
-        for (List<LngLatAlt> poly : mpoly2) {
-            points2.addAll(poly);
-            points2.add(null);
+        for (List<LngLatAlt> poly : precinct2Mpoly) {
+            precinct2Points.addAll(poly);
+            precinct2Points.add(null);
         }
-        for (int i = 0; i < points.size() - 1; i++) {
-            for (int j = 0; j < points2.size() - 1; j++) {
-                LngLatAlt p1 = points.get(i);
-                LngLatAlt q1 = points.get(i + 1);
-                LngLatAlt p2 = points2.get(j);
-                LngLatAlt q2 = points2.get(j + 1);
+        for (int i = 0; i < precinct1Points.size() - 1; i++) {
+            for (int j = 0; j < precinct2Points.size() - 1; j++) {
+                LngLatAlt p1 = precinct1Points.get(i);
+                LngLatAlt q1 = precinct1Points.get(i + 1);
+                LngLatAlt p2 = precinct2Points.get(j);
+                LngLatAlt q2 = precinct2Points.get(j + 1);
                 if (p1 != null && q1 != null && p2 != null && q2 != null) {
                     if (doIntersect(p1, q1, p2, q2)) {
                         return true;

@@ -3,10 +3,7 @@ package com.sbu.controller;
 import com.sbu.main.Constants;
 import com.sbu.services.PreProcessingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -29,5 +26,10 @@ public class PreProcessController {
         }
         return build400(Constants.PREPROCESS_FAIL);
 
+    }
+
+    @RequestMapping(value = "/borders", method = RequestMethod.GET)
+    Response getCongressBorders(@RequestParam("state") String stateName) throws IOException {
+        return build200(preProcessingService.findCongressBorder(stateName));
     }
 }
