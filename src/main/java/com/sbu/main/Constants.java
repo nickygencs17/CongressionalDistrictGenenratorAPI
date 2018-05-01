@@ -41,11 +41,15 @@ public class Constants {
             ZIP = "zip",
             POP_COEF = "population_coefficient",
             FAIR_COEF = "fairness_coefficient",
+            WORKING_DIRECTORY = "Working Directory = ",
             VD = "vd",
             CD = "cd",
             USER_DIR = "user.dir",
             RESOURCES = "/src/main/resources/",
-    COMP_COEF = "compactness_coefficient";
+            VD_RESOURCES = "/src/main/resources/individual_vtds",
+            VD_SUFFIX = "_vtd",
+            GEOJSON = ".geojson",
+            COMP_COEF = "compactness_coefficient";
 
     public static final double AR_LAT = 68.935125;
     public static final double AR_LNG = 56.723705;

@@ -7,13 +7,9 @@ import com.sbu.main.Constants;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
 import org.geojson.MultiPolygon;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -108,24 +104,15 @@ public class PreProcessingService {
     }
 
     private boolean isAdjacent(Precinct precinct1, Precinct precinct2) throws IOException {
-        System.out.println("Working Directory = " +
-                System.getProperty("user.dir"));
-        JSONParser jsonParser = new JSONParser();
-        String location = "src/main/resources/individual_vtds/" + precinct1.getState_id() + "_vtd/" + precinct1.getPrecinct_id() + ".geojson";
-        JSONObject person = new JSONObject();
-        try (FileReader reader = new FileReader(location)) {
-            //Read JSON file
-            Object obj = jsonParser.parse(reader);
-            person = (JSONObject) obj;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Feature feature1 = new ObjectMapper().readValue(person.get("type").toString(), Feature.class);
-        Feature feature2 = new ObjectMapper().readValue(precinct2.getPrecinct_boundaries(), Feature.class);
+        System.out.println(Constants.WORKING_DIRECTORY +
+                System.getProperty(Constants.USER_DIR));
+        String location = Constants.VD_RESOURCES + precinct1.getState_id() + Constants.VD_SUFFIX + precinct1.getPrecinct_id() + Constants.GEOJSON;
+        String location2 = Constants.VD_RESOURCES + precinct2.getState_id() + Constants.VD_SUFFIX + precinct1.getPrecinct_id() + Constants.GEOJSON;
+        FileReader reader = new FileReader(location);
+        FileReader reader2 = new FileReader(location2);
+        Feature feature1 = new ObjectMapper().readValue(reader, Feature.class);
+        Feature feature2 = new ObjectMapper().readValue(reader2, Feature.class);
+
         List<List<LngLatAlt>> precinct1Mpoly = ((MultiPolygon) feature1.getGeometry()).getCoordinates().get(0);
         List<List<LngLatAlt>> precinct2Mpoly = ((MultiPolygon) feature2.getGeometry()).getCoordinates().get(0);
 
