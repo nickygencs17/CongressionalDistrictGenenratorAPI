@@ -140,12 +140,12 @@ public class AlgoService {
                         CongressionalDistrict targetDistrict, Precinct currentPrecinct) {
         this.movesinCurrentUpdate++;
         moves.add(new Move(state.getState_id(), originDistrict.getCongress_id(), targetDistrict.getCongress_id(),
-                currentPrecinct.getPrecinct_id(), currentPrecinct.getGeo_id(), targetDistrict.getColor(), state.calculateCompactness()));
+                currentPrecinct.getPrecinct_id(), currentPrecinct.getGeo_id(), targetDistrict.getColor()));
         Iterator<Precinct> iterator = currentPrecinct.getInnerPrecinctSet().iterator();
         while (iterator.hasNext()) {
             Precinct innerPrecinct = iterator.next();
             moves.add(new Move(state.getState_id(), originDistrict.getCongress_id(), targetDistrict.getCongress_id(),
-                    innerPrecinct.getPrecinct_id(), innerPrecinct.getGeo_id(), targetDistrict.getColor(), state.calculateCompactness()));
+                    innerPrecinct.getPrecinct_id(), innerPrecinct.getGeo_id(), targetDistrict.getColor()));
             this.movesinCurrentUpdate++;
         }
     }
