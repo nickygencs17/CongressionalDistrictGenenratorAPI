@@ -234,6 +234,6 @@ public class UsState {
     }
 
     public double calculateObjective(int cCoefficient, int fCoefficient) {
-        return  cCoefficient * calculateCompactness() + fCoefficient * calculatePoliticalFairness();
+        return cCoefficient * calculateCompactness() + fCoefficient * calculatePoliticalFairness();
     }
 }

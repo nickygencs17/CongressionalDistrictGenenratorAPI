@@ -4,7 +4,6 @@ import com.sbu.data.AppUserRepository;
 import com.sbu.data.entitys.AppUser;
 import com.sbu.data.entitys.UsState;
 import com.sbu.main.Constants;
-import com.sun.jersey.core.impl.provider.entity.XMLRootObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -22,6 +21,7 @@ public class AppUserService {
     AppUserRepository appUserRepository;
 
     HashMap<String, UsState> userStateMap = new HashMap<>();
+
     public Iterable<AppUser> getAllUsers() {
         return appUserRepository.findAll();
     }
@@ -53,16 +53,16 @@ public class AppUserService {
     }
 
     public UsState getStateforUser(String username, String stateName) {
-        if(!userStateMap.containsKey(username)) return null;
+        if (!userStateMap.containsKey(username)) return null;
         UsState selectedState = userStateMap.get(username);
-        if(selectedState.getState_id().equals(stateName)) {
+        if (selectedState.getState_id().equals(stateName)) {
             return selectedState;
         }
         return null;
     }
 
     public void removeStateforUser(String username) {
-        if(userStateMap.containsKey(username)) {
+        if (userStateMap.containsKey(username)) {
             userStateMap.remove(username);
         }
     }

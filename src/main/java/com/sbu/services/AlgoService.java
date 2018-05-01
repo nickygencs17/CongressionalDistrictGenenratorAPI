@@ -3,6 +3,7 @@ package com.sbu.services;
 import com.sbu.data.entitys.*;
 import com.sbu.main.Constants;
 import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -83,8 +84,7 @@ public class AlgoService {
             resetUnChangedChecks();
             addMove(selectedState, currentCongressionalDistrict, boundarycongressionalDistrict, currentPrecinct);
             return true;
-        }
-        else {
+        } else {
             movePrecinct(boundarycongressionalDistrict, currentCongressionalDistrict, currentPrecinct);
             unChangedChecks++;
         }

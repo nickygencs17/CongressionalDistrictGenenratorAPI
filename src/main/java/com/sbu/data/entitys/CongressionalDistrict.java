@@ -352,22 +352,21 @@ public class CongressionalDistrict {
     public double calculateFairness() {
         Iterator<Precinct> precinctIterator = precinctHashSet.iterator();
         float demFloat = 0, repFloat = 0;
-        while(precinctIterator.hasNext()){
+        while (precinctIterator.hasNext()) {
             Precinct currentPrecinct = precinctIterator.next();
-            demFloat += currentPrecinct.getPopulation()*currentPrecinct.getD_leaning();
-            repFloat += currentPrecinct.getPopulation()*currentPrecinct.getR_leaning();
+            demFloat += currentPrecinct.getPopulation() * currentPrecinct.getD_leaning();
+            repFloat += currentPrecinct.getPopulation() * currentPrecinct.getR_leaning();
         }
-        int demVotes = (int)demFloat;
-        int repVotes = (int)repFloat;
+        int demVotes = (int) demFloat;
+        int repVotes = (int) repFloat;
         int totalVotesLosingParty, totalVotesCast, wastedVotesWinning;
         totalVotesCast = demVotes + repVotes;
-        if(demVotes < repVotes){
+        if (demVotes < repVotes) {
             totalVotesLosingParty = demVotes;
-            wastedVotesWinning = (int)Math.abs(repVotes - 0.5 * (totalVotesCast));
-        }
-        else{
+            wastedVotesWinning = (int) Math.abs(repVotes - 0.5 * (totalVotesCast));
+        } else {
             totalVotesLosingParty = repVotes;
-            wastedVotesWinning = (int)Math.abs(demVotes - 0.5 * (totalVotesCast));
+            wastedVotesWinning = (int) Math.abs(demVotes - 0.5 * (totalVotesCast));
         }
         return (1 - ((double) (Math.abs(totalVotesLosingParty - wastedVotesWinning)) / totalVotesCast));
     }

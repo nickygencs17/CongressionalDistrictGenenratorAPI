@@ -1,6 +1,5 @@
 package com.sbu.main;
 
-import org.json.simple.JSONObject;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

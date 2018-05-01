@@ -29,15 +29,13 @@ public class LoginController {
 
     private static final Logger logger = Logger.getLogger(LoginController.class.getName());
     private final InMemoryUserDetailsManager userManager;
+    @Autowired
+    AppUserService appUserService;
 
     @Autowired
     public LoginController(InMemoryUserDetailsManager inMemoryUserDetailsManager) {
         this.userManager = inMemoryUserDetailsManager;
     }
-
-    @Autowired
-    AppUserService appUserService;
-
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public Response login() throws UnauthorizedException {

@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+
 import javax.ws.rs.core.Response;
+
 import static com.sbu.utils.ResponseUtil.build200;
 
 @RestController
@@ -34,9 +36,9 @@ public class AlgoController {
 
     @RequestMapping(method = RequestMethod.GET)
     Response getAlgoUpdate(@RequestParam("state") String stateName,
-                          @RequestParam("populationDeviation") float populationDeviation,
-                          @RequestParam("ccoefficient") int cCoefficient,
-                          @RequestParam("fcoefficient") int fCoefficient) {
+                           @RequestParam("populationDeviation") float populationDeviation,
+                           @RequestParam("ccoefficient") int cCoefficient,
+                           @RequestParam("fcoefficient") int fCoefficient) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         AppUser appUser = (AppUser) appUserService.getUserByUsername(username);
@@ -45,12 +47,12 @@ public class AlgoController {
         appUser.setFairness_coefficient(fCoefficient);
         appUserRepository.save(appUser);
         UsState selectedState = appUserService.getStateforUser(username, stateName);
-        if(selectedState == null) {
+        if (selectedState == null) {
             selectedState = stateService.getStatebyId(stateName);
             appUserService.addStateforUser(username, selectedState);
         }
         Update update = algoService.startAlgorithm(selectedState, populationDeviation, cCoefficient, fCoefficient);
-        if(update.isFinished()) appUserService.removeStateforUser(username);
+        if (update.isFinished()) appUserService.removeStateforUser(username);
         return build200(update);
     }
 }

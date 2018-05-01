@@ -5,9 +5,10 @@ import com.sbu.main.Constants;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
 import org.geojson.MultiPolygon;
-import java.awt.Polygon;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.awt.*;
 import java.awt.geom.Area;
 import java.io.FileReader;
 import java.io.IOException;
@@ -249,7 +250,7 @@ public class Precinct {
 
     public void createArea(String type) throws IOException {
         if (this.is_inner) return;
-        FileReader reader = new FileReader( System.getProperty(Constants.USER_DIR) + Constants.RESOURCES+ this.precinct_boundaries);
+        FileReader reader = new FileReader(System.getProperty(Constants.USER_DIR) + Constants.RESOURCES + this.precinct_boundaries);
         Feature location = new ObjectMapper().readValue(reader, Feature.class);
         List<LngLatAlt> locationLngLatAlt;
         if (type.equalsIgnoreCase(Constants.VD)) {
