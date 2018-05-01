@@ -1,10 +1,13 @@
 package com.sbu.controller;
 
+import com.sbu.data.entitys.AppUser;
 import com.sbu.data.entitys.Update;
 import com.sbu.data.entitys.UsState;
 import com.sbu.services.AlgoService;
+import com.sbu.services.AppUserService;
 import com.sbu.services.StateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import javax.ws.rs.core.Response;
@@ -20,6 +23,9 @@ public class AlgoController {
     AlgoService algoService;
 
     @Autowired
+    AppUserService appUserService;
+
+    @Autowired
     StateService stateService;
     UsState selectedState;
     float populationDeviation;
@@ -27,8 +33,17 @@ public class AlgoController {
     int fcoefficient;
 
     @RequestMapping(method = RequestMethod.GET)
-    Response getStartAlgo(@RequestParam("state") String stateName, @RequestParam("populationDeviation") float populationDeviation,
-                          @RequestParam("ccoefficient") int ccoefficient, @RequestParam("fcoefficient") int fcoefficient) {
+    Response getStartAlgo(@RequestParam("state") String stateName,
+                          @RequestParam("populationDeviation") float populationDeviation,
+                          @RequestParam("ccoefficient") int ccoefficient,
+                          @RequestParam("fcoefficient") int fcoefficient) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        AppUser appUser = (AppUser) appUserService.getUserByUsername(username);
+        appUser.setPopulation_coefficient(populationDeviation);
+        appUser.setCompactness_coefficient(ccoefficient);
+        appUser.setFairness_coefficient(fcoefficient);
+
         this.populationDeviation = populationDeviation;
         this.ccoefficient = ccoefficient;
         this.fcoefficient = fcoefficient;
