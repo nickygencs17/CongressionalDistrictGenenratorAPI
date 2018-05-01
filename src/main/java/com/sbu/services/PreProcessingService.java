@@ -31,15 +31,12 @@ public class PreProcessingService {
         arPrecincts = precinctRepository.findByState_id(Constants.ARKANSAS);
         inPrecincts = precinctRepository.findByState_id(Constants.INDIANA);
         wvPrecincts = precinctRepository.findByState_id(Constants.WEST_VIRGINA);
-
         arPrecincts = findAdjacency(arPrecincts);
         inPrecincts = findAdjacency(inPrecincts);
         wvPrecincts = findAdjacency(wvPrecincts);
-
         arPrecincts = findCongress(arPrecincts);
         inPrecincts = findCongress(inPrecincts);
         wvPrecincts = findCongress(wvPrecincts);
-
         return true;
     }
 
@@ -104,18 +101,14 @@ public class PreProcessingService {
     }
 
     private boolean isAdjacent(Precinct precinct1, Precinct precinct2) throws IOException {
-        System.out.println(Constants.WORKING_DIRECTORY +
-                System.getProperty(Constants.USER_DIR));
         String location = Constants.VD_RESOURCES + precinct1.getState_id() + Constants.VD_SUFFIX + precinct1.getPrecinct_id() + Constants.GEOJSON;
         String location2 = Constants.VD_RESOURCES + precinct2.getState_id() + Constants.VD_SUFFIX + precinct1.getPrecinct_id() + Constants.GEOJSON;
         FileReader reader = new FileReader(location);
         FileReader reader2 = new FileReader(location2);
         Feature feature1 = new ObjectMapper().readValue(reader, Feature.class);
         Feature feature2 = new ObjectMapper().readValue(reader2, Feature.class);
-
         List<List<LngLatAlt>> precinct1Mpoly = ((MultiPolygon) feature1.getGeometry()).getCoordinates().get(0);
         List<List<LngLatAlt>> precinct2Mpoly = ((MultiPolygon) feature2.getGeometry()).getCoordinates().get(0);
-
         //put all polygon points in 1 array per multipolygon
         List<LngLatAlt> precinct1Points = new ArrayList<>();
         List<LngLatAlt> precinct2Points = new ArrayList<>();

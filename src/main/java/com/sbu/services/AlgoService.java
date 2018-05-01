@@ -37,13 +37,11 @@ public class AlgoService {
         unChangedChecks = 0;
         movesinCurrentUpdate = 0;
         simulatedMoves = 0;
-        //Get all Congressional districts that share boundary with other congressional districts
         this.congressionalDistricts = state.getCongressionalDistricts();
         String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
         while (!checkTermination()) {
             sortByPoulation(keys);
             for (int i = 0; i < keys.length; i++) {
-                //Loop through precincts for better changes and update them
                 if (!congressionalDistricts.get(keys[i]).needsRevision()) {
                     if (i == keys.length - 1) isFinished = true;
                     continue;
@@ -56,8 +54,6 @@ public class AlgoService {
     }
 
     public boolean traversePrecinctsforChanges(CongressionalDistrict congressionalDistrict) {
-
-        //Get all voting districts that share boundary with other congressional districts
         Iterator<Precinct> boundaryPrecincts = congressionalDistrict.getBoundaryPrecinctHashSet().iterator();
         while (boundaryPrecincts.hasNext()) {
             Precinct currentPrecinct = boundaryPrecincts.next();
