@@ -41,7 +41,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().httpBasic()
                 .and().headers()
                 .and().logout().disable()
-                //
                 .csrf().disable();
     }
 
@@ -57,8 +56,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         for (AppUser appUser : appUsers) {
             users.put(appUser.getUsername(), appUser.getUser_password() + ',' + appUser.getRole() + ",enabled");
         }
-        //Iterable<AppUser> appUsers = userService.getAllUsers();
-        //add whatever other user you need
         users.put("rama", "pass,ROLE_ADMIN,enabled");
         users.put("ethan", "pass,ROLE_ADMIN,enabled");
         users.put("rahul", "pass,ROLE_ADMIN,enabled");

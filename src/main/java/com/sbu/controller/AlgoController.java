@@ -31,33 +31,26 @@ public class AlgoController {
 
     @Autowired
     StateService stateService;
-    UsState selectedState;
-    float populationDeviation;
-    int ccoefficient;
-    int fcoefficient;
 
     @RequestMapping(method = RequestMethod.GET)
-    Response getStartAlgo(@RequestParam("state") String stateName,
+    Response getAlgoUpdate(@RequestParam("state") String stateName,
                           @RequestParam("populationDeviation") float populationDeviation,
-                          @RequestParam("ccoefficient") int ccoefficient,
-                          @RequestParam("fcoefficient") int fcoefficient) {
+                          @RequestParam("ccoefficient") int cCoefficient,
+                          @RequestParam("fcoefficient") int fCoefficient) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         AppUser appUser = (AppUser) appUserService.getUserByUsername(username);
         appUser.setPopulation_coefficient(populationDeviation);
-        appUser.setCompactness_coefficient(ccoefficient);
-        appUser.setFairness_coefficient(fcoefficient);
+        appUser.setCompactness_coefficient(cCoefficient);
+        appUser.setFairness_coefficient(fCoefficient);
         appUserRepository.save(appUser);
-        this.populationDeviation = populationDeviation;
-        this.ccoefficient = ccoefficient;
-        this.fcoefficient = fcoefficient;
-        selectedState = stateService.getStatebyId(stateName);
-        return getUpdate();
-    }
-
-    @RequestMapping(value = "/update", method = RequestMethod.GET)
-    Response getUpdate() {
-        Update update = algoService.startAlgorithm(selectedState, populationDeviation, ccoefficient, fcoefficient);
+        UsState selectedState = appUserService.getStateforUser(username, stateName);
+        if(selectedState == null) {
+            selectedState = stateService.getStatebyId(stateName);
+            appUserService.addStateforUser(username, selectedState);
+        }
+        Update update = algoService.startAlgorithm(selectedState, populationDeviation, cCoefficient, fCoefficient);
+        if(update.isFinished()) appUserService.removeStateforUser(username);
         return build200(update);
     }
 }

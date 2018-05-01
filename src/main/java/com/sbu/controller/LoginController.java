@@ -2,6 +2,7 @@ package com.sbu.controller;
 
 import com.sbu.exceptions.UnauthorizedException;
 import com.sbu.main.Constants;
+import com.sbu.services.AppUserService;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,6 +35,9 @@ public class LoginController {
         this.userManager = inMemoryUserDetailsManager;
     }
 
+    @Autowired
+    AppUserService appUserService;
+
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public Response login() throws UnauthorizedException {
@@ -53,6 +57,7 @@ public class LoginController {
     @RequestMapping(value = "/logout", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
     public Response logout() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        appUserService.removeStateforUser(username);
         return build200(username);
     }
 }
