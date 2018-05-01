@@ -24,17 +24,13 @@ import java.util.regex.Pattern;
 @Component
 public class PreProcessingService {
 
-
     @Autowired
     PrecinctRepository precinctRepository;
-
 
     public boolean startPreprocessor() throws IOException {
         List<Precinct> arVoting = precinctRepository.findByState_id(Constants.ARKANSAS);
         List<Precinct> inVoting = precinctRepository.findByState_id(Constants.INDIANA);
         List<Precinct> wvVoting = precinctRepository.findByState_id(Constants.WEST_VIRGINA);
-
-
         arVoting = findAdjacency(arVoting);
         inVoting = findAdjacency(inVoting);
         wvVoting = findAdjacency(wvVoting);
@@ -81,7 +77,6 @@ public class PreProcessingService {
         for (Precinct vd : vds) {
             vd.setNeighbor_precincts(Constants.ARRAY_START);
         }
-
         for (Precinct vd : vds) {
             for (Precinct vd2 : vds) {
                 if (!(vd.getPrecinct_id().equals(vd2.getPrecinct_id())) && isAdjacent(vd, vd2)) {
@@ -94,23 +89,15 @@ public class PreProcessingService {
     }
 
     private boolean isAdjacent(Precinct vd1, Precinct vd2) throws IOException {
-
         System.out.println("Working Directory = " +
                 System.getProperty("user.dir"));
-
         JSONParser jsonParser = new JSONParser();
-
         String location = "src/main/resources/individual_vtds/" + vd1.getState_id() + "_vtd/" + vd1.getPrecinct_id() + ".geojson";
-
-
         JSONObject person = new JSONObject();
-
         try (FileReader reader = new FileReader(location)) {
             //Read JSON file
             Object obj = jsonParser.parse(reader);
-
             person = (JSONObject) obj;
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -118,19 +105,13 @@ public class PreProcessingService {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
         Feature feature1 = new ObjectMapper().readValue(person.get("type").toString(), Feature.class);
-
-        System.out.print("here");
         Feature feature2 = new ObjectMapper().readValue(vd2.getPrecinct_boundaries(), Feature.class);
         List<List<LngLatAlt>> mpoly1 = ((MultiPolygon) feature1.getGeometry()).getCoordinates().get(0);
         List<List<LngLatAlt>> mpoly2 = ((MultiPolygon) feature2.getGeometry()).getCoordinates().get(0);
-
         //put all polygon points in 1 array per multipolygon
         List<LngLatAlt> points = new ArrayList<>();
         List<LngLatAlt> points2 = new ArrayList<>();
-
-
         for (List<LngLatAlt> poly : mpoly1) {
             points.addAll(poly);
             //null to separate polygons
@@ -140,8 +121,6 @@ public class PreProcessingService {
             points2.addAll(poly);
             points2.add(null);
         }
-
-
         for (int i = 0; i < points.size() - 1; i++) {
             for (int j = 0; j < points2.size() - 1; j++) {
                 LngLatAlt p1 = points.get(i);
@@ -167,12 +146,9 @@ public class PreProcessingService {
     }
 
     private int orientation(LngLatAlt p, LngLatAlt q, LngLatAlt r) {
-
         double val = (q.getLatitude() - p.getLatitude()) * (r.getLongitude() - q.getLongitude()) -
                 (q.getLongitude() - p.getLongitude()) * (r.getLatitude() - q.getLatitude());
-
         if (val == 0) return 0;
-
         return (val > 0) ? 1 : 2;
     }
 
@@ -181,15 +157,12 @@ public class PreProcessingService {
         int o2 = orientation(p1, q1, q2);
         int o3 = orientation(p2, q2, p1);
         int o4 = orientation(p2, q2, q1);
-
         if (o1 != o2 && o3 != o4)
             return true;
-
         if (o1 == 0 && onSegment(p1, p2, q1)) return true;
         if (o2 == 0 && onSegment(p1, q2, q1)) return true;
         if (o3 == 0 && onSegment(p2, p1, q2)) return true;
         if (o4 == 0 && onSegment(p2, q1, q2)) return true;
-
         return false;
     }
 }

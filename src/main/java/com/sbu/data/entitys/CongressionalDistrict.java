@@ -143,7 +143,7 @@ public class CongressionalDistrict {
     }
 
     public double calculateCompactness() {
-        double r = Math.sqrt((area / 2589988) / Math.PI);
+        double r = Math.sqrt((area / Constants.AREA_SQUAREMILES) / Math.PI);
         double equalAreaPerimeter = 2 * Math.PI * r;
         double perimeter = getPerimeter();
         return 1 / (perimeter / equalAreaPerimeter);
@@ -263,17 +263,17 @@ public class CongressionalDistrict {
             e.printStackTrace();
         }
         List<LngLatAlt> points = ((Polygon) border.getGeometry()).getExteriorRing();
-        double perimeter = 0;
+        double perimeter = Constants.ZERO;
         double latMiles, lngMiles;
         if (this.state_id.equalsIgnoreCase(Constants.ARKANSAS)) {
-            latMiles = 68.935125;
-            lngMiles = 56.723705;
+            latMiles = Constants.AR_LAT;
+            lngMiles = Constants.AR_LNG;
         } else if (this.state_id.equalsIgnoreCase(Constants.INDIANA)) {
-            latMiles = 68.993567;
-            lngMiles = 53.061157;
+            latMiles = Constants.IN_LAT;
+            lngMiles = Constants.IN_LNG;
         } else {
-            latMiles = 68.969859;
-            lngMiles = 54.576432;
+            latMiles = Constants.WV_LAT;
+            lngMiles = Constants.WV_LNG;
         }
         for (int i = 0; i < points.size() - 1; i++) {
             perimeter += Math.sqrt(Math.pow(lngMiles * (points.get(i + 1).getLongitude() - points.get(i).getLongitude()), 2) + Math.pow(latMiles * (points.get(i + 1).getLatitude() - points.get(i).getLatitude()), 2));
@@ -282,9 +282,7 @@ public class CongressionalDistrict {
     }
 
     public void createArea(String type) throws IOException {
-
-        String dir = System.getProperty("user.dir");
-        FileReader reader = new FileReader(dir + "/src/main/resources/" + this.boundaries);
+        FileReader reader = new FileReader(Constants.USER_DIR + Constants.RESOURCES + this.boundaries);
         Feature location = new ObjectMapper().readValue(reader, Feature.class);
         List<LngLatAlt> locationLngLatAlt;
         if (type.equalsIgnoreCase(Constants.CD)) {
@@ -294,7 +292,7 @@ public class CongressionalDistrict {
         }
         java.awt.Polygon locationPolygon = new java.awt.Polygon();
         for (LngLatAlt point : locationLngLatAlt) {
-            locationPolygon.addPoint((int) (point.getLongitude() * 1000000), (int) (point.getLatitude() * 1000000));
+            locationPolygon.addPoint((int) (point.getLongitude() * Constants.THOUSAND_HUNDRED), (int) (point.getLatitude() * Constants.THOUSAND_HUNDRED));
         }
         this.areaObject = new Area(locationPolygon);
     }
@@ -325,19 +323,19 @@ public class CongressionalDistrict {
             int numPoints = lngPath.currentSegment(point);
             switch (numPoints) {
                 case 0:
-                    lngFinal.add((new LngLatAlt(point[0] / 1000000, point[1] / 1000000)));
+                    lngFinal.add((new LngLatAlt(point[0] / Constants.THOUSAND_HUNDRED, point[1] / Constants.THOUSAND_HUNDRED)));
                     break;
                 case 1:
-                    lngFinal.add((new LngLatAlt(point[0] / 1000000, point[1] / 1000000)));
+                    lngFinal.add((new LngLatAlt(point[0] / Constants.THOUSAND_HUNDRED, point[1] / Constants.THOUSAND_HUNDRED)));
                     break;
                 case 2:
-                    lngFinal.add((new LngLatAlt(point[0] / 1000000, point[1] / 1000000)));
-                    lngFinal.add((new LngLatAlt(point[2] / 1000000, point[3] / 1000000)));
+                    lngFinal.add((new LngLatAlt(point[0] / Constants.THOUSAND_HUNDRED, point[1] / Constants.THOUSAND_HUNDRED)));
+                    lngFinal.add((new LngLatAlt(point[2] / Constants.THOUSAND_HUNDRED, point[3] / Constants.THOUSAND_HUNDRED)));
                     break;
                 case 3:
-                    lngFinal.add((new LngLatAlt(point[0] / 1000000, point[1] / 1000000)));
-                    lngFinal.add((new LngLatAlt(point[2] / 1000000, point[3] / 1000000)));
-                    lngFinal.add((new LngLatAlt(point[4] / 1000000, point[5] / 1000000)));
+                    lngFinal.add((new LngLatAlt(point[0] / Constants.THOUSAND_HUNDRED, point[1] / Constants.THOUSAND_HUNDRED)));
+                    lngFinal.add((new LngLatAlt(point[2] / Constants.THOUSAND_HUNDRED, point[3] / Constants.THOUSAND_HUNDRED)));
+                    lngFinal.add((new LngLatAlt(point[4] / Constants.THOUSAND_HUNDRED, point[5] / Constants.THOUSAND_HUNDRED)));
                     break;
                 default:
                     break;

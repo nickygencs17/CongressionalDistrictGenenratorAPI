@@ -16,7 +16,6 @@ import java.util.Iterator;
 @Component
 public class StateService {
 
-
     @Autowired
     CongressElectionInfoRepository congressElectionInfoRepository;
 
@@ -34,7 +33,6 @@ public class StateService {
 
     @Autowired
     UsStateRepository usStateRepository;
-
 
     public Object getBoundaries(String type, String state_id) {
         UsState usState = usStateRepository.findOne(state_id);

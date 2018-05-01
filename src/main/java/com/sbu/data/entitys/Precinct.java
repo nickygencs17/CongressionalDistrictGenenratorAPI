@@ -5,7 +5,7 @@ import com.sbu.main.Constants;
 import org.geojson.Feature;
 import org.geojson.LngLatAlt;
 import org.geojson.MultiPolygon;
-
+import java.awt.Polygon;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.awt.geom.Area;
@@ -249,20 +249,18 @@ public class Precinct {
 
     public void createArea(String type) throws IOException {
         if (this.is_inner) return;
-        String dir = System.getProperty("user.dir");
-        FileReader reader = new FileReader(dir + "/src/main/resources/" + this.precinct_boundaries);
+        FileReader reader = new FileReader( System.getProperty(Constants.USER_DIR) + Constants.RESOURCES+ this.precinct_boundaries);
         Feature location = new ObjectMapper().readValue(reader, Feature.class);
         List<LngLatAlt> locationLngLatAlt;
         if (type.equalsIgnoreCase(Constants.VD)) {
-            locationLngLatAlt = ((MultiPolygon) location.getGeometry()).getCoordinates().get(0).get(0);
+            locationLngLatAlt = ((MultiPolygon) location.getGeometry()).getCoordinates().get(Constants.ZERO).get(Constants.ZERO);
         } else {
             locationLngLatAlt = new ArrayList<>();
         }
-        java.awt.Polygon locationPolygon = new java.awt.Polygon();
+        Polygon locationPolygon = new Polygon();
         for (LngLatAlt point : locationLngLatAlt) {
-            locationPolygon.addPoint((int) (point.getLongitude() * 1000000), (int) (point.getLatitude() * 1000000));
+            locationPolygon.addPoint((int) (point.getLongitude() * Constants.THOUSAND_HUNDRED), (int) (point.getLatitude() * Constants.THOUSAND_HUNDRED));
         }
         this.areaObject = new Area(locationPolygon);
     }
-
 }

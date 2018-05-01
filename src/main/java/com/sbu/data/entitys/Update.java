@@ -19,10 +19,6 @@ public class Update {
 
     }
 
-    public Update(List<Move> moves) {
-
-    }
-
     public List<Move> getMoves() {
         return moves;
     }

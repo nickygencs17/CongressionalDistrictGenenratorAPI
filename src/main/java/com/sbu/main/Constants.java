@@ -43,10 +43,20 @@ public class Constants {
             FAIR_COEF = "fairness_coefficient",
             VD = "vd",
             CD = "cd",
-            COMP_COEF = "compactness_coefficient";
+            USER_DIR = "user.dir",
+            RESOURCES = "/src/main/resources/",
+    COMP_COEF = "compactness_coefficient";
 
+    public static final double AR_LAT = 68.935125;
+    public static final double AR_LNG = 56.723705;
+    public static final double IN_LAT = 68.993567;
+    public static final double IN_LNG = 53.061157;
+    public static final double WV_LAT = 68.969859;
+    public static final double WV_LNG = 54.576432;
     public static final int MAX_UNCHANGED_CHECKS = 700;
+    public static final int AREA_SQUAREMILES = 2589988;
     public static final int MAX_MOVES_PER_UPDATE = 300;
-    public static final int MAX_ITERATIONS = 1000;
+    public static final int ZERO = 0;
+    public static final int THOUSAND_HUNDRED = 1000000;
 
 }

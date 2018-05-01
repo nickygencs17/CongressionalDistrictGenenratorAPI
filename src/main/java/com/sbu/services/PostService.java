@@ -50,6 +50,5 @@ public class PostService {
 
     public Object getAllPosts() {
         return blogPostRepository.findAll();
-
     }
 }

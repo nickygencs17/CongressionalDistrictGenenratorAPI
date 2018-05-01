@@ -24,11 +24,9 @@ public class PreProcessController {
 
     @RequestMapping(value = "/process", method = RequestMethod.PUT)
     Response putPreProcessing() throws IOException {
-
         if (preProcessingService.startPreprocessor()) {
             return build200(Constants.SUCCESS);
         }
-
         return build400(Constants.PREPROCESS_FAIL);
 
     }

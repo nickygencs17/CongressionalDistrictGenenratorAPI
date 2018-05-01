@@ -72,7 +72,6 @@ public class UsState {
         this.compactness = compactness;
     }
 
-
     public String getState_boundaries() {
         return state_boundaries;
     }
@@ -150,7 +149,7 @@ public class UsState {
         String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
         for (String key : keys) {
             CongressionalDistrict district = congressionalDistricts.get(key);
-            district.setPopulation(0);
+            district.setPopulation(Constants.ZERO);
             district.createArea(Constants.CD);
             setPrecinctsforDistrict(district);
             district.updateBoundaryPrecincts();
@@ -235,8 +234,6 @@ public class UsState {
     }
 
     public double calculateObjective(int cCoefficient, int fCoefficient) {
-        return cCoefficient * calculateCompactness()
-                + fCoefficient * calculatePoliticalFairness();
+        return  cCoefficient * calculateCompactness() + fCoefficient * calculatePoliticalFairness();
     }
-
 }
