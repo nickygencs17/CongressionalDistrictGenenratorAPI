@@ -44,11 +44,15 @@ public class AppUserController {
         return build201(user.getUsername());
     }
 
-    @RequestMapping(value = "/{username}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{username:.+}", method = RequestMethod.GET)
     Response getUserByUsername(@PathVariable(value = "username") String username) {
         if (handleAdminCall()) {
             return build401();
         }
+        if (!userManager.userExists(username)) {
+            return build404(Constants.USER_NOT_FOUND);
+        }
+
         return build200(appUserService.getUserByUsername(username));
     }
 

@@ -77,9 +77,6 @@ public class CongressionalDistrict {
     public CongressionalDistrict() {
     }
 
-    public CongressionalDistrict() {
-    }
-
     public String getState_id() {
         return state_id;
     }
