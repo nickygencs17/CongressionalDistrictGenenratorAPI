@@ -43,7 +43,6 @@ public class PostController {
 
     @RequestMapping(value = "/comment", method = RequestMethod.POST)
     Response postComment(@RequestBody @Valid Comment comment) {
-
         return build201(postService.addComment(comment));
     }
 

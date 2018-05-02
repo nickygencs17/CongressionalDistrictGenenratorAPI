@@ -1,12 +1,21 @@
 package com.sbu.data.entitys;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sbu.main.Constants;
+import org.geojson.Feature;
+import org.geojson.LngLatAlt;
+import org.geojson.Polygon;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.awt.geom.Area;
+import java.awt.geom.PathIterator;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
 
 @Entity
 @Table(name = "congressional_districts")
@@ -25,19 +34,34 @@ public class CongressionalDistrict {
     String state_id;
 
     @NotNull
+    String color;
+
+    @NotNull
     boolean is_changed;
 
     @Transient
-    HashSet<String> precinct_ids;
+    HashSet<Precinct> precinctHashSet = new HashSet<>();
 
     @Transient
-    HashSet<String> boundaryPrecinct_ids;
+    HashSet<Precinct> boundaryPrecinctHashSet = new HashSet<>();
 
+    @Transient
+    Area areaObject;
+
+    @Transient
+    float area;
+
+    @NotNull
     int in_use;
 
-    float compactness;
+    @NotNull
+    double compactness;
 
-    public CongressionalDistrict(String congress_id, String precincts, long population, String state_id, boolean is_changed, int in_use, float compactness) {
+    @NotNull
+    String boundaries;
+
+    public CongressionalDistrict(String congress_id, String precincts, long population, String state_id,
+                                 boolean is_changed, int in_use, float compactness, String color, String boundaries) {
 
         this.congress_id = congress_id;
         this.precincts = precincts;
@@ -46,8 +70,12 @@ public class CongressionalDistrict {
         this.is_changed = is_changed;
         this.in_use = in_use;
         this.compactness = compactness;
+        this.color = color;
+        this.boundaries = boundaries;
     }
 
+    public CongressionalDistrict() {
+    }
 
     public CongressionalDistrict() {
     }
@@ -60,8 +88,8 @@ public class CongressionalDistrict {
         this.state_id = state_id;
     }
 
-    public int getIn_use() {
-        return in_use;
+    public boolean in_use() {
+        return in_use == 1;
     }
 
     public void setIn_use(int in_use) {
@@ -78,7 +106,6 @@ public class CongressionalDistrict {
 
 
     public String getPrecincts() {
-
         return precincts;
     }
 
@@ -86,13 +113,12 @@ public class CongressionalDistrict {
         this.precincts = precincts;
     }
 
-    public HashSet<String> getBoundaryPrecinct_ids() {
-        return boundaryPrecinct_ids;
+    public HashSet<Precinct> getBoundaryPrecinctHashSet() {
+        return boundaryPrecinctHashSet;
     }
 
-    public void setBoundaryPrecinct_ids(HashSet<String> boundaryPrecinct_ids) {
-        this.boundaryPrecinct_ids = boundaryPrecinct_ids;
-
+    public void setBoundaryPrecinctHashSet(HashSet<Precinct> boundaryPrecinctHashSet) {
+        this.boundaryPrecinctHashSet = boundaryPrecinctHashSet;
     }
 
     public long getPopulation() {
@@ -111,40 +137,241 @@ public class CongressionalDistrict {
         this.is_changed = is_changed;
     }
 
-    public float getCompactness() {
-        return compactness;
+    public double getCompactness() {
+        return this.compactness;
     }
 
-    public void setCompactness(float compactness) {
+    public void setCompactness(double compactness) {
         this.compactness = compactness;
     }
 
-    public boolean isIs_changed() {
-        return is_changed;
+    public double calculateCompactness() {
+        double r = Math.sqrt((area / Constants.AREA_SQUAREMILES) / Math.PI);
+        double equalAreaPerimeter = 2 * Math.PI * r;
+        double perimeter = getPerimeter();
+        return 1 / (perimeter / equalAreaPerimeter);
     }
 
-    public void setIs_changed(boolean is_changed) {
-        this.is_changed = is_changed;
-    }
-
-    public void addPrecinct(String id) {
-        this.precinct_ids.add(id);
-    }
-
-    public void removePrecinct(String id) {
-        Iterator<String> iterator = precinct_ids.iterator();
+    public boolean isContiguous(Precinct movePrecinct) {
+        Iterator<Precinct> iterator = movePrecinct.getNeighborPrecinctSet().iterator();
+        ArrayList<Precinct> finalSet = new ArrayList<>();
         while (iterator.hasNext()) {
-            if (iterator.next().equals(id)) {
-                precinct_ids.remove(id);
-                break;
+            Precinct currentPrecinct = iterator.next();
+            if (!currentPrecinct.getCongress_id().equals(this.congress_id)) continue;
+            finalSet.add(currentPrecinct);
+        }
+        HashMap<String, Boolean> pathChecked = new HashMap<>();
+        for (int i = 0; i < finalSet.size(); i++) {
+            for (int j = 0; j < finalSet.size(); j++) {
+                if (pathChecked.containsKey(pathChecked.get(finalSet.get(i).getPrecinct_id() + finalSet.get(j).getPrecinct_id())))
+                    continue;
+                if (i == j) continue;
+                pathChecked.put(finalSet.get(i).getPrecinct_id() + finalSet.get(j).getPrecinct_id(), true);
+                pathChecked.put(finalSet.get(j).getPrecinct_id() + finalSet.get(i).getPrecinct_id(), true);
+                if (!isReachable(finalSet.get(i), finalSet.get(j))) return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isReachable(Precinct start, Precinct end) {
+        LinkedList<Integer> temp;
+        HashMap<String, Boolean> visitedMap = new HashMap<>();
+        Iterator<Precinct> iterator = precinctHashSet.iterator();
+        while (iterator.hasNext()) {
+            visitedMap.put(iterator.next().getPrecinct_id(), false);
+        }
+        LinkedList<Precinct> queue = new LinkedList<>();
+        visitedMap.put(start.getPrecinct_id(), true);
+        queue.add(start);
+        Iterator<Precinct> neighborsIterator;
+        while (queue.size() != 0) {
+            start = queue.poll();
+            Precinct next;
+            neighborsIterator = start.getNeighborPrecinctSet().iterator();
+            while (neighborsIterator.hasNext()) {
+                next = neighborsIterator.next();
+                if (!next.getCongress_id().equals(this.congress_id)) continue;
+                if (next.getPrecinct_id().equals(end.getPrecinct_id()))
+                    return true;
+                if (!visitedMap.get(next.getPrecinct_id())) {
+                    visitedMap.put(next.getPrecinct_id(), true);
+                    queue.add(next);
+                }
+            }
+        }
+        return false;
+    }
+
+    public void addPrecinct(Precinct precinct, boolean updateAreaObj) {
+        precinct.setCongress_id(this.congress_id);
+        this.precinctHashSet.add(precinct);
+        Iterator<Precinct> iterator = precinct.getInnerPrecinctSet().iterator();
+        while (iterator.hasNext()) {
+            Precinct innerPrecinct = iterator.next();
+            innerPrecinct.setCongress_id(this.congress_id);
+            this.precinctHashSet.add(innerPrecinct);
+        }
+        this.population += precinct.getPopulation();
+        if (updateAreaObj) updateAreaObject(precinct.getAreaObject(), true);
+        updateArea(precinct.getArea(), true);
+    }
+
+    public void removePrecinct(Precinct precinct) {
+        if (precinctHashSet.contains(precinct)) {
+            precinctHashSet.remove(precinct);
+            Iterator<Precinct> iterator = precinct.getInnerPrecinctSet().iterator();
+            while (iterator.hasNext()) {
+                Precinct innerPrecinct = iterator.next();
+                this.precinctHashSet.remove(innerPrecinct);
+            }
+            this.population -= precinct.getPopulation();
+            updateAreaObject(precinct.getAreaObject(), false);
+            updateArea(precinct.getArea(), false);
+        }
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public void updateBoundaryPrecincts() {
+        boundaryPrecinctHashSet.clear();
+        Iterator<Precinct> precinctIterator = this.precinctHashSet.iterator();
+        while (precinctIterator.hasNext()) {
+            Precinct currentPrecinct = precinctIterator.next();
+            Iterator<Precinct> neighborIterator = currentPrecinct.getNeighborPrecinctSet().iterator();
+            while (neighborIterator.hasNext()) {
+                if (!neighborIterator.next().getCongress_id().equals(currentPrecinct.getCongress_id())) {
+                    boundaryPrecinctHashSet.add(currentPrecinct);
+                    break;
+                }
             }
         }
     }
 
-    public void updateBoundaryPrecincts(Precinct precinct) {
-
-
+    public void updateCompactness(Precinct precinct, boolean addition) {
+        compactness = (addition) ? compactness + precinct.getCompactness() : compactness - precinct.getCompactness();
     }
 
+    public double getPerimeter() {
+        Feature border = null;
+        try {
+            border = createFeature(this.areaObject);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        List<LngLatAlt> points = ((Polygon) border.getGeometry()).getExteriorRing();
+        double perimeter = Constants.ZERO;
+        double latMiles, lngMiles;
+        if (this.state_id.equalsIgnoreCase(Constants.ARKANSAS)) {
+            latMiles = Constants.AR_LAT;
+            lngMiles = Constants.AR_LNG;
+        } else if (this.state_id.equalsIgnoreCase(Constants.INDIANA)) {
+            latMiles = Constants.IN_LAT;
+            lngMiles = Constants.IN_LNG;
+        } else {
+            latMiles = Constants.WV_LAT;
+            lngMiles = Constants.WV_LNG;
+        }
+        for (int i = 0; i < points.size() - 1; i++) {
+            perimeter += Math.sqrt(Math.pow(lngMiles * (points.get(i + 1).getLongitude() - points.get(i).getLongitude()), 2) + Math.pow(latMiles * (points.get(i + 1).getLatitude() - points.get(i).getLatitude()), 2));
+        }
+        return perimeter;
+    }
 
+    public void createArea(String type) throws IOException {
+        FileReader reader = new FileReader(System.getProperty(Constants.USER_DIR) + Constants.RESOURCES + this.boundaries);
+        Feature location = new ObjectMapper().readValue(reader, Feature.class);
+        List<LngLatAlt> locationLngLatAlt;
+        if (type.equalsIgnoreCase(Constants.CD)) {
+            locationLngLatAlt = ((Polygon) location.getGeometry()).getExteriorRing();
+        } else {
+            locationLngLatAlt = new ArrayList<>();
+        }
+        java.awt.Polygon locationPolygon = new java.awt.Polygon();
+        for (LngLatAlt point : locationLngLatAlt) {
+            locationPolygon.addPoint((int) (point.getLongitude() * Constants.THOUSAND_HUNDRED), (int) (point.getLatitude() * Constants.THOUSAND_HUNDRED));
+        }
+        this.areaObject = new Area(locationPolygon);
+    }
+
+    public void updateAreaObject(Area precinctArea, boolean additon) {
+        if (additon) this.areaObject.add(precinctArea);
+        else this.areaObject.subtract(precinctArea);
+    }
+
+    public void updateArea(float precinctArea, boolean additon) {
+        this.area = (additon) ? area + precinctArea : area - precinctArea;
+    }
+
+    public Area getAreaObject() {
+        return this.areaObject;
+    }
+
+    public float getArea() {
+        return this.area;
+    }
+
+    public Feature createFeature(Area toConvert) throws IOException {
+
+        PathIterator lngPath = toConvert.getPathIterator(null);
+        List<LngLatAlt> lngFinal = new ArrayList<>();
+        while (!lngPath.isDone()) {
+            float[] point = new float[6];
+            int numPoints = lngPath.currentSegment(point);
+            switch (numPoints) {
+                case 0:
+                    lngFinal.add((new LngLatAlt(point[0] / Constants.THOUSAND_HUNDRED, point[1] / Constants.THOUSAND_HUNDRED)));
+                    break;
+                case 1:
+                    lngFinal.add((new LngLatAlt(point[0] / Constants.THOUSAND_HUNDRED, point[1] / Constants.THOUSAND_HUNDRED)));
+                    break;
+                case 2:
+                    lngFinal.add((new LngLatAlt(point[0] / Constants.THOUSAND_HUNDRED, point[1] / Constants.THOUSAND_HUNDRED)));
+                    lngFinal.add((new LngLatAlt(point[2] / Constants.THOUSAND_HUNDRED, point[3] / Constants.THOUSAND_HUNDRED)));
+                    break;
+                case 3:
+                    lngFinal.add((new LngLatAlt(point[0] / Constants.THOUSAND_HUNDRED, point[1] / Constants.THOUSAND_HUNDRED)));
+                    lngFinal.add((new LngLatAlt(point[2] / Constants.THOUSAND_HUNDRED, point[3] / Constants.THOUSAND_HUNDRED)));
+                    lngFinal.add((new LngLatAlt(point[4] / Constants.THOUSAND_HUNDRED, point[5] / Constants.THOUSAND_HUNDRED)));
+                    break;
+                default:
+                    break;
+            }
+            lngPath.next();
+        }
+        Feature featureFinal = new Feature();
+        org.geojson.Polygon polyFinal = new org.geojson.Polygon();
+        polyFinal.setExteriorRing(lngFinal);
+        featureFinal.setGeometry(polyFinal);
+        return featureFinal;
+    }
+
+    public double calculateFairness() {
+        Iterator<Precinct> precinctIterator = precinctHashSet.iterator();
+        float demFloat = 0, repFloat = 0;
+        while(precinctIterator.hasNext()){
+            Precinct currentPrecinct = precinctIterator.next();
+            demFloat += currentPrecinct.getPopulation()*currentPrecinct.getD_leaning();
+            repFloat += currentPrecinct.getPopulation()*currentPrecinct.getR_leaning();
+        }
+        int demVotes = (int)demFloat;
+        int repVotes = (int)repFloat;
+        int totalVotesLosingParty, totalVotesCast, wastedVotesWinning;
+        totalVotesCast = demVotes + repVotes;
+        if(demVotes < repVotes){
+            totalVotesLosingParty = demVotes;
+            wastedVotesWinning = (int)Math.abs(repVotes - 0.5 * (totalVotesCast));
+        }
+        else{
+            totalVotesLosingParty = repVotes;
+            wastedVotesWinning = (int)Math.abs(demVotes - 0.5 * (totalVotesCast));
+        }
+        return (1 - ((double) (Math.abs(totalVotesLosingParty - wastedVotesWinning)) / totalVotesCast));
+    }
 }

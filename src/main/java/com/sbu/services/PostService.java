@@ -25,7 +25,7 @@ public class PostService {
     }
 
     public Object addComment(Comment comment) {
-        Object blog_post = blogPostRepository.findOne(comment.getPost_id());
+        Object blog_post = blogPostRepository.findOne(Integer.parseInt(comment.getPost_id()));
         if (blog_post == null) {
             return build404(Constants.POST_NOT_FOUND);
         }
@@ -50,6 +50,5 @@ public class PostService {
 
     public Object getAllPosts() {
         return blogPostRepository.findAll();
-
     }
 }

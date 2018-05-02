@@ -24,12 +24,15 @@ public class PreProcessController {
 
     @RequestMapping(value = "/process", method = RequestMethod.PUT)
     Response putPreProcessing() throws IOException {
-
         if (preProcessingService.startPreprocessor()) {
             return build200(Constants.SUCCESS);
         }
-
         return build400(Constants.PREPROCESS_FAIL);
 
+    }
+
+    @RequestMapping(value = "/borders", method = RequestMethod.GET)
+    Response getCongressBorders(@RequestParam("state") String stateName) throws IOException {
+        return build200(preProcessingService.findCongressBorder(stateName));
     }
 }

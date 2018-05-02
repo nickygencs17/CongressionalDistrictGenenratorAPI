@@ -1,5 +1,6 @@
 package com.sbu.main;
 
+import org.json.simple.JSONObject;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -41,9 +42,31 @@ public class Constants {
             ZIP = "zip",
             POP_COEF = "population_coefficient",
             FAIR_COEF = "fairness_coefficient",
-            COMP_COEF = "compactness_coefficient";
+            WORKING_DIRECTORY = "Working Directory = ",
+            VD = "vd",
+            CD = "cd",
+            USER_DIR = "user.dir",
+            RESOURCES = "/src/main/resources/",
+            VD_RESOURCES = "/src/main/resources/individual_vtds",
+            VD_SUFFIX = "_vtd",
+            GEOJSON = ".geojson",
+            COMP_COEF = "compactness_coefficient",
+            LOGIN_SUCCESS = "success",
+            MESSAGE = "message",
+            LOGIN_SUCESS_MESSAGE = "Login Successful",
+            ROLES = "roles";
 
-    public static final int MAX_UNCHANGED_CHECKS = 100;
-    public static final int MAX_MOVES_PER_UPDATE = 10;
+
+    public static final double AR_LAT = 68.935125;
+    public static final double AR_LNG = 56.723705;
+    public static final double IN_LAT = 68.993567;
+    public static final double IN_LNG = 53.061157;
+    public static final double WV_LAT = 68.969859;
+    public static final double WV_LNG = 54.576432;
+    public static final int MAX_UNCHANGED_CHECKS = 700;
+    public static final int AREA_SQUAREMILES = 2589988;
+    public static final int MAX_MOVES_PER_UPDATE = 300;
+    public static final int ZERO = 0;
+    public static final int THOUSAND_HUNDRED = 1000000;
 
 }

@@ -4,8 +4,8 @@ import java.util.List;
 
 public class Update {
     List<Move> moves;
-    float compactness;
-    float populationDeviation;
+    double compactness;
+    double populationDeviation;
     boolean finished;
 
     public Update(List<Move> moves, float compactness, float populationDeviation, boolean finished) {
@@ -15,8 +15,8 @@ public class Update {
         this.finished = finished;
     }
 
-    public Update(List<Move> moves) {
-        this.moves = moves;
+    public Update() {
+
     }
 
     public List<Move> getMoves() {
@@ -27,19 +27,19 @@ public class Update {
         this.moves = moves;
     }
 
-    public float getCompactness() {
+    public double getCompactness() {
         return compactness;
     }
 
-    public void setCompactness(float compactness) {
+    public void setCompactness(double compactness) {
         this.compactness = compactness;
     }
 
-    public float getPopulationDeviation() {
+    public double getPopulationDeviation() {
         return populationDeviation;
     }
 
-    public void setPopulationDeviation(float populationDeviation) {
+    public void setPopulationDeviation(double populationDeviation) {
         this.populationDeviation = populationDeviation;
     }
 

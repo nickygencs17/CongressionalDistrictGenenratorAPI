@@ -1,10 +1,19 @@
 package com.sbu.data.entitys;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sbu.main.Constants;
+import org.geojson.Feature;
+import org.geojson.LngLatAlt;
+import org.geojson.MultiPolygon;
+import java.awt.Polygon;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.awt.geom.Area;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 @Entity
 @Table(name = "precinct")
@@ -22,6 +31,9 @@ public class Precinct {
     @Lob
     @NotNull
     String neighbor_precincts;
+
+    @NotNull
+    String inner_precincts;
 
     @NotNull
     float d_leaning;
@@ -50,8 +62,21 @@ public class Precinct {
     @NotNull
     float compactness;
 
+    @NotNull
+    boolean is_inner;
 
-    public Precinct(String state_id, String congress_id, String precinct_id, String neighbor_precincts, float d_leaning, float r_leaning, long population, String precinct_boundaries, String precinct_name, String geo_id, float perimeter, float area, float compactness) {
+    @Transient
+    HashSet<Precinct> neighborPrecinctSet = new HashSet<>();
+
+    @Transient
+    HashSet<Precinct> innerPrecinctSet = new HashSet<>();
+
+    @Transient
+    Area areaObject;
+
+    public Precinct(String state_id, String congress_id, String precinct_id, String neighbor_precincts, float d_leaning,
+                    float r_leaning, long population, String precinct_boundaries, String precinct_name,
+                    String geo_id, float perimeter, float area, float compactness, String inner_precincts, boolean is_inner) {
         this.state_id = state_id;
         this.congress_id = congress_id;
         this.precinct_id = precinct_id;
@@ -65,6 +90,8 @@ public class Precinct {
         this.perimeter = perimeter;
         this.area = area;
         this.compactness = compactness;
+        this.inner_precincts = inner_precincts;
+        this.is_inner = is_inner;
     }
 
     public Precinct() {
@@ -172,5 +199,68 @@ public class Precinct {
 
     public void setCompactness(float compactness) {
         this.compactness = compactness;
+    }
+
+    public boolean isIs_inner() {
+        return is_inner;
+    }
+
+    public void setIs_inner(boolean is_inner) {
+        this.is_inner = is_inner;
+    }
+
+    public String getInner_precincts() {
+        return inner_precincts;
+    }
+
+    public void setInner_precincts(String inner_precincts) {
+        this.inner_precincts = inner_precincts;
+    }
+
+    public HashSet<Precinct> getInnerPrecinctSet() {
+        return innerPrecinctSet;
+    }
+
+    public void setInnerPrecinctSet(HashSet<Precinct> innerPrecinctSet) {
+        this.innerPrecinctSet = innerPrecinctSet;
+    }
+
+    public HashSet<Precinct> getNeighborPrecinctSet() {
+        return neighborPrecinctSet;
+    }
+
+    public void setNeighborPrecinctSet(HashSet<Precinct> neighborPrecinctSet) {
+        this.neighborPrecinctSet = neighborPrecinctSet;
+    }
+
+    public void addNeighborPrecinct(Precinct precinct) {
+        neighborPrecinctSet.add(precinct);
+    }
+
+    public void addInnerPrecinct(Precinct precinct) {
+        innerPrecinctSet.add(precinct);
+        this.area += precinct.getArea();
+        this.population += precinct.getPopulation();
+    }
+
+    public Area getAreaObject() {
+        return areaObject;
+    }
+
+    public void createArea(String type) throws IOException {
+        if (this.is_inner) return;
+        FileReader reader = new FileReader( System.getProperty(Constants.USER_DIR) + Constants.RESOURCES+ this.precinct_boundaries);
+        Feature location = new ObjectMapper().readValue(reader, Feature.class);
+        List<LngLatAlt> locationLngLatAlt;
+        if (type.equalsIgnoreCase(Constants.VD)) {
+            locationLngLatAlt = ((MultiPolygon) location.getGeometry()).getCoordinates().get(Constants.ZERO).get(Constants.ZERO);
+        } else {
+            locationLngLatAlt = new ArrayList<>();
+        }
+        Polygon locationPolygon = new Polygon();
+        for (LngLatAlt point : locationLngLatAlt) {
+            locationPolygon.addPoint((int) (point.getLongitude() * Constants.THOUSAND_HUNDRED), (int) (point.getLatitude() * Constants.THOUSAND_HUNDRED));
+        }
+        this.areaObject = new Area(locationPolygon);
     }
 }
