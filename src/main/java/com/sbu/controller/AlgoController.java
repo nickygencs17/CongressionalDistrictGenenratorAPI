@@ -7,6 +7,7 @@ import com.sbu.data.entitys.UsState;
 import com.sbu.services.AlgoService;
 import com.sbu.services.AppUserService;
 import com.sbu.services.StateService;
+import org.json.simple.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -40,14 +41,11 @@ public class AlgoController {
     Response getStartAlgo(@RequestParam("state") String stateName,
                           @RequestParam("populationDeviation") float populationDeviation,
                           @RequestParam("ccoefficient") int ccoefficient,
-                          @RequestParam("fcoefficient") int fcoefficient) {
-
+                          @RequestParam("fcoefficient") int fcoefficient /*,
+                          @RequestBody JSONArray precinctIdArray,
+                          @RequestBody JSONArray congressionalIdArray */) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         AppUser appUser = (AppUser) appUserService.getUserByUsername(username);
-        appUser.setPopulation_coefficient(populationDeviation);
-        appUser.setCompactness_coefficient(ccoefficient);
-        appUser.setFairness_coefficient(fcoefficient);
-        appUserRepository.save(appUser);
         this.populationDeviation = populationDeviation;
         this.ccoefficient = ccoefficient;
         this.fcoefficient = fcoefficient;

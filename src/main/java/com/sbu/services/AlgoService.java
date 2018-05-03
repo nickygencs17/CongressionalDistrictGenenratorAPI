@@ -12,15 +12,12 @@ public class AlgoService {
 
     ArrayList<Move> moves;
     Update update;
-    int unChangedChecks;
     int movesinCurrentUpdate;
     float populationDeviation;
     int cCoefficient;
     int fCoefficient;
     int totalIterations;
-    int simulatedMoves;
     boolean isFinished;
-    double temperature;
     UsState selectedState;
     HashMap<String, CongressionalDistrict> congressionalDistricts;
 
@@ -33,44 +30,44 @@ public class AlgoService {
         this.fCoefficient = fCoefficient;
         this.isFinished = false;
         this.selectedState = state;
-        this.temperature = (-((double) (cCoefficient + fCoefficient)) / 2) / Math.log(0.8);
-        unChangedChecks = 0;
         movesinCurrentUpdate = 0;
-        simulatedMoves = 0;
         this.congressionalDistricts = state.getCongressionalDistricts();
         String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
         while (!checkTermination()) {
-            sortByPoulation(keys);
-            for (int i = 0; i < keys.length; i++) {
-                if (!congressionalDistricts.get(keys[i]).needsRevision()) {
-                    if (i == keys.length - 1) isFinished = true;
-                    continue;
-                }
-                boolean districtChanged = traversePrecinctsforChanges(congressionalDistricts.get(keys[i]));
-                if (districtChanged || checkTermination()) break;
-            }
+            //sortByPoulation(keys);
+            int i = (int) (Math.random() * (keys.length - 1));
+//            if (!congressionalDistricts.get(keys[i]).needsRevision()) {
+//                if (i == keys.length - 1) isFinished = true;
+//                continue;
+//            }
+            traversePrecinctsforChanges(congressionalDistricts.get(keys[i]));
         }
         return fillUpdate();
     }
 
-    public boolean traversePrecinctsforChanges(CongressionalDistrict congressionalDistrict) {
+    public void traversePrecinctsforChanges(CongressionalDistrict congressionalDistrict) {
         Iterator<Precinct> boundaryPrecincts = congressionalDistrict.getBoundaryPrecinctHashSet().iterator();
-        while (boundaryPrecincts.hasNext()) {
+        Integer size = congressionalDistrict.getBoundaryPrecinctHashSet().size();
+        int randomIndex = (int) (Math.random() *(size-1));
+        int index = 0;
+        while(boundaryPrecincts.hasNext()) {
             Precinct currentPrecinct = boundaryPrecincts.next();
-            boolean change = checkBoundarycongressionalDistrictforChanges(congressionalDistrict, currentPrecinct);
-            if (change) {
-                return true;
+            if (randomIndex != index) {
+                index++;
+                continue;
             }
+            checkBoundarycongressionalDistrictforChanges(congressionalDistrict, currentPrecinct);
+            break;
         }
-        return false;
     }
 
-    public boolean checkBoundarycongressionalDistrictforChanges(CongressionalDistrict congressionalDistrict,
-                                                                Precinct currentPrecinct) {
+    public void checkBoundarycongressionalDistrictforChanges(CongressionalDistrict congressionalDistrict,
+                                                             Precinct currentPrecinct) {
         //Get congressional district that share boundary with currentPrecinct
         CongressionalDistrict boundarycongressionalDistrict = getBoundaryCongressionalDistrict(currentPrecinct);
         double oldObjective = selectedState.calculateObjective(cCoefficient, fCoefficient);
         this.totalIterations++;
+        System.out.println("Iteration : " + totalIterations + " Moves : " + movesinCurrentUpdate);
         CongressionalDistrict currentCongressionalDistrict = congressionalDistricts.get(currentPrecinct.getCongress_id());
         movePrecinct(currentCongressionalDistrict, boundarycongressionalDistrict, currentPrecinct);
         double newObjective = selectedState.calculateObjective(cCoefficient, fCoefficient);
@@ -78,18 +75,14 @@ public class AlgoService {
             //Update the neighbours of current precinct to be the new voting districts that have boundary with congressional district
             congressionalDistrict.updateBoundaryPrecincts();
             boundarycongressionalDistrict.updateBoundaryPrecincts();
-            congressionalDistrict.setNeedsRevision(true);
-            boundarycongressionalDistrict.setNeedsRevision(true);
-            resetUnChangedChecks();
+            //congressionalDistrict.setNeedsRevision(true);
+            //boundarycongressionalDistrict.setNeedsRevision(true);
             addMove(selectedState, currentCongressionalDistrict, boundarycongressionalDistrict, currentPrecinct);
-            return true;
         }
         else {
             movePrecinct(boundarycongressionalDistrict, currentCongressionalDistrict, currentPrecinct);
-            unChangedChecks++;
         }
-        congressionalDistrict.setNeedsRevision(false);
-        return false;
+        //congressionalDistrict.setNeedsRevision(false);
     }
 
     public void sortByPoulation(String[] keys) {
@@ -106,8 +99,7 @@ public class AlgoService {
     }
 
     public boolean checkTermination() {
-        if (unChangedChecks >= Constants.MAX_UNCHANGED_CHECKS) isFinished = true;
-        if (unChangedChecks <= Constants.MAX_UNCHANGED_CHECKS && movesinCurrentUpdate <= Constants.MAX_MOVES_PER_UPDATE && !isFinished) {
+        if (totalIterations <= Constants.MAX_TOTAL_CHECKS && movesinCurrentUpdate <= Constants.MAX_MOVES_PER_UPDATE && !isFinished) {
             return false;
         }
         return true;
@@ -121,9 +113,9 @@ public class AlgoService {
         return false;
     }
 
-    public void resetUnChangedChecks() {
-        unChangedChecks = 0;
-    }
+//    public void resetUnChangedChecks() {
+//        unChangedChecks = 0;
+//    }
 
     public void movePrecinct(CongressionalDistrict originDistrict, CongressionalDistrict targetDistrict, Precinct movingPrecinct) {
         originDistrict.removePrecinct(movingPrecinct);
@@ -142,7 +134,7 @@ public class AlgoService {
             Precinct innerPrecinct = iterator.next();
             moves.add(new Move(state.getState_id(), originDistrict.getCongress_id(), targetDistrict.getCongress_id(),
                     innerPrecinct.getPrecinct_id(), innerPrecinct.getGeo_id(), targetDistrict.getColor()));
-            this.movesinCurrentUpdate++;
+            //this.movesinCurrentUpdate++;
         }
     }
 

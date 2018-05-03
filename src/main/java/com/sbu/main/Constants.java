@@ -64,6 +64,7 @@ public class Constants {
     public static final double WV_LAT = 68.969859;
     public static final double WV_LNG = 54.576432;
     public static final int MAX_UNCHANGED_CHECKS = 700;
+    public static final int MAX_TOTAL_CHECKS = 200000;
     public static final int AREA_SQUAREMILES = 2589988;
     public static final int MAX_MOVES_PER_UPDATE = 300;
     public static final int ZERO = 0;
