@@ -3,14 +3,18 @@ package com.sbu.services;
 import com.sbu.data.entitys.*;
 import com.sbu.main.Constants;
 import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 @Component
 public class AlgoService {
 
     ArrayList<Move> moves;
+    List<String> congressExclude;
+    List<String> precinctExclude;
     Update update;
     int unChangedChecks;
     int movesinCurrentUpdate;
@@ -26,6 +30,8 @@ public class AlgoService {
 
     public Update startAlgorithm(UsState state, float populationDeviation, int cCoefficient, int fCoefficient) {
 
+        congressExclude = new ArrayList<>();
+        precinctExclude = new ArrayList<>();
         this.moves = new ArrayList<>();
         this.update = new Update();
         this.populationDeviation = populationDeviation;
@@ -42,7 +48,7 @@ public class AlgoService {
         while (!checkTermination()) {
             sortByPoulation(keys);
             for (int i = 0; i < keys.length; i++) {
-                if (!congressionalDistricts.get(keys[i]).needsRevision()) {
+                if (inExcludeCongress(congressionalDistricts.get(keys[i]).getCongress_id()) || !congressionalDistricts.get(keys[i]).needsRevision()) {
                     if (i == keys.length - 1) isFinished = true;
                     continue;
                 }
@@ -57,7 +63,10 @@ public class AlgoService {
         Iterator<Precinct> boundaryPrecincts = congressionalDistrict.getBoundaryPrecinctHashSet().iterator();
         while (boundaryPrecincts.hasNext()) {
             Precinct currentPrecinct = boundaryPrecincts.next();
-            boolean change = checkBoundarycongressionalDistrictforChanges(congressionalDistrict, currentPrecinct);
+            boolean change = false;
+            if (!inExcludePrecinct(currentPrecinct.getPrecinct_id())) {
+                change = checkBoundarycongressionalDistrictforChanges(congressionalDistrict, currentPrecinct);
+            }
             if (change) {
                 return true;
             }
@@ -69,6 +78,10 @@ public class AlgoService {
                                                                 Precinct currentPrecinct) {
         //Get congressional district that share boundary with currentPrecinct
         CongressionalDistrict boundarycongressionalDistrict = getBoundaryCongressionalDistrict(currentPrecinct);
+        if (inExcludeCongress(boundarycongressionalDistrict.getCongress_id())) {
+            congressionalDistrict.setNeedsRevision(false);
+            return false;
+        }
         double oldObjective = selectedState.calculateObjective(cCoefficient, fCoefficient);
         this.totalIterations++;
         CongressionalDistrict currentCongressionalDistrict = congressionalDistricts.get(currentPrecinct.getCongress_id());
@@ -83,8 +96,7 @@ public class AlgoService {
             resetUnChangedChecks();
             addMove(selectedState, currentCongressionalDistrict, boundarycongressionalDistrict, currentPrecinct);
             return true;
-        }
-        else {
+        } else {
             movePrecinct(boundarycongressionalDistrict, currentCongressionalDistrict, currentPrecinct);
             unChangedChecks++;
         }
@@ -163,6 +175,14 @@ public class AlgoService {
         update.setCompactness(selectedState.calculateCompactness());
         update.setPopulationDeviation(selectedState.getPopulationDeviation());
         return update;
+    }
+
+    private boolean inExcludeCongress(String congressid) {
+        return congressExclude.contains(congressid);
+    }
+
+    private boolean inExcludePrecinct(String precinctid) {
+        return precinctExclude.contains(precinctid);
     }
 }
 
