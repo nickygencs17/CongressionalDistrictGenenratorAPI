@@ -8,6 +8,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 @Entity
 @Table(name = "us_state")
@@ -197,6 +199,25 @@ public class UsState {
 
     public void setObjective(double objective) {
         this.objective = objective;
+    }
+
+    public void setIncludes(StartAlgoObject startAlgoObject) {
+        List<String> excludedPrecincts = startAlgoObject.getExcluded_precinct_ids();
+        for(int i = 0; i < excludedPrecincts.size(); i++) {
+            Iterator<String> iterator = precincts.keySet().iterator();
+            while(iterator.hasNext()) {
+                Precinct thisPrecinct = precincts.get(iterator.next());
+                if(thisPrecinct.getGeo_id().equals(excludedPrecincts.get(i))) {
+                    thisPrecinct.setInclude(false);
+                    break;
+                }
+            }
+        }
+
+        List<String> includedDistricts = startAlgoObject.getIncluded_districts_ids();
+        for(int i = 0; i < includedDistricts.size(); i++) {
+            congressionalDistricts.get(includedDistricts.get(i)).setInclude(true);
+        }
     }
 
     public double calculateCompactness() {

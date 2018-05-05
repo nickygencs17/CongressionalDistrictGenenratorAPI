@@ -39,6 +39,9 @@ public class Precinct {
     float d_leaning;
 
     @NotNull
+    boolean include;
+
+    @NotNull
     float r_leaning;
 
     @NotNull
@@ -119,6 +122,14 @@ public class Precinct {
 
     public void setPrecinct_id(String precinct_id) {
         this.precinct_id = precinct_id;
+    }
+
+    public boolean isInclude() {
+        return include;
+    }
+
+    public void setInclude(boolean include) {
+        this.include = include;
     }
 
     public String getNeighbor_precincts() {

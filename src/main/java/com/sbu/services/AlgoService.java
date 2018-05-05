@@ -18,31 +18,27 @@ public class AlgoService {
     int cCoefficient;
     int fCoefficient;
     int totalIterations;
-    int simulatedMoves;
     boolean isFinished;
-    double temperature;
     UsState selectedState;
     HashMap<String, CongressionalDistrict> congressionalDistricts;
 
     public Update startAlgorithm(UsState state, float populationDeviation, int cCoefficient, int fCoefficient) {
 
         this.moves = new ArrayList<>();
-        this.update = new Update();
+        this.update = new Update(moves);
         this.populationDeviation = populationDeviation;
         this.cCoefficient = cCoefficient;
         this.fCoefficient = fCoefficient;
         this.isFinished = false;
         this.selectedState = state;
-        this.temperature = (-((double) (cCoefficient + fCoefficient)) / 2) / Math.log(0.8);
         unChangedChecks = 0;
         movesinCurrentUpdate = 0;
-        simulatedMoves = 0;
         this.congressionalDistricts = state.getCongressionalDistricts();
         String[] keys = congressionalDistricts.keySet().stream().toArray(String[]::new);
         while (!checkTermination()) {
             sortByPoulation(keys);
             for (int i = 0; i < keys.length; i++) {
-                if (!congressionalDistricts.get(keys[i]).needsRevision()) {
+                if (!(congressionalDistricts.get(keys[i]).needsRevision() && congressionalDistricts.get(keys[i]).isInclude())) {
                     if (i == keys.length - 1) isFinished = true;
                     continue;
                 }
@@ -57,6 +53,7 @@ public class AlgoService {
         Iterator<Precinct> boundaryPrecincts = congressionalDistrict.getBoundaryPrecinctHashSet().iterator();
         while (boundaryPrecincts.hasNext()) {
             Precinct currentPrecinct = boundaryPrecincts.next();
+            if(!currentPrecinct.isInclude()) continue;
             boolean change = checkBoundarycongressionalDistrictforChanges(congressionalDistrict, currentPrecinct);
             if (change) {
                 return true;
@@ -69,6 +66,7 @@ public class AlgoService {
                                                                 Precinct currentPrecinct) {
         //Get congressional district that share boundary with currentPrecinct
         CongressionalDistrict boundarycongressionalDistrict = getBoundaryCongressionalDistrict(currentPrecinct);
+        if(boundarycongressionalDistrict == null || !boundarycongressionalDistrict.isInclude()) return false;
         double oldObjective = selectedState.calculateObjective(cCoefficient, fCoefficient);
         this.totalIterations++;
         CongressionalDistrict currentCongressionalDistrict = congressionalDistricts.get(currentPrecinct.getCongress_id());

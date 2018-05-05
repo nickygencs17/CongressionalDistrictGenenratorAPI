@@ -14,6 +14,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.UUID;
+
 import static com.sbu.utils.ResponseUtil.build200;
 
 @RestController
@@ -33,30 +36,39 @@ public class AlgoController {
 
     @Autowired
     StateService stateService;
-    UsState selectedState;
-    float populationDeviation;
-    int ccoefficient;
-    int fcoefficient;
 
+    HashMap<String, UsState> currentStates = new HashMap<>();
+    HashMap<String, StartAlgoObject> currentProperties = new HashMap<>();
     @RequestMapping(method = RequestMethod.POST)
     Response getStartAlgo(@RequestBody StartAlgoObject startAlgoObject) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
         AppUser appUser = (AppUser) appUserService.getUserByUsername(username);
-        appUser.setPopulation_coefficient(startAlgoObject.getPopulation_deviation());
-        appUser.setCompactness_coefficient(startAlgoObject.getC_coefficient());
-        appUser.setFairness_coefficient(startAlgoObject.getF_coefficient());
-        appUserRepository.save(appUser);
-        this.populationDeviation = startAlgoObject.getPopulation_deviation();
-        this.ccoefficient = startAlgoObject.getC_coefficient();
-        this.fcoefficient = startAlgoObject.getF_coefficient();
-        selectedState = stateService.getStatebyId(startAlgoObject.getState_id());
-        return getUpdate();
+        UsState selectedState = stateService.getStatebyId(startAlgoObject.getState_id());
+        selectedState.setIncludes(startAlgoObject);
+        String id = UUID.randomUUID().toString();
+        currentStates.put(id, selectedState);
+        currentProperties.put(id, startAlgoObject);
+        return build200(id);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.GET)
-    Response getUpdate() {
-        Update update = algoService.startAlgorithm(selectedState, populationDeviation, ccoefficient, fcoefficient);
+    Response getUpdate(@RequestParam("id") String id) {
+        if(!currentStates.containsKey(id)) {
+            //ERROR
+        }
+        StartAlgoObject startAlgoObject = currentProperties.get(id);
+        float populationDeviation = startAlgoObject.getPopulation_deviation();
+        int ccoefficient = startAlgoObject.getC_coefficient();
+        int fcoefficient = startAlgoObject.getF_coefficient();
+        Update update = algoService.startAlgorithm(currentStates.get(id), populationDeviation, ccoefficient, fcoefficient);
+        if(update.isFinished()) currentStates.remove(id);
         return build200(update);
     }
+
+//    @RequestMapping(method = RequestMethod.POST)
+//    Response getStartAlgo(@RequestBody SaveRedistrict saveRedistrict) {
+//
+//        return build200("Saved");
+//    }
+
 }

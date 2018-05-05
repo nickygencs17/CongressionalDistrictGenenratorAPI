@@ -37,6 +37,9 @@ public class CongressionalDistrict {
     String color;
 
     @NotNull
+    boolean include;
+
+    @NotNull
     boolean is_changed;
 
     @Transient
@@ -116,6 +119,14 @@ public class CongressionalDistrict {
 
     public void setBoundaryPrecinctHashSet(HashSet<Precinct> boundaryPrecinctHashSet) {
         this.boundaryPrecinctHashSet = boundaryPrecinctHashSet;
+    }
+
+    public boolean isInclude() {
+        return include;
+    }
+
+    public void setInclude(boolean include) {
+        this.include = include;
     }
 
     public long getPopulation() {

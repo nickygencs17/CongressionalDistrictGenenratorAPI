@@ -65,7 +65,7 @@ public class Constants {
     public static final double WV_LNG = 54.576432;
     public static final int MAX_UNCHANGED_CHECKS = 700;
     public static final int AREA_SQUAREMILES = 2589988;
-    public static final int MAX_MOVES_PER_UPDATE = 300;
+    public static final int MAX_MOVES_PER_UPDATE = 5;
     public static final int ZERO = 0;
     public static final int THOUSAND_HUNDRED = 1000000;
 
