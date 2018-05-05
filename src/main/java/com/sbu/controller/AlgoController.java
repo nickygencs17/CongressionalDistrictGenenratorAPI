@@ -40,7 +40,7 @@ public class AlgoController {
     HashMap<String, UsState> currentStates = new HashMap<>();
     HashMap<String, StartAlgoObject> currentProperties = new HashMap<>();
     @RequestMapping(method = RequestMethod.POST)
-    Response getStartAlgo(@RequestBody StartAlgoObject startAlgoObject) {
+    Response postStartAlgo(@RequestBody StartAlgoObject startAlgoObject) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         AppUser appUser = (AppUser) appUserService.getUserByUsername(username);
         UsState selectedState = stateService.getStatebyId(startAlgoObject.getState_id());
@@ -51,9 +51,15 @@ public class AlgoController {
         return build200(id);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.GET)
-    Response getUpdate(@RequestParam("id") String id) {
+    @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
+    Response getUpdate(@PathVariable(value = "id") String id) {
+        //alright im gonna try on this one...
+        // url aka path variables are used to identify a resources. Query parms are used to change resourcess.
+        //since we wanna grab an update we are just identifying
+
+
         if(!currentStates.containsKey(id)) {
+
             //ERROR
         }
         StartAlgoObject startAlgoObject = currentProperties.get(id);
@@ -65,10 +71,10 @@ public class AlgoController {
         return build200(update);
     }
 
-//    @RequestMapping(method = RequestMethod.POST)
-//    Response getStartAlgo(@RequestBody SaveRedistrict saveRedistrict) {
-//
-//        return build200("Saved");
-//    }
+    @RequestMapping(value = "all/{username:.+}", method = RequestMethod.GET)
+    Response getAllRedistrictsByUsername(@PathVariable(value = "username") String username) {
+        //user name or security context added the regex because we have the .com in our usernames
+        return build200("ok");
+    }
 
 }
