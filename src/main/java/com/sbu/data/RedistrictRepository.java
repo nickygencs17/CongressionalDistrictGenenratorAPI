@@ -1,5 +1,6 @@
 package com.sbu.data;
 
+import com.sbu.data.entitys.CongressionalDistrict;
 import com.sbu.data.entitys.Redistrict;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
