@@ -1,10 +1,9 @@
 package com.sbu.controller;
 
 import com.sbu.data.AppUserRepository;
-import com.sbu.data.entitys.AppUser;
-import com.sbu.data.entitys.StartAlgoObject;
-import com.sbu.data.entitys.Update;
-import com.sbu.data.entitys.UsState;
+import com.sbu.data.RedistrictRepository;
+import com.sbu.data.entitys.*;
+import com.sbu.main.Constants;
 import com.sbu.services.AlgoService;
 import com.sbu.services.AppUserService;
 import com.sbu.services.StateService;
@@ -18,6 +17,8 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import static com.sbu.utils.ResponseUtil.build200;
+import static com.sbu.utils.ResponseUtil.build401;
+import static com.sbu.utils.ResponseUtil.build404;
 
 @RestController
 @CrossOrigin
@@ -51,6 +52,13 @@ public class AlgoController {
         return build200(id);
     }
 
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    Response deleteAlgo(@PathVariable(value = "id") String id) {
+        if(currentStates.containsKey(id)) currentStates.remove(id);
+        if(currentProperties.containsKey(id)) currentProperties.remove(id);
+        return build200("Deleted");
+    }
+
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     Response getUpdate(@PathVariable(value = "id") String id) {
         //alright im gonna try on this one...
@@ -73,8 +81,6 @@ public class AlgoController {
 
     @RequestMapping(value = "all/{username:.+}", method = RequestMethod.GET)
     Response getAllRedistrictsByUsername(@PathVariable(value = "username") String username) {
-        //user name or security context added the regex because we have the .com in our usernames
-        return build200("ok");
+        return build200(stateService.getSavedRedistringByUser(username));
     }
-
 }

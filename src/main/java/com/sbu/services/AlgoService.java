@@ -53,6 +53,9 @@ public class AlgoService {
         Iterator<Precinct> boundaryPrecincts = congressionalDistrict.getBoundaryPrecinctHashSet().iterator();
         while (boundaryPrecincts.hasNext()) {
             Precinct currentPrecinct = boundaryPrecincts.next();
+            if(currentPrecinct.getGeo_id().equals("1817900120")) {
+                System.out.println("here");
+            }
             if(!currentPrecinct.isInclude()) continue;
             boolean change = checkBoundarycongressionalDistrictforChanges(congressionalDistrict, currentPrecinct);
             if (change) {
