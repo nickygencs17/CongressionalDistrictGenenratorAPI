@@ -1,9 +1,15 @@
 package com.sbu.data.entitys;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sbu.main.Constants;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -48,7 +54,7 @@ public class Redistrict {
     ArrayList<String> included_congressional_ids = new ArrayList<>();
 
     @Transient
-    ArrayList<String> excluded_precincts_ids = new ArrayList<>();
+    ArrayList<String> excluded_precincts_geo_ids = new ArrayList<>();
 
     public Redistrict(String id, String username, float f_coefficient, float c_coefficient,
                       float population_deviation, String state_id, String moves, String included_congressional_districts,
@@ -64,6 +70,8 @@ public class Redistrict {
         this.excluded_precincts = excluded_precincts;
         this.timestamp = timestamp;
     }
+
+    public Redistrict() {}
 
     public String getId() {
         return id;
@@ -161,11 +169,63 @@ public class Redistrict {
         this.included_congressional_ids = included_congressional_ids;
     }
 
-    public ArrayList<String> getExcluded_precincts_ids() {
-        return excluded_precincts_ids;
+    public ArrayList<String> getexcluded_precincts_geo_ids() {
+        return excluded_precincts_geo_ids;
     }
 
-    public void setExcluded_precincts_ids(ArrayList<String> excluded_precincts_ids) {
-        this.excluded_precincts_ids = excluded_precincts_ids;
+    public void setexcluded_precincts_geo_ids(ArrayList<String> excluded_precincts_geo_ids) {
+        this.excluded_precincts_geo_ids = excluded_precincts_geo_ids;
     }
+
+    public void mapLists() {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode nodes = null;
+        try {
+            nodes = mapper.readTree(moves);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for (int i = 0; i < nodes.size(); i++) {
+            String moveString = nodes.get(i).toString();
+            ObjectMapper moveMapper = new ObjectMapper();
+            JsonNode moveNode = null;
+
+            try {
+                moveNode = moveMapper.readTree(moveString);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                continue;
+            }
+            Move newMove = new Move();
+            newMove.setStateId(moveNode.get("stateId").asText());
+            newMove.setOriginCongressionalDistrictId(moveNode.get("originCongressionalDistrictId").asText());
+            newMove.setTargetCongressionalDistrictId(moveNode.get("targetCongressionalDistrictId").asText());
+            newMove.setMovingPrecinctId(moveNode.get("movingPrecinctId").asText());
+            newMove.setGeoId(moveNode.get("geoId").asText());
+            newMove.setColorChange(moveNode.get("colorChange").asText());
+            movesList.add(newMove);
+        }
+        mapper = new ObjectMapper();
+        try {
+            nodes = mapper.readTree(included_congressional_districts);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for (int i = 0; i < nodes.size(); i++) {
+            String congressionalId = nodes.get(i).asText();
+            included_congressional_ids.add(congressionalId);
+        }
+        mapper = new ObjectMapper();
+        try {
+            nodes = mapper.readTree(excluded_precincts);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for (int i = 0; i < nodes.size(); i++) {
+            String precinctGeoId = nodes.get(i).asText();
+            excluded_precincts_geo_ids.add(precinctGeoId);
+        }
+    }
+
 }

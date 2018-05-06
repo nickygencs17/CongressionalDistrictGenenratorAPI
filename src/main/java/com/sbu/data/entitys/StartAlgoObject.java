@@ -23,6 +23,15 @@ public class StartAlgoObject {
         this.state_id = state_id;
     }
 
+    public StartAlgoObject(Redistrict savedRedistrict) {
+        this.population_deviation = savedRedistrict.getPopulation_deviation();
+        this.c_coefficient = (int) savedRedistrict.getC_coefficient();
+        this.f_coefficient = (int) savedRedistrict.getF_coefficient();
+        this.state_id = savedRedistrict.getState_id();
+        this.excluded_precinct_ids = savedRedistrict.getexcluded_precincts_geo_ids();
+        this.included_districts_ids = savedRedistrict.getIncluded_congressional_ids();
+    }
+
     public List<String> getExcluded_precinct_ids() {
         return excluded_precinct_ids;
     }

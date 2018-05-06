@@ -64,6 +64,10 @@ public class StateService {
         return redistrictRepository.findByUsername(username);
     }
 
+    public Redistrict getSavedRedistringById(String id) {
+        return redistrictRepository.findOne(id);
+    }
+
     public Object getStateInfo(String id) {
         JSONObject return_node = new JSONObject();
         UsState usState = usStateRepository.findOne(id);

@@ -7,6 +7,7 @@ import com.sbu.main.Constants;
 import com.sbu.services.AlgoService;
 import com.sbu.services.AppUserService;
 import com.sbu.services.StateService;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import static com.sbu.utils.ResponseUtil.build200;
@@ -81,6 +83,41 @@ public class AlgoController {
 
     @RequestMapping(value = "all/{username:.+}", method = RequestMethod.GET)
     Response getAllRedistrictsByUsername(@PathVariable(value = "username") String username) {
-        return build200(stateService.getSavedRedistringByUser(username));
+        List<Redistrict> savedRedistricts = stateService.getSavedRedistringByUser(username);
+        JSONObject return_node = new JSONObject();
+        JSONArray arr = new JSONArray();
+        for(int i = 0; i < savedRedistricts.size(); i++) {
+            JSONObject obj = new JSONObject();
+            obj.put("id", savedRedistricts.get(i).getId());
+            obj.put("time", savedRedistricts.get(i).getTimestamp());
+            obj.put("state_id", savedRedistricts.get(i).getState_id());
+            arr.add(obj);
+        }
+        return_node.put("Redistricts", arr);
+        return build200(return_node);
+    }
+
+    @RequestMapping(value = "redistricting/{id}", method = RequestMethod.GET)
+    Response getRedistrictById(@PathVariable(value = "id") String id) {
+        Redistrict savedRedistrict = stateService.getSavedRedistringById(id);
+        savedRedistrict.mapLists();
+        StartAlgoObject startAlgoObject = new StartAlgoObject(savedRedistrict);
+        UsState selectedState = stateService.getStatebyId(startAlgoObject.getState_id());
+        selectedState.setIncludes(startAlgoObject);
+        algoService.executeMoves(selectedState, savedRedistrict.getMovesList());
+        currentStates.put(id, selectedState);
+        currentProperties.put(id, startAlgoObject);
+        JSONObject return_node = new JSONObject();
+        return_node.put("fCoefficient", savedRedistrict.getF_coefficient());
+        return_node.put("cCoefficient", savedRedistrict.getC_coefficient());
+        return_node.put("population_deviation", savedRedistrict.getPopulation_deviation());
+        return_node.put("state_id", savedRedistrict.getState_id());
+        return_node.put("moves", savedRedistrict.getMovesList());
+        return_node.put("excluded_precincts", savedRedistrict.getexcluded_precincts_geo_ids());
+        return_node.put("included_congressional_districts", savedRedistrict.getIncluded_congressional_ids());
+        return_node.put("population_deviation", selectedState.calculatePopulationDeviation());
+        return_node.put("compactness", selectedState.calculateCompactness());
+        return_node.put("political_fairness", selectedState.calculatePoliticalFairness());
+        return build200(return_node);
     }
 }

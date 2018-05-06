@@ -53,9 +53,6 @@ public class AlgoService {
         Iterator<Precinct> boundaryPrecincts = congressionalDistrict.getBoundaryPrecinctHashSet().iterator();
         while (boundaryPrecincts.hasNext()) {
             Precinct currentPrecinct = boundaryPrecincts.next();
-            if(currentPrecinct.getGeo_id().equals("1817900120")) {
-                System.out.println("here");
-            }
             if(!currentPrecinct.isInclude()) continue;
             boolean change = checkBoundarycongressionalDistrictforChanges(congressionalDistrict, currentPrecinct);
             if (change) {
@@ -164,6 +161,21 @@ public class AlgoService {
         update.setCompactness(selectedState.calculateCompactness());
         update.setPopulationDeviation(selectedState.getPopulationDeviation());
         return update;
+    }
+
+    public void executeMoves(UsState selectedState, ArrayList<Move> movesList) {
+        for(int i = 0; i < movesList.size(); i++) {
+            Move currentMove = movesList.get(i);
+            CongressionalDistrict originDistrict = selectedState.getCongressionalDistrictbyId(currentMove.getOriginCongressionalDistrictId());
+            CongressionalDistrict targetDistrict = selectedState.getCongressionalDistrictbyId(currentMove.getTargetCongressionalDistrictId());
+            Precinct movingprecinct = selectedState.getPrecinctbyId(currentMove.getMovingPrecinctId());
+            movePrecinct(originDistrict, targetDistrict, movingprecinct);
+            originDistrict.updateBoundaryPrecincts();
+            targetDistrict.updateBoundaryPrecincts();
+            originDistrict.setNeedsRevision(true);
+            targetDistrict.setNeedsRevision(true);
+            resetUnChangedChecks();
+        }
     }
 }
 
