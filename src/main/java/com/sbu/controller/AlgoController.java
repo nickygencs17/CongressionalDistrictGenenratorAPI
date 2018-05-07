@@ -20,8 +20,6 @@ import javax.ws.rs.core.Response;
 import java.util.*;
 
 import static com.sbu.utils.ResponseUtil.build200;
-import static com.sbu.utils.ResponseUtil.build401;
-import static com.sbu.utils.ResponseUtil.build404;
 
 @RestController
 @CrossOrigin
@@ -165,6 +163,7 @@ public class AlgoController {
         algoService.executeMoves(selectedState, savedRedistrict.getMovesList());
         currentStates.put(id, selectedState);
         currentProperties.put(id, startAlgoObject);
+        currentMoves.put(id, new ArrayList<Move>(savedRedistrict.getMovesList()));
         JSONObject return_node = new JSONObject();
         return_node.put("fCoefficient", savedRedistrict.getF_coefficient());
         return_node.put("cCoefficient", savedRedistrict.getC_coefficient());
