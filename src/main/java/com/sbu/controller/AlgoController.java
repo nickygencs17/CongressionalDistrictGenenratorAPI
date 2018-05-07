@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 import java.util.*;
 
 import static com.sbu.utils.ResponseUtil.build200;
+import static com.sbu.utils.ResponseUtil.build404;
 
 @RestController
 @CrossOrigin
@@ -68,7 +69,7 @@ public class AlgoController {
     @RequestMapping(value = "/save/{id}", method = RequestMethod.POST)
     Response saveAlgo(@PathVariable(value = "id") String id) {
         if(!currentStates.containsKey(id)) {
-            //ERROR
+            return build404("No current state found with specified id");
         }
         StartAlgoObject startAlgoObject = currentProperties.get(id);
         Redistrict newRedistrict = new Redistrict();
@@ -92,6 +93,9 @@ public class AlgoController {
         newRedistrict.setPopulation_deviation(startAlgoObject.getPopulation_deviation());
         newRedistrict.setId(id);
         List<Move> moves = currentMoves.get(id);
+        if(moves == null) {
+            return build404("Moves not found in memory");
+        }
         String movesJson = null;
         ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         try {
@@ -109,14 +113,8 @@ public class AlgoController {
 
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     Response getUpdate(@PathVariable(value = "id") String id) {
-        //alright im gonna try on this one...
-        // url aka path variables are used to identify a resources. Query parms are used to change resourcess.
-        //since we wanna grab an update we are just identifying
-
-
         if(!currentStates.containsKey(id)) {
-
-            //ERROR
+            return build404("Id not found in current states");
         }
         StartAlgoObject startAlgoObject = currentProperties.get(id);
         float populationDeviation = startAlgoObject.getPopulation_deviation();
@@ -140,6 +138,9 @@ public class AlgoController {
     @RequestMapping(value = "all/{username:.+}", method = RequestMethod.GET)
     Response getAllRedistrictsByUsername(@PathVariable(value = "username") String username) {
         List<Redistrict> savedRedistricts = stateService.getSavedRedistringByUser(username);
+        if(savedRedistricts == null) {
+            return build404("Saved redistricts not found for user");
+        }
         JSONObject return_node = new JSONObject();
         JSONArray arr = new JSONArray();
         for(int i = 0; i < savedRedistricts.size(); i++) {
@@ -156,6 +157,9 @@ public class AlgoController {
     @RequestMapping(value = "redistricting/{id}", method = RequestMethod.GET)
     Response getRedistrictById(@PathVariable(value = "id") String id) {
         Redistrict savedRedistrict = stateService.getSavedRedistringById(id);
+        if(savedRedistrict == null) {
+            return build404("No such redistrict with given id");
+        }
         savedRedistrict.mapLists();
         StartAlgoObject startAlgoObject = new StartAlgoObject(savedRedistrict);
         UsState selectedState = stateService.getStatebyId(startAlgoObject.getState_id());
