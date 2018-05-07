@@ -47,6 +47,7 @@ public class AlgoController {
     @RequestMapping(method = RequestMethod.POST)
     Response postStartAlgo(@RequestBody StartAlgoObject startAlgoObject) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        startAlgoObject.trimString();
         AppUser appUser = (AppUser) appUserService.getUserByUsername(username);
         UsState selectedState = stateService.getStatebyId(startAlgoObject.getState_id());
         selectedState.setIncludes(startAlgoObject);

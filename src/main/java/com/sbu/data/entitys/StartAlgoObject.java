@@ -80,4 +80,16 @@ public class StartAlgoObject {
         this.state_id = state_id;
     }
 
+    public void trimString() {
+        for(int i = 0; i < excluded_precinct_ids.size(); i++) {
+            if(excluded_precinct_ids.get(i).equals("string")) {
+                excluded_precinct_ids.remove(i);
+            }
+        }
+        for(int i = 0; i < included_districts_ids.size(); i++) {
+            if(included_districts_ids.get(i).equals("string")) {
+                included_districts_ids.remove(i);
+            }
+        }
+    }
 }
