@@ -62,6 +62,7 @@ public class AlgoController {
         if(currentStates.containsKey(id)) currentStates.remove(id);
         if(currentProperties.containsKey(id)) currentProperties.remove(id);
         if(currentMoves.containsKey(id)) currentMoves.remove(id);
+        stateService.deleteRedistrict(id);
         return build200("Deleted");
     }
 

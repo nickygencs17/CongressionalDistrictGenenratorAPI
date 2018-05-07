@@ -110,4 +110,8 @@ public class StateService {
     public void saveRedistrict(Redistrict redistrict) {
         redistrictRepository.save(redistrict);
     }
+
+    public void deleteRedistrict(String id) {
+        redistrictRepository.delete(id);
+    }
 }
