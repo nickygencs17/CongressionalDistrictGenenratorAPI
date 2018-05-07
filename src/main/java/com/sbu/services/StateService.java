@@ -106,4 +106,8 @@ public class StateService {
         }
         return precinctHashMap;
     }
+
+    public void saveRedistrict(Redistrict redistrict) {
+        redistrictRepository.save(redistrict);
+    }
 }

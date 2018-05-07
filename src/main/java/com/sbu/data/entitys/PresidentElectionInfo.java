@@ -24,7 +24,7 @@ public class PresidentElectionInfo {
     String vpres_name;
 
     @NotNull
-    long votes_for;
+    String votes_for;
 
     @NotNull
     float vote_percent;
@@ -41,7 +41,7 @@ public class PresidentElectionInfo {
     public PresidentElectionInfo() {
     }
 
-    public PresidentElectionInfo(int election_year, String party, String pres_name, String vpres_name, long votes_for, float vote_percent, int ec_vote, String state_id, boolean is_winner) {
+    public PresidentElectionInfo(int election_year, String party, String pres_name, String vpres_name, String votes_for, float vote_percent, int ec_vote, String state_id, boolean is_winner) {
         this.election_year = election_year;
         this.party = party;
         this.pres_name = pres_name;
@@ -93,11 +93,11 @@ public class PresidentElectionInfo {
         this.vpres_name = vpres_name;
     }
 
-    public long getVotes_for() {
+    public String getVotes_for() {
         return votes_for;
     }
 
-    public void setVotes_for(long votes_for) {
+    public void setVotes_for(String votes_for) {
         this.votes_for = votes_for;
     }
 

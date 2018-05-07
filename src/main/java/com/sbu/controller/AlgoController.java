@@ -1,5 +1,8 @@
 package com.sbu.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.sbu.data.AppUserRepository;
 import com.sbu.data.RedistrictRepository;
 import com.sbu.data.entitys.*;
@@ -14,9 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import javax.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.sbu.utils.ResponseUtil.build200;
 import static com.sbu.utils.ResponseUtil.build401;
@@ -42,6 +43,7 @@ public class AlgoController {
 
     HashMap<String, UsState> currentStates = new HashMap<>();
     HashMap<String, StartAlgoObject> currentProperties = new HashMap<>();
+    HashMap<String, List<Move>> currentMoves = new HashMap<>();
     @RequestMapping(method = RequestMethod.POST)
     Response postStartAlgo(@RequestBody StartAlgoObject startAlgoObject) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -51,6 +53,7 @@ public class AlgoController {
         String id = UUID.randomUUID().toString();
         currentStates.put(id, selectedState);
         currentProperties.put(id, startAlgoObject);
+        currentMoves.put(id, new ArrayList<Move>());
         return build200(id);
     }
 
@@ -58,7 +61,50 @@ public class AlgoController {
     Response deleteAlgo(@PathVariable(value = "id") String id) {
         if(currentStates.containsKey(id)) currentStates.remove(id);
         if(currentProperties.containsKey(id)) currentProperties.remove(id);
+        if(currentMoves.containsKey(id)) currentMoves.remove(id);
         return build200("Deleted");
+    }
+
+    @RequestMapping(value = "/save/{id}", method = RequestMethod.POST)
+    Response saveAlgo(@PathVariable(value = "id") String id) {
+        if(!currentStates.containsKey(id)) {
+            //ERROR
+        }
+        StartAlgoObject startAlgoObject = currentProperties.get(id);
+        Redistrict newRedistrict = new Redistrict();
+        newRedistrict.setC_coefficient(startAlgoObject.getC_coefficient());
+        newRedistrict.setF_coefficient(startAlgoObject.getF_coefficient());
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String exludedPrecinctsString = "[]";
+        try {
+            exludedPrecinctsString = ow.writeValueAsString(startAlgoObject.getExcluded_precinct_ids());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        newRedistrict.setExcluded_precincts(exludedPrecinctsString);
+        String includedCongressString = "[]";
+        try {
+            includedCongressString = ow.writeValueAsString(startAlgoObject.getIncluded_districts_ids());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        newRedistrict.setIncluded_congressional_districts(includedCongressString);
+        newRedistrict.setPopulation_deviation(startAlgoObject.getPopulation_deviation());
+        newRedistrict.setId(id);
+        List<Move> moves = currentMoves.get(id);
+        String movesJson = null;
+        ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        try {
+            movesJson = ow.writeValueAsString(moves);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        newRedistrict.setMoves(movesJson);
+        newRedistrict.setUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        newRedistrict.setTimestamp(new Date(System.currentTimeMillis()));
+        newRedistrict.setState_id(startAlgoObject.getState_id());
+        stateService.saveRedistrict(newRedistrict);
+        return build200("saved");
     }
 
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
@@ -77,7 +123,17 @@ public class AlgoController {
         int ccoefficient = startAlgoObject.getC_coefficient();
         int fcoefficient = startAlgoObject.getF_coefficient();
         Update update = algoService.startAlgorithm(currentStates.get(id), populationDeviation, ccoefficient, fcoefficient);
-        if(update.isFinished()) currentStates.remove(id);
+        List<Move> moves = currentMoves.get(id);
+        List<Move> updateMoves = update.getMoves();
+        for(int i = 0; i < updateMoves.size(); i++) {
+            moves.add(updateMoves.get(i));
+        }
+        currentMoves.put(id, moves);
+        if(update.isFinished()) {
+            currentStates.remove(id);
+            currentMoves.remove(id);
+            currentProperties.remove(id);
+        }
         return build200(update);
     }
 
