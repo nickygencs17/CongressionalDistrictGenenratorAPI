@@ -4,11 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.sbu.data.AppUserRepository;
-import com.sbu.data.RedistrictRepository;
 import com.sbu.data.entitys.*;
 import com.sbu.main.Constants;
 import com.sbu.services.AlgoService;
 import com.sbu.services.AppUserService;
+import com.sbu.services.LogService;
 import com.sbu.services.StateService;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+
 import javax.ws.rs.core.Response;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.sbu.utils.ResponseUtil.build200;
@@ -35,6 +37,9 @@ public class AlgoController {
     AppUserService appUserService;
 
     @Autowired
+    LogService logService;
+
+    @Autowired
     AppUserRepository appUserRepository;
 
     @Autowired
@@ -43,6 +48,7 @@ public class AlgoController {
     HashMap<String, UsState> currentStates = new HashMap<>();
     HashMap<String, StartAlgoObject> currentProperties = new HashMap<>();
     HashMap<String, List<Move>> currentMoves = new HashMap<>();
+
     @RequestMapping(method = RequestMethod.POST)
     Response postStartAlgo(@RequestBody StartAlgoObject startAlgoObject) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -59,16 +65,16 @@ public class AlgoController {
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     Response deleteAlgo(@PathVariable(value = "id") String id) {
-        if(currentStates.containsKey(id)) currentStates.remove(id);
-        if(currentProperties.containsKey(id)) currentProperties.remove(id);
-        if(currentMoves.containsKey(id)) currentMoves.remove(id);
+        if (currentStates.containsKey(id)) currentStates.remove(id);
+        if (currentProperties.containsKey(id)) currentProperties.remove(id);
+        if (currentMoves.containsKey(id)) currentMoves.remove(id);
         stateService.deleteRedistrict(id);
         return build200("Deleted");
     }
 
     @RequestMapping(value = "/save/{id}", method = RequestMethod.POST)
     Response saveAlgo(@PathVariable(value = "id") String id) {
-        if(!currentStates.containsKey(id)) {
+        if (!currentStates.containsKey(id)) {
             return build404("No current state found with specified id");
         }
         StartAlgoObject startAlgoObject = currentProperties.get(id);
@@ -93,7 +99,7 @@ public class AlgoController {
         newRedistrict.setPopulation_deviation(startAlgoObject.getPopulation_deviation());
         newRedistrict.setId(id);
         List<Move> moves = currentMoves.get(id);
-        if(moves == null) {
+        if (moves == null) {
             return build404("Moves not found in memory");
         }
         String movesJson = null;
@@ -113,37 +119,44 @@ public class AlgoController {
 
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     Response getUpdate(@PathVariable(value = "id") String id) {
-        if(!currentStates.containsKey(id)) {
+        if (!currentStates.containsKey(id)) {
             return build404("Id not found in current states");
         }
         StartAlgoObject startAlgoObject = currentProperties.get(id);
+
+        String time_date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        String log_details = Constants.LOG_USER + SecurityContextHolder.getContext().getAuthentication().getName() + Constants.LOG_STATE + currentStates.get(id).getState_id() + Constants.LOG_INCLUDED + startAlgoObject.getIncluded_districts_ids();
+        Log algoLog = new Log(time_date, log_details);
+        logService.postLog(algoLog);
+
         float populationDeviation = startAlgoObject.getPopulation_deviation();
         int ccoefficient = startAlgoObject.getC_coefficient();
         int fcoefficient = startAlgoObject.getF_coefficient();
         Update update = algoService.startAlgorithm(currentStates.get(id), populationDeviation, ccoefficient, fcoefficient);
         List<Move> moves = currentMoves.get(id);
         List<Move> updateMoves = update.getMoves();
-        for(int i = 0; i < updateMoves.size(); i++) {
+        for (int i = 0; i < updateMoves.size(); i++) {
             moves.add(updateMoves.get(i));
         }
         currentMoves.put(id, moves);
-        if(update.isFinished()) {
+        if (update.isFinished()) {
             currentStates.remove(id);
             currentMoves.remove(id);
             currentProperties.remove(id);
         }
+        logService.deleteLog(algoLog);
         return build200(update);
     }
 
     @RequestMapping(value = "all/{username:.+}", method = RequestMethod.GET)
     Response getAllRedistrictsByUsername(@PathVariable(value = "username") String username) {
         List<Redistrict> savedRedistricts = stateService.getSavedRedistringByUser(username);
-        if(savedRedistricts == null) {
+        if (savedRedistricts == null) {
             return build404("Saved redistricts not found for user");
         }
         JSONObject return_node = new JSONObject();
         JSONArray arr = new JSONArray();
-        for(int i = 0; i < savedRedistricts.size(); i++) {
+        for (int i = 0; i < savedRedistricts.size(); i++) {
             JSONObject obj = new JSONObject();
             obj.put("id", savedRedistricts.get(i).getId());
             obj.put("time", savedRedistricts.get(i).getTimestamp());
@@ -157,7 +170,7 @@ public class AlgoController {
     @RequestMapping(value = "redistricting/{id}", method = RequestMethod.GET)
     Response getRedistrictById(@PathVariable(value = "id") String id) {
         Redistrict savedRedistrict = stateService.getSavedRedistringById(id);
-        if(savedRedistrict == null) {
+        if (savedRedistrict == null) {
             return build404("No such redistrict with given id");
         }
         savedRedistrict.mapLists();
