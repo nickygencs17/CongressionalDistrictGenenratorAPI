@@ -125,7 +125,7 @@ public class AlgoController {
         StartAlgoObject startAlgoObject = currentProperties.get(id);
 
         String time_date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        String log_details = Constants.LOG_USER + SecurityContextHolder.getContext().getAuthentication().getName() + Constants.LOG_STATE + currentStates.get(id).getState_id() + Constants.LOG_INCLUDED + startAlgoObject.getIncluded_districts_ids();
+        String log_details = Constants.LOG_USER + SecurityContextHolder.getContext().getAuthentication().getName() + Constants.LOG_INCLUDED + startAlgoObject.getIncluded_districts_ids() + Constants.LOG_STATE + currentStates.get(id).getState_id();
         Log algoLog = new Log(time_date, log_details);
         logService.postLog(algoLog);
 

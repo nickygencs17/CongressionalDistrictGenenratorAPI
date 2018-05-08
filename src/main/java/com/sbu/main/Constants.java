@@ -54,9 +54,9 @@ public class Constants {
             LOGIN_SUCCESS = "success",
             MESSAGE = "message",
             LOGIN_SUCESS_MESSAGE = "Login Successful",
-            LOG_USER = "User:",
-            LOG_STATE = " State:",
-            LOG_INCLUDED = " Included_Districts:",
+            LOG_USER = "User ",
+            LOG_STATE = " in state ",
+            LOG_INCLUDED = " is redistricting congressional districts ",
             ROLES = "roles";
 
 
