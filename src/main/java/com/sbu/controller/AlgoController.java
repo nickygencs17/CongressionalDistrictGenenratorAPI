@@ -72,7 +72,7 @@ public class AlgoController {
         return build200("Deleted");
     }
 
-    @RequestMapping(value = "/save/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/save/{id}", method = RequestMethod.GET)
     Response saveAlgo(@PathVariable(value = "id") String id) {
         if (!currentStates.containsKey(id)) {
             return build404("No current state found with specified id");
