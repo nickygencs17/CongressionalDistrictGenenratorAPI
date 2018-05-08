@@ -174,8 +174,8 @@ public class AlgoController {
         return_node.put("population_deviation", savedRedistrict.getPopulation_deviation());
         return_node.put("state_id", savedRedistrict.getState_id());
         return_node.put("moves", savedRedistrict.getMovesList());
-        return_node.put("excluded_precincts", savedRedistrict.getexcluded_precincts_geo_ids());
-        return_node.put("included_congressional_districts", savedRedistrict.getIncluded_congressional_ids());
+        return_node.put("excluded_precinct_ids", savedRedistrict.getexcluded_precincts_geo_ids());
+        return_node.put("included_districts_ids", savedRedistrict.getIncluded_congressional_ids());
         return_node.put("population_deviation", selectedState.calculatePopulationDeviation());
         return_node.put("compactness", selectedState.calculateCompactness());
         return_node.put("political_fairness", selectedState.calculatePoliticalFairness());
