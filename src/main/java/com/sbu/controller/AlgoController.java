@@ -148,6 +148,17 @@ public class AlgoController {
         return build200(update);
     }
 
+    @RequestMapping(value = "/stop/{id}", method = RequestMethod.GET)
+    Response stopAlgo(@PathVariable(value = "id") String id) {
+        if(!currentMoves.containsKey(id) || !currentMoves.containsKey(id) || !currentMoves.containsKey(id)) {
+            build404("Resource for id not found");
+        }
+        currentStates.remove(id);
+        currentMoves.remove(id);
+        currentProperties.remove(id);
+        return build200("stopped");
+    }
+
     @RequestMapping(value = "all/{username:.+}", method = RequestMethod.GET)
     Response getAllRedistrictsByUsername(@PathVariable(value = "username") String username) {
         List<Redistrict> savedRedistricts = stateService.getSavedRedistringByUser(username);
