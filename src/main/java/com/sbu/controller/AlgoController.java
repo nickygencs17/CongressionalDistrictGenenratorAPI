@@ -119,33 +119,40 @@ public class AlgoController {
 
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     Response getUpdate(@PathVariable(value = "id") String id) {
+
         if (!currentStates.containsKey(id)) {
-            return build404("Id not found in current states");
+            return build200("Id not found in current states");
         }
-        StartAlgoObject startAlgoObject = currentProperties.get(id);
+        try {
+            StartAlgoObject startAlgoObject = currentProperties.get(id);
 
-        String time_date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        String log_details = Constants.LOG_USER + SecurityContextHolder.getContext().getAuthentication().getName() + Constants.LOG_INCLUDED + startAlgoObject.getIncluded_districts_ids() + Constants.LOG_STATE + currentStates.get(id).getState_id();
-        Log algoLog = new Log(time_date, log_details);
-        logService.postLog(algoLog);
+            String time_date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+            String log_details = Constants.LOG_USER + SecurityContextHolder.getContext().getAuthentication().getName() + Constants.LOG_INCLUDED + startAlgoObject.getIncluded_districts_ids() + Constants.LOG_STATE + currentStates.get(id).getState_id();
+            Log algoLog = new Log(time_date, log_details);
+            logService.postLog(algoLog);
 
-        float populationDeviation = startAlgoObject.getPopulation_deviation();
-        int ccoefficient = startAlgoObject.getC_coefficient();
-        int fcoefficient = startAlgoObject.getF_coefficient();
-        Update update = algoService.startAlgorithm(currentStates.get(id), populationDeviation, ccoefficient, fcoefficient);
-        List<Move> moves = currentMoves.get(id);
-        List<Move> updateMoves = update.getMoves();
-        for (int i = 0; i < updateMoves.size(); i++) {
-            moves.add(updateMoves.get(i));
+            float populationDeviation = startAlgoObject.getPopulation_deviation();
+            int ccoefficient = startAlgoObject.getC_coefficient();
+            int fcoefficient = startAlgoObject.getF_coefficient();
+            Update update = algoService.startAlgorithm(currentStates.get(id), populationDeviation, ccoefficient, fcoefficient);
+            List<Move> moves = currentMoves.get(id);
+            List<Move> updateMoves = update.getMoves();
+            for (int i = 0; i < updateMoves.size(); i++) {
+                moves.add(updateMoves.get(i));
+            }
+            currentMoves.put(id, moves);
+            if (update.isFinished()) {
+                currentStates.remove(id);
+                currentMoves.remove(id);
+                currentProperties.remove(id);
+            }
+            logService.deleteLog(algoLog);
+            return build200(update);
         }
-        currentMoves.put(id, moves);
-        if (update.isFinished()) {
-            currentStates.remove(id);
-            currentMoves.remove(id);
-            currentProperties.remove(id);
+        catch (Exception e){
+            return build200("OK");
         }
-        logService.deleteLog(algoLog);
-        return build200(update);
+
     }
 
     @RequestMapping(value = "/stop/{id}", method = RequestMethod.GET)
