@@ -123,12 +123,14 @@ public class AlgoController {
         if (!currentStates.containsKey(id)) {
             return build200("Id not found in current states");
         }
+        Log algoLog = new Log();
         try {
             StartAlgoObject startAlgoObject = currentProperties.get(id);
 
             String time_date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
             String log_details = Constants.LOG_USER + SecurityContextHolder.getContext().getAuthentication().getName() + Constants.LOG_INCLUDED + startAlgoObject.getIncluded_districts_ids() + Constants.LOG_STATE + currentStates.get(id).getState_id();
-            Log algoLog = new Log(time_date, log_details);
+            algoLog.setTime_date(time_date);
+            algoLog.setLog_details(log_details);
             logService.postLog(algoLog);
 
             float populationDeviation = startAlgoObject.getPopulation_deviation();
@@ -150,6 +152,7 @@ public class AlgoController {
             return build200(update);
         }
         catch (Exception e){
+            logService.deleteLog(algoLog);
             return build200("OK");
         }
 
