@@ -18,6 +18,8 @@ public class Move {
         this.colorChange = colorChange;
     }
 
+    public Move() {}
+
     public String getStateId() {
         return stateId;
     }

@@ -23,6 +23,15 @@ public class StartAlgoObject {
         this.state_id = state_id;
     }
 
+    public StartAlgoObject(Redistrict savedRedistrict) {
+        this.population_deviation = savedRedistrict.getPopulation_deviation();
+        this.c_coefficient = (int) savedRedistrict.getC_coefficient();
+        this.f_coefficient = (int) savedRedistrict.getF_coefficient();
+        this.state_id = savedRedistrict.getState_id();
+        this.excluded_precinct_ids = savedRedistrict.getexcluded_precincts_geo_ids();
+        this.included_districts_ids = savedRedistrict.getIncluded_congressional_ids();
+    }
+
     public List<String> getExcluded_precinct_ids() {
         return excluded_precinct_ids;
     }
@@ -69,5 +78,18 @@ public class StartAlgoObject {
 
     public void setState_id(String state_id) {
         this.state_id = state_id;
+    }
+
+    public void trimString() {
+        for(int i = 0; i < excluded_precinct_ids.size(); i++) {
+            if(excluded_precinct_ids.get(i).equals("string")) {
+                excluded_precinct_ids.remove(i);
+            }
+        }
+        for(int i = 0; i < included_districts_ids.size(); i++) {
+            if(included_districts_ids.get(i).equals("string")) {
+                included_districts_ids.remove(i);
+            }
+        }
     }
 }

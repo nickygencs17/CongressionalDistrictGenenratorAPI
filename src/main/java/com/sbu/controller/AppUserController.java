@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.ws.rs.core.Response;
 
 import static com.sbu.utils.ResponseUtil.*;
@@ -33,7 +34,9 @@ public class AppUserController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST)
-    public Response postUser(@RequestBody AppUser user) throws BadRequestException {
+    public Response postUser(@RequestBody @Valid AppUser user) throws BadRequestException {
+
+
         if (user.getState_id().length() > 2) {
             return build400(Constants.STATE_ID_LENGTH_GREATER_THAN_TWO);
         }

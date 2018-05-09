@@ -1,5 +1,6 @@
 package com.sbu.data.entitys;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Update {
@@ -15,9 +16,16 @@ public class Update {
         this.finished = finished;
     }
 
-    public Update() {
-
+    public Update(List<Move> moves) {
+        this.moves = moves;
     }
+    public Update(Update update) {
+        this.moves = new ArrayList<>(update.getMoves());
+        this.setCompactness(update.getCompactness());
+        this.setFinished(update.isFinished());
+        this.setPopulationDeviation(update.getPopulationDeviation());
+    }
+
 
     public List<Move> getMoves() {
         return moves;

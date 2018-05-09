@@ -3,6 +3,7 @@ package com.sbu.services;
 import com.sbu.data.*;
 import com.sbu.data.entitys.CongressionalDistrict;
 import com.sbu.data.entitys.Precinct;
+import com.sbu.data.entitys.Redistrict;
 import com.sbu.data.entitys.UsState;
 import com.sbu.main.Constants;
 import org.json.simple.JSONObject;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 @Component
 public class StateService {
@@ -34,6 +36,9 @@ public class StateService {
     @Autowired
     UsStateRepository usStateRepository;
 
+    @Autowired
+    RedistrictRepository redistrictRepository;
+
     public Object getBoundaries(String type, String state_id) {
         UsState usState = usStateRepository.findOne(state_id);
         if (type.equals(Constants.STATE)) {
@@ -53,6 +58,14 @@ public class StateService {
         return_node.put(Constants.CONGRESS_ELECTION_INFO, congressElectionInfoRepository.findByState_id(id));
         return_node.put(Constants.PRESIDENT_ELECTION_INFO, presidentElectionInfoRepository.findByState_id(id));
         return return_node;
+    }
+
+    public List<Redistrict> getSavedRedistringByUser(String username) {
+        return redistrictRepository.findByUsername(username);
+    }
+
+    public Redistrict getSavedRedistringById(String id) {
+        return redistrictRepository.findOne(id);
     }
 
     public Object getStateInfo(String id) {
@@ -92,5 +105,13 @@ public class StateService {
             precinctHashMap.put(currentPrecinct.getPrecinct_id(), currentPrecinct);
         }
         return precinctHashMap;
+    }
+
+    public void saveRedistrict(Redistrict redistrict) {
+        redistrictRepository.save(redistrict);
+    }
+
+    public void deleteRedistrict(String id) {
+        redistrictRepository.delete(id);
     }
 }

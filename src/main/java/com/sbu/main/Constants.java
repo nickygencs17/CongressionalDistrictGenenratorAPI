@@ -54,6 +54,9 @@ public class Constants {
             LOGIN_SUCCESS = "success",
             MESSAGE = "message",
             LOGIN_SUCESS_MESSAGE = "Login Successful",
+            LOG_USER = "User ",
+            LOG_STATE = " in state ",
+            LOG_INCLUDED = " is redistricting congressional districts ",
             ROLES = "roles";
 
 
@@ -65,7 +68,7 @@ public class Constants {
     public static final double WV_LNG = 54.576432;
     public static final int MAX_UNCHANGED_CHECKS = 700;
     public static final int AREA_SQUAREMILES = 2589988;
-    public static final int MAX_MOVES_PER_UPDATE = 300;
+    public static final int MAX_MOVES_PER_UPDATE = 5;
     public static final int ZERO = 0;
     public static final int THOUSAND_HUNDRED = 1000000;
 

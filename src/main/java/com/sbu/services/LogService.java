@@ -15,6 +15,10 @@ public class LogService {
         return logRepository.save(log);
     }
 
+    public void deleteLog(Log log) {
+        logRepository.delete(log);
+    }
+
     public Object getAllLogs() {
         return logRepository.findAll();
     }
