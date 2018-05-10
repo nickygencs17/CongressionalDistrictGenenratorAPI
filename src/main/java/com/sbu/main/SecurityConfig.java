@@ -36,6 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/post/all").permitAll()
                 .antMatchers("/post/id/{id}").permitAll()
                 .antMatchers("/user").permitAll()
+                .antMatchers("/algorithm/**").permitAll()
                 .anyRequest().authenticated()
                 //Allows HTTP Basic auth
                 .and().httpBasic()
@@ -59,11 +60,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         }
         //Iterable<AppUser> appUsers = userService.getAllUsers();
         //add whatever other user you need
-        users.put("rama", "pass,ROLE_ADMIN,enabled");
-        users.put("ethan", "pass,ROLE_ADMIN,enabled");
-        users.put("rahul", "pass,ROLE_ADMIN,enabled");
-        users.put("nick", "pass,ROLE_ADMIN,enabled");
-        users.put("g", "pass,ROLE_USER,enabled");
         return new InMemoryUserDetailsManager(users);
     }
 }

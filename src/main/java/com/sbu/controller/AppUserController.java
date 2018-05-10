@@ -43,8 +43,11 @@ public class AppUserController {
         if (checkIfUserExists(user)) {
             return build409();
         }
-        appUserService.createAppUser(user, userManager, "ROLE_USER");
-        return build201(user.getUsername());
+        appUserService.createAppUser(user, userManager);
+        JSONObject json = new JSONObject();
+        json.put("un",user.getUsername());
+        json.put("pass",user.getUser_password());
+        return build201(json);
     }
 
     @RequestMapping(value = "/{username:.+}", method = RequestMethod.GET)
@@ -69,6 +72,7 @@ public class AppUserController {
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     Response putEditUser(@RequestBody JSONObject user) {
+
         AppUser appUser = new AppUser(user.get(Constants.USERNAME).toString(),
                 user.get(Constants.USER_PASSWORD).toString(),
                 user.get(Constants.FIRST_NAME).toString(),
@@ -77,11 +81,15 @@ public class AppUserController {
                 user.get(Constants.STATE_ID).toString(),
                 user.get(Constants.ADDRESS).toString(),
                 Integer.parseInt(user.get(Constants.ZIP).toString()),
-                Constants.ROLE_USER_STRING,
+                Constants.ROLE_USERR,
                 Float.parseFloat(user.get(Constants.POP_COEF).toString()),
                 Float.parseFloat(user.get(Constants.FAIR_COEF).toString()),
                 Float.parseFloat(user.get(Constants.COMP_COEF).toString()));
 
+
+        if(userManager.loadUserByUsername(appUser.getUsername()).getAuthorities().toString().equals(Constants.ROLE_ADMIN_STRING)){
+                appUser.setRole(Constants.ROLE_ADMINN);
+        }
 
         if (handleAdminCall()) {
             return build401();

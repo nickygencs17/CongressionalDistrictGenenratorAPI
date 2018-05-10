@@ -9,6 +9,8 @@ public class Constants {
     public static final GrantedAuthority ROLE_ADMIN = new SimpleGrantedAuthority("ROLE_ADMIN");
     public static final String ROLE_ADMIN_STRING = "[ROLE_ADMIN]";
     public static final String ROLE_USER_STRING = "[ROLE_USER]";
+    public static final String ROLE_USERR = "ROLE_USER";
+    public static final String ROLE_ADMINN = "ROLE_ADMIN";
     public static final String
             USER_NOT_FOUND = "USER_NOT_FOUND",
             USER_EXISTS = "USER_EXISTS",
