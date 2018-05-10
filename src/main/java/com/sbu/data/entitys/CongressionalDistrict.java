@@ -221,8 +221,12 @@ public class CongressionalDistrict {
             this.precinctHashSet.add(innerPrecinct);
         }
         this.population += precinct.getPopulation();
+        try{
         if (updateAreaObj) updateAreaObject(precinct.getAreaObject(), true);
         updateArea(precinct.getArea(), true);
+        }
+       catch(Exception e){
+       }
     }
 
     public void removePrecinct(Precinct precinct) {
