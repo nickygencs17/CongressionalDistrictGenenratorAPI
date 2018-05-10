@@ -43,7 +43,7 @@ public class AppUserController {
         if (checkIfUserExists(user)) {
             return build409();
         }
-        appUserService.createAppUser(user, userManager);
+        appUserService.createAppUser(user, userManager, "ROLE_USER");
         return build201(user.getUsername());
     }
 
@@ -69,7 +69,6 @@ public class AppUserController {
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     Response putEditUser(@RequestBody JSONObject user) {
-
         AppUser appUser = new AppUser(user.get(Constants.USERNAME).toString(),
                 user.get(Constants.USER_PASSWORD).toString(),
                 user.get(Constants.FIRST_NAME).toString(),

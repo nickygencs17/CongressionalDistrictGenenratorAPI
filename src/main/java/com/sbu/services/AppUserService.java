@@ -26,9 +26,16 @@ public class AppUserService {
         return appUserRepository.findOne(username);
     }
 
-    public AppUser createAppUser(AppUser user, InMemoryUserDetailsManager inMemoryUserDetailsManager) {
+    public AppUser createAppUser(AppUser user, InMemoryUserDetailsManager inMemoryUserDetailsManager, String role) {
         List<GrantedAuthority> roles = new ArrayList<>();
-        roles.add(Constants.ROLE_USER);
+        if(role.equals("ROLE_ADMIN")) {
+            roles.add(Constants.ROLE_ADMIN);
+            user.setRole("ROLE_ADMIN");
+        }
+        else {
+            roles.add(Constants.ROLE_USER);
+            user.setRole("ROLE_USER");
+        }
         inMemoryUserDetailsManager.createUser(new User(user.getUsername(), user.getUser_password(), roles));
         return appUserRepository.save(user);
     }
@@ -36,7 +43,7 @@ public class AppUserService {
     public AppUser editUser(AppUser user, InMemoryUserDetailsManager inMemoryUserDetailsManager) {
         AppUser old_app_user = (AppUser) getUserByUsername(user.getUsername());
         removeUser(old_app_user, inMemoryUserDetailsManager);
-        return createAppUser(user, inMemoryUserDetailsManager);
+        return createAppUser(user, inMemoryUserDetailsManager, old_app_user.getRole());
     }
 
     public void removeUser(AppUser user, InMemoryUserDetailsManager inMemoryUserDetailsManager) {
